@@ -7,3 +7,11 @@ I use clone instead of internal so the HDMI interface is not disabled, preventin
 - `Install-Module -Name AudioDeviceCmdlets` (handle audio switching)
 
 Reset screens / audio at start.
+
+Clone this repo, edit the file to suit your needs, and then `pip install pyinstaller`
+
+`pyinstaller --onefile --noconsole bigpicture-external.py`
+
+You can then create a shortcut and place it to shell:startup.
+
+Windows defender will block the generated exe file. You may whitelist it.
