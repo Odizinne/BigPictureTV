@@ -1,17 +1,12 @@
-Python script to automate switching from monitor to TV when starting Steam Big Picture.<br/>
-Also switch audio output.
+This Python script automates switching between a monitor and a TV when launching Steam Big Picture and also handles audio output switching.
 
-I use clone instead of internal so the HDMI interface is not disabled, preventing using a sleep to wait from HDMI turning on.
+Requirements:
+- Install [py-audiodevices](https://github.com/Odizinne/py-audiodevices) to manage audio output switching.
+- Install pygetwindow via pip (`pip install pygetwindow`) to handle window titles.
 
-- `pip install pygetwindow` (handle window title)
-- `Install-Module -Name AudioDeviceCmdlets` (handle audio switching)
+Usage:
+1. Launch the script once to create the configuration file.
+2. Specify your audio output settings for both desktop and gamemode in the config file.
+   - Use the same names as they appear in Windows for the audio outputs.
 
-Reset screens / audio at start.
-
-Clone this repo, edit the file to suit your needs, and then `pip install pyinstaller`
-
-`pyinstaller --onefile --noconsole bigpicture-external.py`
-
-You can then create a shortcut and place it to shell:startup.
-
-Windows defender will block the generated exe file. You may whitelist it.
+If you configure this script to auto-start, you can safely shut down your PC with Steam Big Picture active, as it will reset screens and audio settings upon startup.
