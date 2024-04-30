@@ -1,7 +1,7 @@
 This Python script automates switching between a monitor and a TV when launching Steam Big Picture and also handles audio output switching.
 
 Requirements:
-- Install [py-audiodevices](https://github.com/Odizinne/py-audiodevices) to manage audio output switching.
+- Download [py-audiodevices](https://github.com/Odizinne/py-audiodevices) and place it in the same directory to manage audio output switching.
 - Install pygetwindow via pip (`pip install pygetwindow`) to handle window titles.
 
 Usage:
