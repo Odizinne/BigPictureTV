@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.12  # Choose the Python version you want
+          python-version: 3.12 
 
       - name: Install dependencies
         run: |
@@ -31,3 +31,24 @@ jobs:
         with:
           name: executable
           path: dist/bigpicture-external.exe
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: executable
+          path: dist
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/bigpicture-external.exe
+          asset_name: bigpicture-external.exe
+          asset_content_type: application/octet-stream
