@@ -3,7 +3,7 @@ name: Build Windows Executable
 on:
   push:
     branches:
-      - main  # Adjust the branch name if needed
+      - main 
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.12  # Choose the Python version you want
+          python-version: 3.12  
 
       - name: Install dependencies
         run: |
@@ -26,3 +26,9 @@ jobs:
       - name: Build executable
         run: |
           pyinstaller --onefile bigpicture-external.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: executable
+          path: dist/bigpicture-external.exe
