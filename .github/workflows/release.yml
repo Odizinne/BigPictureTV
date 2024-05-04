@@ -24,7 +24,7 @@ jobs:
 
       - name: Build executable
         run: |
-          pyinstaller --onefile bigpicture-external.py
+          pyinstaller --onefile --noconsole bigpicture-external.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
