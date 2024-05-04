@@ -1,0 +1,33 @@
+name: Build and Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.12  # Choose the Python version you want
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pywin32 pygetwindow psutil
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile bigpicture-external.py
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: executable
+          path: dist/bigpicture-external.exe
