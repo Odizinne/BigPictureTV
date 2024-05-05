@@ -3,7 +3,7 @@ This Python project automates switching between a monitor and a TV when launchin
 # Requirements
 - Python `pip install pyinstaller pywin32 pygetwindow psutil winshell`
 - PowerShell `Install-Module -Name AudioDeviceCmdlets`
-- 
+
 # Usage
 The first time you launch it, a window will show.<br/>
 Specify your audio output settings for both desktop and gamemode.<br/>
