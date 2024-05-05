@@ -114,7 +114,7 @@ def apply_changes():
     else:
         toggle_startup_shortcut(enable=False)
     messagebox.showinfo("Saved", "Configuration saved successfully!\nPlease restart the program for changes to take effect.")
-    sys.exit()
+    quit()
 
 def create_gui(config):
     global bigpicture_keywords_entry, gamemode_audio_entry, desktop_audio_entry, close_discord_var, run_at_startup_var
@@ -179,7 +179,7 @@ def main():
         except KeyboardInterrupt:
             print("\nExiting")
         finally:
-            sys.exit()
+            quit()
 
 if __name__ == "__main__":
     main()
