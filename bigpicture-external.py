@@ -4,7 +4,6 @@ import time
 import sys
 import psutil
 import re
-import signal
 import json
 import tkinter as tk
 from tkinter import ttk
@@ -15,7 +14,6 @@ from win32com.client import Dispatch
 
 CONFIG_FOLDER = os.path.join(os.getenv('LOCALAPPDATA'), 'BigPicture-External')
 CONFIG_FILE = os.path.join(CONFIG_FOLDER, "config.json")
-LOCK_FILE = os.path.join(CONFIG_FOLDER, "lock")
 
 DEFAULT_CONFIG = {
     "BIG_PICTURE_KEYWORDS": "Steam Big Picture Mode",
@@ -24,27 +22,6 @@ DEFAULT_CONFIG = {
     "CLOSE_DISCORD_WHEN_GAMEMODE": False,
     "RUN_AT_STARTUP": False
 }
-
-def check_lock():
-    if not os.path.exists(CONFIG_FOLDER):
-        os.makedirs(CONFIG_FOLDER)
-    if os.path.exists(LOCK_FILE):
-        user_response = messagebox.askyesno("Warning", "Another instance is already running. Do you want to terminate it?")
-        if user_response:
-            with open(LOCK_FILE, 'r') as f:
-                pid = int(f.read())
-                try:
-                    os.kill(pid, signal.SIGTERM)
-                except ProcessLookupError:
-                    messagebox.showinfo("Info", "Previous instance not found.")
-            os.remove(LOCK_FILE)
-        else:
-            sys.exit()
-    with open(LOCK_FILE, 'w') as f:
-        f.write(str(os.getpid()))
-
-def release_lock():
-    os.remove(LOCK_FILE)
 
 def load_config():
     try:
@@ -137,7 +114,6 @@ def apply_changes():
     else:
         toggle_startup_shortcut(enable=False)
     messagebox.showinfo("Saved", "Configuration saved successfully!\nPlease restart the program for changes to take effect.")
-    release_lock()
     sys.exit()
 
 def create_gui(config):
@@ -177,7 +153,6 @@ def create_gui(config):
     root.mainloop()
 
 def main():
-    check_lock()
     gamemode = False
     if "--gui" in sys.argv or not os.path.exists(CONFIG_FILE):
         config = DEFAULT_CONFIG
@@ -204,7 +179,6 @@ def main():
         except KeyboardInterrupt:
             print("\nExiting")
         finally:
-            release_lock()
             sys.exit()
 
 if __name__ == "__main__":
