@@ -10,22 +10,15 @@ class Mode(Enum):
     DESKTOP = 1
     GAMEMODE = 2
 
-
 def load_constants():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     constants_path = os.path.join(script_dir, 'settings.json')
     with open(constants_path, 'r') as f:
         return json.load(f)
 
-
 def read_stream_status():
     file_path = os.path.join(os.environ['APPDATA'], "sunshine-status", "status.txt")
-    if os.path.exists(file_path):
-        with open(file_path, "r") as file:
-            content = file.read().strip().lower()
-            return content == "true"
-    return False
-
+    return os.path.exists(file_path)
 
 def get_audio_devices():
     cmd = "powershell Get-AudioDevice -list"
@@ -83,23 +76,26 @@ def is_bigpicture_running():
     return any(all(word in window_title for word in BIG_PICTURE_KEYWORDS)
                for window_title in gw.getAllTitles())
 
-def write_current_mode(current_mode):
+def get_mode_file_path():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(script_dir, 'current_mode.txt')
-    with open(file_path, 'w') as f:
-        f.write(str(current_mode.value))
+    return os.path.join(script_dir, 'current_mode.txt')
+
+def write_current_mode(current_mode):
+    file_path = get_mode_file_path()
+
+    if current_mode == Mode.GAMEMODE:
+        with open(file_path, 'w') as f:
+            pass
+    elif current_mode == Mode.DESKTOP:
+        if os.path.exists(file_path):
+            os.remove(file_path)
 
 def read_current_mode():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(script_dir, 'current_mode.txt')
-    if not os.path.exists(file_path):
-        with open(file_path, 'w') as f:
-            f.write(str(Mode.DESKTOP.value))
-            return Mode.DESKTOP
+    file_path = get_mode_file_path()
+    if os.path.exists(file_path):
+        return Mode.GAMEMODE
     else:
-        with open(file_path, 'r') as f:
-            mode_value = int(f.read())
-            return Mode(mode_value)
+        return Mode.DESKTOP
     
 constants = load_constants()
 BIG_PICTURE_KEYWORDS = constants['BIG_PICTURE_KEYWORDS']
