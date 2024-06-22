@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['bigpicture-external.py'],
+    ['BigPictureTV.py'],
     pathex=[],
     binaries=[],
-    datas=[('default_icon.png', '.'), ('design.ui', '.')],
+    datas=[('steamos-logo.png', '.'), ('design.ui', '.'), ('steamos-logo-light.png', '.'), ('steamos-logo-dark.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -22,7 +22,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='bigpicture-external',
+    name='BigPictureTV',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -35,4 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['steamos-logo.png'],
 )
