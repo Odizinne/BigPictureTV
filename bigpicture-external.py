@@ -52,10 +52,8 @@ def create_default_settings(constants_path):
     with open(constants_path, 'w') as f:
         json.dump(settings_template, f, indent=4)
 
-    app = QApplication(sys.argv)
-    window = SettingsWindow()
-    window.show()
-    app.exec_()
+    # Function to open settings window
+    open_settings_window()
 
 def read_stream_status():
     file_path = os.path.join(os.environ['APPDATA'], "sunshine-status", "status.txt")
@@ -134,7 +132,7 @@ def is_bigpicture_running():
                for window_title in gw.getAllTitles())
 
 def get_mode_file_path():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_dir = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(script_dir, 'current_mode.txt')
 
 def write_current_mode(current_mode):
@@ -195,7 +193,17 @@ class SettingsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        uic.loadUi('design.ui', self)
+        # Determine if the script is bundled or run as a script
+        if getattr(sys, 'frozen', False):
+            # Bundled by PyInstaller
+            basedir = sys._MEIPASS
+        else:
+            # Run as a script
+            basedir = os.path.dirname(__file__)
+
+        self.constants_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", 'settings.json')
+
+        uic.loadUi(os.path.join(basedir, 'design.ui'), self)
 
         self.constants = load_constants()
         self.load_settings()
@@ -203,6 +211,8 @@ class SettingsWindow(QMainWindow):
         self.saveButton.clicked.connect(self.save_settings)
 
     def load_settings(self):
+        self.constants = load_constants()
+
         self.steamEntry.setText(' '.join(self.constants['BIG_PICTURE_KEYWORDS']))
         self.desktopEntry.setText(self.constants['DESKTOP_AUDIO'])
         self.gamemodeEntry.setText(self.constants['GAMEMODE_AUDIO'])
