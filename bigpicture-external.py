@@ -10,6 +10,7 @@ from enum import Enum
 from PIL import Image, ImageDraw
 from pystray import Icon, MenuItem, Menu
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
 class Mode(Enum):
@@ -26,7 +27,7 @@ def generate_default_icon():
     icon_image = Image.new('RGBA', icon_size, icon_color)
     draw = ImageDraw.Draw(icon_image)
     draw.ellipse([(50, 50), (200, 200)], fill=(0, 128, 255, 255))
-    temp_icon_path = "default_icon.png"
+    temp_icon_path = "steamos-logo.png"
     icon_image.save(temp_icon_path)
     return temp_icon_path
 
@@ -119,12 +120,12 @@ def switch_mode(mode):
 
 def create_menu(current_mode):
     menu_items = [
-        MenuItem(f'Current Mode: {current_mode.name}', None),
-        MenuItem('GAMEMODE Audio: ' + constants['GAMEMODE_AUDIO'], None),
-        MenuItem('DESKTOP Audio: ' + constants['DESKTOP_AUDIO'], None),
-        MenuItem('Open Settings', lambda icon, item: open_settings_window_in_thread()),
+        MenuItem(f'Mode: {current_mode.name}', None, enabled=False),
+        MenuItem('', None, enabled=False, visible=False),
+        MenuItem('Settings', lambda icon, item: open_settings_window_in_thread()),
         MenuItem('Exit', exit_action)
     ]
+    
     return Menu(*menu_items)
 
 def is_bigpicture_running():
@@ -159,12 +160,13 @@ def exit_action(icon, item):
 def create_tray_icon(current_mode):
     global tray_icon
 
-    icon_path = os.path.join(os.path.dirname(__file__), 'default_icon.png')
+    icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo.png')
     icon_image = Image.open(icon_path)
 
     menu = create_menu(current_mode)
 
-    tray_icon = Icon('Sunshine Status', icon=icon_image, menu=menu)
+    tray_icon = Icon('BigPictureTV', icon=icon_image, menu=menu)
+    tray_icon.tooltip = 'BigPictureTV'
 
     return tray_icon
 
@@ -203,12 +205,26 @@ class SettingsWindow(QMainWindow):
 
         self.constants_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", 'settings.json')
 
+        # Load the UI
         uic.loadUi(os.path.join(basedir, 'design.ui'), self)
+
+        # Set the window title
+        self.setWindowTitle("BigPictureTV - Settings")
+
+        # Set the window icon
+        icon_path = os.path.join(basedir, 'steamos-logo.png')  # Path to your icon file
+        self.setWindowIcon(QIcon(icon_path))
+
+        # Prevent resizing by setting fixed size
+        self.setFixedSize(self.size())
 
         self.constants = load_constants()
         self.load_settings()
 
         self.saveButton.clicked.connect(self.save_settings)
+
+        # Apply stylesheet for grey background and widget styling
+        self.set_darkmode()
 
     def load_settings(self):
         self.constants = load_constants()
@@ -230,6 +246,45 @@ class SettingsWindow(QMainWindow):
             restart_main()
         except Exception as e:
             QMessageBox.critical(self, 'Error', f'Failed to save settings: {e}')
+
+    def set_darkmode(self):
+        # Define a stylesheet for rounded corners and other widget styles
+        stylesheet = """
+        QMainWindow {
+            background-color: #171d25;
+        }
+        QPushButton {
+            background-color: #32363d;
+            color: white;
+            border: 1px solid #303641;
+            border-radius: 4px;  /* Rounded corners */
+            padding: 5px;
+            margin: 8px;
+        }
+        QLabel {
+            color: white;
+            margin: 8px;
+        }
+        QLineEdit {
+            background-color: #24282f;
+            color: white;
+            border: 1px solid #303641;
+            border-radius: 4px;  /* Rounded corners */
+            padding: 3px;
+            margin: 8px;
+        }
+        QTextEdit {
+            background-color: #24282f;
+            color: white;
+            border: 1px solid #303641;
+            border-radius: 4px;  /* Rounded corners */
+            padding: 5px;
+            margin: 8px;
+        }
+        """
+
+        # Apply the stylesheet to the window
+        self.setStyleSheet(stylesheet)
 
 def restart_main():
     python = sys.executable
