@@ -1,5 +1,3 @@
-This Python project automates switching between a monitor and a TV when launching Steam Big Picture.
+This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.
 
-# Requirements
-- Python `pip install pygetwindow`
-
+Readme to be written
