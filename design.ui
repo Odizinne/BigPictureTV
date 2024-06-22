@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>491</width>
-    <height>372</height>
+    <height>407</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -24,40 +24,33 @@
     <item row="0" column="0">
      <widget class="QFrame" name="gridFrame">
       <layout class="QGridLayout" name="gridLayout">
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>DESKTOP audio device</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>GAMEMODE audio device</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <widget class="QLineEdit" name="desktopEntry"/>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="label">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Steam Big Picture keywords</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="2" column="1">
         <widget class="QLineEdit" name="steamEntry"/>
        </item>
-       <item row="3" column="1">
-        <widget class="QLineEdit" name="gamemodeEntry"/>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QPushButton" name="saveButton">
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>Save and restart</string>
+          <string>GAMEMODE audio device</string>
          </property>
         </widget>
        </item>
@@ -78,6 +71,33 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="textInteractionFlags">
           <set>Qt::NoTextInteraction</set>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="gamemodeEntry"/>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QPushButton" name="saveButton">
+         <property name="text">
+          <string>Save and restart</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="systemThemeBox">
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Use system theme for icon</string>
          </property>
         </widget>
        </item>

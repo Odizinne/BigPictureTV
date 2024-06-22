@@ -7,7 +7,7 @@ import re
 import threading
 import pygetwindow as gw
 from enum import Enum
-from PIL import Image, ImageDraw
+from PIL import Image
 from pystray import Icon, MenuItem, Menu
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
 from PyQt5.QtGui import QIcon
@@ -20,16 +20,6 @@ class Mode(Enum):
 tray_icon = None
 current_mode = None
 constants = None
-
-def generate_default_icon():
-    icon_size = (256, 256)
-    icon_color = (255, 255, 255, 0)
-    icon_image = Image.new('RGBA', icon_size, icon_color)
-    draw = ImageDraw.Draw(icon_image)
-    draw.ellipse([(50, 50), (200, 200)], fill=(0, 128, 255, 255))
-    temp_icon_path = "steamos-logo.png"
-    icon_image.save(temp_icon_path)
-    return temp_icon_path
 
 def load_constants():
     appdata_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal")
@@ -48,7 +38,8 @@ def create_default_settings(constants_path):
     settings_template = {
         "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
         "GAMEMODE_AUDIO": "TV",
-        "DESKTOP_AUDIO": "Headset"
+        "DESKTOP_AUDIO": "Headset",
+        "UseSystemTheme": False  # Added setting for system theme
     }
     with open(constants_path, 'w') as f:
         json.dump(settings_template, f, indent=4)
@@ -160,14 +151,32 @@ def exit_action(icon, item):
 def create_tray_icon(current_mode):
     global tray_icon
 
-    icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo.png')
-    icon_image = Image.open(icon_path)
+    # Load constants and check for UseSystemTheme setting
+    constants = load_constants()
+    use_system_theme = constants.get('UseSystemTheme', False)
 
+    # Determine icon path based on system theme
+    if use_system_theme:
+        # Check Windows theme using winreg
+        try:
+            import winreg
+            reg_path = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path) as key:
+                theme_type = winreg.QueryValueEx(key, 'AppsUseLightTheme')[0]
+                if theme_type == 1:
+                    icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo-dark.png')
+                else:
+                    icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo-light.png')
+        except Exception as e:
+            print(f"Failed to read Windows theme: {e}")
+            icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo.png')
+    else:
+        icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo.png')
+
+    # Create menu and tray icon
     menu = create_menu(current_mode)
-
+    icon_image = Image.open(icon_path)
     tray_icon = Icon('BigPictureTV', icon=icon_image, menu=menu)
-    tray_icon.tooltip = 'BigPictureTV'
-
     return tray_icon
 
 def run_tray_icon():
@@ -226,6 +235,10 @@ class SettingsWindow(QMainWindow):
         # Apply stylesheet for grey background and widget styling
         self.set_darkmode()
 
+        # Connect systemThemeBox to toggle_system_theme function
+        self.systemThemeBox.setChecked(self.constants.get('UseSystemTheme', False))
+        self.systemThemeBox.stateChanged.connect(self.toggle_system_theme)
+
     def load_settings(self):
         self.constants = load_constants()
 
@@ -250,9 +263,9 @@ class SettingsWindow(QMainWindow):
     def set_darkmode(self):
         # Define a stylesheet for rounded corners and other widget styles
         stylesheet = """
-        QMainWindow {
             background-color: #171d25;
         }
+
         QPushButton {
             background-color: #32363d;
             color: white;
@@ -261,10 +274,12 @@ class SettingsWindow(QMainWindow):
             padding: 5px;
             margin: 8px;
         }
+
         QLabel {
             color: white;
             margin: 8px;
         }
+
         QLineEdit {
             background-color: #24282f;
             color: white;
@@ -273,6 +288,7 @@ class SettingsWindow(QMainWindow):
             padding: 3px;
             margin: 8px;
         }
+
         QTextEdit {
             background-color: #24282f;
             color: white;
@@ -281,10 +297,21 @@ class SettingsWindow(QMainWindow):
             padding: 5px;
             margin: 8px;
         }
+
+        QCheckBox {
+            margin: 8px;
+        }
+
         """
 
         # Apply the stylesheet to the window
         self.setStyleSheet(stylesheet)
+
+    def toggle_system_theme(self, state):
+        if state == 2:  # Qt.Checked
+            self.constants['UseSystemTheme'] = True
+        else:
+            self.constants['UseSystemTheme'] = False
 
 def restart_main():
     python = sys.executable
@@ -294,10 +321,10 @@ if __name__ == '__main__':
     GAMEMODE_SCREEN = "/external"
     DESKTOP_SCREEN = "/internal"
     constants = load_constants()
-    current_mode = Mode.DESKTOP
+    current_mode = read_current_mode()
     SLEEP_TIME = 1
 
-    if read_current_mode() != Mode.DESKTOP:
+    if current_mode != Mode.DESKTOP:
         switch_mode(Mode.DESKTOP)
 
     tray_thread = threading.Thread(target=run_tray_icon, daemon=True)
