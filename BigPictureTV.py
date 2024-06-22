@@ -9,7 +9,7 @@ import pygetwindow as gw
 from enum import Enum
 from PIL import Image
 from pystray import Icon, MenuItem, Menu
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QVBoxLayout, QTextEdit, QPushButton, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
@@ -239,6 +239,9 @@ class SettingsWindow(QMainWindow):
         self.systemThemeBox.setChecked(self.constants.get('UseSystemTheme', False))
         self.systemThemeBox.stateChanged.connect(self.toggle_system_theme)
 
+        # Connect helpButton to open_help_dialog function
+        self.helpButton.clicked.connect(self.open_help_dialog)
+
     def load_settings(self):
         self.constants = load_constants()
 
@@ -312,6 +315,47 @@ class SettingsWindow(QMainWindow):
             self.constants['UseSystemTheme'] = True
         else:
             self.constants['UseSystemTheme'] = False
+
+    def open_help_dialog(self):
+        dialog = HelpDialog(self.styleSheet())  # Pass main window's stylesheet to dialog
+        dialog.exec_()
+
+class HelpDialog(QDialog):
+    def __init__(self, stylesheet=None):
+        super().__init__()
+
+        self.setWindowTitle("Help")
+        self.setWindowIcon(QIcon("icon_path"))  # Set the icon path as per your requirement
+
+        layout = QVBoxLayout()
+
+        help_text = QTextEdit()
+        help_text.setHtml("""
+            <b>- Steam Big Picture Keywords:</b><br><br>
+            This is used to search for Big Picture window.<br>
+            Adjust depending on your Steam language.<br><br>
+            
+            <b>- DESKTOP / GAMEMODE audio device:</b><br><br>
+            The devices that will be used when switching modes.<br>
+            You can specify keywords here.<br>
+            If your device full name is "Headset Earphone (CORSAIR VOID ELITE)",<br>
+            you can specify "Corsair Headset" and it will be valid.
+        """)
+        help_text.setReadOnly(True)
+
+        layout.addWidget(help_text)
+
+        close_button = QPushButton("Close")
+        close_button.clicked.connect(self.close)
+
+        layout.addWidget(close_button)
+
+        self.setLayout(layout)
+
+        if stylesheet:
+            self.setStyleSheet(stylesheet)  # Apply main window's stylesheet to dialog
+
+        self.setFixedSize(400, 265)
 
 def restart_main():
     python = sys.executable
