@@ -10,7 +10,7 @@ import pygetwindow as gw
 from enum import Enum
 from PIL import Image
 from pystray import Icon, MenuItem, Menu
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QVBoxLayout, QTextEdit, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
@@ -20,37 +20,38 @@ class Mode(Enum):
     DESKTOP = 1
     GAMEMODE = 2
 
+GAMEMODE_SCREEN = "/external"
+DESKTOP_SCREEN = "/internal"
+SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", "settings.json")
+UI_FOLDER = os.path.join(os.path.dirname(__file__), 'ui')
+ICONS_FOLDER = os.path.join(os.path.dirname(__file__), 'icons')
+
 tray_icon = None
 current_mode = None
 constants = None
 
 def load_constants():
-    appdata_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal")
-    constants_path = os.path.join(appdata_path, 'settings.json')
+    if not os.path.exists(os.path.dirname(SETTINGS_FILE)):
+        os.makedirs(os.path.dirname(SETTINGS_FILE))
 
-    if not os.path.exists(appdata_path):
-        os.makedirs(appdata_path)
+    if not os.path.exists(SETTINGS_FILE):
+        create_default_settings()
 
-    if not os.path.exists(constants_path):
-        create_default_settings(constants_path)
-
-    with open(constants_path, 'r') as f:
+    with open(SETTINGS_FILE, 'r') as f:
         return json.load(f)
 
-def create_default_settings(constants_path):
+def create_default_settings():
     settings_template = {
         "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
         "GAMEMODE_AUDIO": "TV",
         "DESKTOP_AUDIO": "Headset",
         "UseSystemTheme": False
     }
-    with open(constants_path, 'w') as f:
+    with open(SETTINGS_FILE, 'w') as f:
         json.dump(settings_template, f, indent=4)
 
-    open_settings_window()
-
 def read_stream_status():
-    file_path = os.path.join(os.environ['APPDATA'], "sunshine-status", "status.txt")
+    file_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", "sunshine-status", "status.txt")
     return os.path.exists(file_path)
 
 def get_audio_devices():
@@ -64,15 +65,10 @@ def set_audio_device(device_name, devices):
 
     for index, name, _ in devices:
         lower_name = name.lower()
-
         if all(word in lower_name for word in device_words):
             cmd = f"powershell set-audiodevice -index {index}"
             result = subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-            if result.returncode == 0:
-                return True
-            else:
-                return False
+            return result.returncode == 0
     return False
 
 def switch_audio(audio_output):
@@ -118,7 +114,6 @@ def create_menu(current_mode):
         MenuItem('Settings', lambda icon, item: open_settings_window_in_thread()),
         MenuItem('Exit', exit_action)
     ]
-    
     return Menu(*menu_items)
 
 def is_bigpicture_running():
@@ -141,10 +136,7 @@ def write_current_mode(current_mode):
 
 def read_current_mode():
     file_path = get_mode_file_path()
-    if os.path.exists(file_path):
-        return Mode.GAMEMODE
-    else:
-        return Mode.DESKTOP
+    return Mode.GAMEMODE if os.path.exists(file_path) else Mode.DESKTOP
 
 def exit_action(icon, item):
     icon.stop()
@@ -153,8 +145,8 @@ def exit_action(icon, item):
 def create_tray_icon(current_mode):
     global tray_icon
 
-    constants = load_constants()
     use_system_theme = constants.get('UseSystemTheme', False)
+    icon_file = 'steamos-logo.png'
 
     if use_system_theme:
         try:
@@ -162,15 +154,13 @@ def create_tray_icon(current_mode):
             with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path) as key:
                 theme_type = winreg.QueryValueEx(key, 'AppsUseLightTheme')[0]
                 if theme_type == 1:
-                    icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo-dark.png')
+                    icon_file = 'steamos-logo-dark.png'
                 else:
-                    icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo-light.png')
+                    icon_file = 'steamos-logo-light.png'
         except Exception as e:
             print(f"Failed to read Windows theme: {e}")
-            icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo.png')
-    else:
-        icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo.png')
 
+    icon_path = os.path.join(ICONS_FOLDER, icon_file)
     menu = create_menu(current_mode)
     icon_image = Image.open(icon_path)
     tray_icon = Icon('BigPictureTV', icon=icon_image, menu=menu)
@@ -182,7 +172,6 @@ def run_tray_icon():
     global constants
 
     constants = load_constants()
-
     current_mode = read_current_mode()
     tray_icon = create_tray_icon(current_mode)
     tray_icon.run()
@@ -201,29 +190,17 @@ class SettingsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        if getattr(sys, 'frozen', False):
-            basedir = sys._MEIPASS
-        else:
-            basedir = os.path.dirname(__file__)
-
-        self.constants_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", 'settings.json')
-
-        uic.loadUi(os.path.join(basedir, 'design.ui'), self)
+        self.constants_path = SETTINGS_FILE
+        uic.loadUi(os.path.join(UI_FOLDER, 'design.ui'), self)
 
         self.setWindowTitle("BigPictureTV - Settings")
-
-        icon_path = os.path.join(basedir, 'steamos-logo.png')
-        self.setWindowIcon(QIcon(icon_path))
-
+        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
         self.setFixedSize(self.size())
 
         self.constants = load_constants()
         self.load_settings()
 
         self.saveButton.clicked.connect(self.save_settings)
-
-        self.set_darkmode()
-
         self.systemThemeBox.setChecked(self.constants.get('UseSystemTheme', False))
         self.systemThemeBox.stateChanged.connect(self.toggle_system_theme)
 
@@ -232,6 +209,8 @@ class SettingsWindow(QMainWindow):
 
         self.helpButton.clicked.connect(self.open_help_dialog)
         
+        self.set_stylesheet()
+
     def is_startup_shortcut_exist(self):
         startup_dir = winshell.startup()
         shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
@@ -263,7 +242,6 @@ class SettingsWindow(QMainWindow):
 
     def load_settings(self):
         self.constants = load_constants()
-
         self.steamEntry.setText(' '.join(self.constants['BIG_PICTURE_KEYWORDS']))
         self.desktopEntry.setText(self.constants['DESKTOP_AUDIO'])
         self.gamemodeEntry.setText(self.constants['GAMEMODE_AUDIO'])
@@ -273,65 +251,21 @@ class SettingsWindow(QMainWindow):
         self.constants['DESKTOP_AUDIO'] = self.desktopEntry.text()
         self.constants['GAMEMODE_AUDIO'] = self.gamemodeEntry.text()
 
-        constants_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", 'settings.json')
         try:
-            with open(constants_path, 'w') as f:
+            with open(self.constants_path, 'w') as f:
                 json.dump(self.constants, f, indent=4)
             QMessageBox.information(self, 'Success', 'Settings saved successfully.')
             restart_main()
         except Exception as e:
             QMessageBox.critical(self, 'Error', f'Failed to save settings: {e}')
 
-    def set_darkmode(self):
-        stylesheet = """
-            background-color: #171d25;
-        }
-
-        QPushButton {
-            background-color: #32363d;
-            color: white;
-            border: 1px solid #303641;
-            border-radius: 4px;
-            padding: 5px;
-            margin: 8px;
-        }
-
-        QLabel {
-            color: white;
-            margin: 8px;
-        }
-
-        QLineEdit {
-            background-color: #24282f;
-            color: white;
-            border: 1px solid #303641;
-            border-radius: 4px;
-            padding: 3px;
-            margin: 8px;
-        }
-
-        QTextEdit {
-            background-color: #24282f;
-            color: white;
-            border: 1px solid #303641;
-            border-radius: 4px;
-            padding: 5px;
-            margin: 8px;
-        }
-
-        QCheckBox {
-            margin: 8px;
-        }
-
-        """
-
-        self.setStyleSheet(stylesheet)
+    def set_stylesheet(self):
+        style_file = os.path.join(os.path.dirname(__file__), UI_FOLDER, 'style.css')
+        with open(style_file, 'r') as f:
+            self.setStyleSheet(f.read())
 
     def toggle_system_theme(self, state):
-        if state == 2:
-            self.constants['UseSystemTheme'] = True
-        else:
-            self.constants['UseSystemTheme'] = False
+        self.constants['UseSystemTheme'] = (state == Qt.Checked)
 
     def open_help_dialog(self):
         dialog = HelpDialog(self.styleSheet())
@@ -341,20 +275,13 @@ class HelpDialog(QDialog):
     def __init__(self, stylesheet=None):
         super().__init__()
 
-        if getattr(sys, 'frozen', False):
-            basedir = sys._MEIPASS
-        else:
-            basedir = os.path.dirname(__file__)
-
         self.setWindowTitle("Help")
-        ui_path = os.path.join(basedir, 'help.ui')
-        uic.loadUi(ui_path, self)
+        uic.loadUi(os.path.join(UI_FOLDER, 'help.ui'), self)
 
         if stylesheet:
             self.setStyleSheet(stylesheet)
 
-        icon_path = os.path.join(basedir, 'steamos-logo.png')
-        self.setWindowIcon(QIcon(icon_path))
+        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
         self.closeButton.clicked.connect(self.close)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setFixedSize(self.size())
@@ -364,11 +291,8 @@ def restart_main():
     os.execl(python, python, *sys.argv)
 
 if __name__ == '__main__':
-    GAMEMODE_SCREEN = "/external"
-    DESKTOP_SCREEN = "/internal"
     constants = load_constants()
     current_mode = read_current_mode()
-    SLEEP_TIME = 1
 
     if current_mode != Mode.DESKTOP:
         switch_mode(Mode.DESKTOP)
@@ -384,6 +308,6 @@ if __name__ == '__main__':
                 switch_mode(Mode.GAMEMODE)
             elif not bigpicture and current_mode != Mode.DESKTOP:
                 switch_mode(Mode.DESKTOP)
-            time.sleep(SLEEP_TIME)
+            time.sleep(1)
     except KeyboardInterrupt:
         print("\nExiting")
