@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QVBoxLayout, QTe
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 from PyQt5 import uic
+import winreg
 
 class Mode(Enum):
     DESKTOP = 1
@@ -41,12 +42,11 @@ def create_default_settings(constants_path):
         "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
         "GAMEMODE_AUDIO": "TV",
         "DESKTOP_AUDIO": "Headset",
-        "UseSystemTheme": False  # Added setting for system theme
+        "UseSystemTheme": False
     }
     with open(constants_path, 'w') as f:
         json.dump(settings_template, f, indent=4)
 
-    # Function to open settings window
     open_settings_window()
 
 def read_stream_status():
@@ -153,15 +153,11 @@ def exit_action(icon, item):
 def create_tray_icon(current_mode):
     global tray_icon
 
-    # Load constants and check for UseSystemTheme setting
     constants = load_constants()
     use_system_theme = constants.get('UseSystemTheme', False)
 
-    # Determine icon path based on system theme
     if use_system_theme:
-        # Check Windows theme using winreg
         try:
-            import winreg
             reg_path = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
             with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path) as key:
                 theme_type = winreg.QueryValueEx(key, 'AppsUseLightTheme')[0]
@@ -175,7 +171,6 @@ def create_tray_icon(current_mode):
     else:
         icon_path = os.path.join(os.path.dirname(__file__), 'steamos-logo.png')
 
-    # Create menu and tray icon
     menu = create_menu(current_mode)
     icon_image = Image.open(icon_path)
     tray_icon = Icon('BigPictureTV', icon=icon_image, menu=menu)
@@ -206,27 +201,20 @@ class SettingsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        # Determine if the script is bundled or run as a script
         if getattr(sys, 'frozen', False):
-            # Bundled by PyInstaller
             basedir = sys._MEIPASS
         else:
-            # Run as a script
             basedir = os.path.dirname(__file__)
 
         self.constants_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", 'settings.json')
 
-        # Load the UI
         uic.loadUi(os.path.join(basedir, 'design.ui'), self)
 
-        # Set the window title
         self.setWindowTitle("BigPictureTV - Settings")
 
-        # Set the window icon
-        icon_path = os.path.join(basedir, 'steamos-logo.png')  # Path to your icon file
+        icon_path = os.path.join(basedir, 'steamos-logo.png')
         self.setWindowIcon(QIcon(icon_path))
 
-        # Prevent resizing by setting fixed size
         self.setFixedSize(self.size())
 
         self.constants = load_constants()
@@ -234,17 +222,14 @@ class SettingsWindow(QMainWindow):
 
         self.saveButton.clicked.connect(self.save_settings)
 
-        # Apply stylesheet for grey background and widget styling
         self.set_darkmode()
 
-        # Connect systemThemeBox to toggle_system_theme function
         self.systemThemeBox.setChecked(self.constants.get('UseSystemTheme', False))
         self.systemThemeBox.stateChanged.connect(self.toggle_system_theme)
 
         self.startupCheckBox.setChecked(self.is_startup_shortcut_exist())
         self.startupCheckBox.stateChanged.connect(self.handle_startup_checkbox)
 
-        # Connect helpButton to open_help_dialog function
         self.helpButton.clicked.connect(self.open_help_dialog)
         
     def is_startup_shortcut_exist(self):
@@ -261,8 +246,8 @@ class SettingsWindow(QMainWindow):
     def create_shortcut(self):
         startup_dir = winshell.startup()
         shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
-        target = os.path.abspath(sys.argv[0])  # Assumes this is the path to the .exe
-        icon = target  # Use the .exe icon, or specify another icon path
+        target = os.path.abspath(sys.argv[0])
+        icon = target
         winshell.CreateShortcut(
             Path=shortcut_path,
             Target=target,
@@ -298,7 +283,6 @@ class SettingsWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', f'Failed to save settings: {e}')
 
     def set_darkmode(self):
-        # Define a stylesheet for rounded corners and other widget styles
         stylesheet = """
             background-color: #171d25;
         }
@@ -307,7 +291,7 @@ class SettingsWindow(QMainWindow):
             background-color: #32363d;
             color: white;
             border: 1px solid #303641;
-            border-radius: 4px;  /* Rounded corners */
+            border-radius: 4px;
             padding: 5px;
             margin: 8px;
         }
@@ -321,7 +305,7 @@ class SettingsWindow(QMainWindow):
             background-color: #24282f;
             color: white;
             border: 1px solid #303641;
-            border-radius: 4px;  /* Rounded corners */
+            border-radius: 4px;
             padding: 3px;
             margin: 8px;
         }
@@ -330,7 +314,7 @@ class SettingsWindow(QMainWindow):
             background-color: #24282f;
             color: white;
             border: 1px solid #303641;
-            border-radius: 4px;  /* Rounded corners */
+            border-radius: 4px;
             padding: 5px;
             margin: 8px;
         }
@@ -341,55 +325,39 @@ class SettingsWindow(QMainWindow):
 
         """
 
-        # Apply the stylesheet to the window
         self.setStyleSheet(stylesheet)
 
     def toggle_system_theme(self, state):
-        if state == 2:  # Qt.Checked
+        if state == 2:
             self.constants['UseSystemTheme'] = True
         else:
             self.constants['UseSystemTheme'] = False
 
     def open_help_dialog(self):
-        dialog = HelpDialog(self.styleSheet())  # Pass main window's stylesheet to dialog
+        dialog = HelpDialog(self.styleSheet())
         dialog.exec_()
 
 class HelpDialog(QDialog):
     def __init__(self, stylesheet=None):
         super().__init__()
 
+        if getattr(sys, 'frozen', False):
+            basedir = sys._MEIPASS
+        else:
+            basedir = os.path.dirname(__file__)
+
         self.setWindowTitle("Help")
-        self.setWindowIcon(QIcon("icon_path"))  # Set the icon path as per your requirement
-
-        layout = QVBoxLayout()
-
-        help_text = QTextEdit()
-        help_text.setHtml("""
-            <b>- Steam Big Picture Keywords:</b><br><br>
-            This is used to search for Big Picture window.<br>
-            Adjust depending on your Steam language.<br><br>
-            
-            <b>- DESKTOP / GAMEMODE audio device:</b><br><br>
-            The devices that will be used when switching modes.<br>
-            You can specify keywords here.<br>
-            If your device full name is "Headset Earphone (CORSAIR VOID ELITE)",<br>
-            you can specify "Corsair Headset" and it will be valid.
-        """)
-        help_text.setReadOnly(True)
-
-        layout.addWidget(help_text)
-
-        close_button = QPushButton("Close")
-        close_button.clicked.connect(self.close)
-
-        layout.addWidget(close_button)
-
-        self.setLayout(layout)
+        ui_path = os.path.join(basedir, 'help.ui')
+        uic.loadUi(ui_path, self)
 
         if stylesheet:
-            self.setStyleSheet(stylesheet)  # Apply main window's stylesheet to dialog
+            self.setStyleSheet(stylesheet)
 
-        self.setFixedSize(400, 265)
+        icon_path = os.path.join(basedir, 'steamos-logo.png')
+        self.setWindowIcon(QIcon(icon_path))
+        self.closeButton.clicked.connect(self.close)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setFixedSize(self.size())
 
 def restart_main():
     python = sys.executable

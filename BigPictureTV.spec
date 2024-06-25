@@ -5,7 +5,7 @@ a = Analysis(
     ['BigPictureTV.py'],
     pathex=[],
     binaries=[],
-    datas=[('steamos-logo.png', '.'), ('design.ui', '.'), ('steamos-logo-light.png', '.'), ('steamos-logo-dark.png', '.')],
+    datas=[('steamos-logo.png', '.'), ('design.ui', '.'), ('help.ui', '.'), ('steamos-logo-light.png', '.'), ('steamos-logo-dark.png', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
