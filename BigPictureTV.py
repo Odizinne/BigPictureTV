@@ -241,11 +241,17 @@ class SettingsWindow(QMainWindow):
         self.systemThemeBox.setChecked(self.constants.get('UseSystemTheme', False))
         self.systemThemeBox.stateChanged.connect(self.toggle_system_theme)
 
+        self.startupCheckBox.setChecked(self.is_startup_shortcut_exist())
         self.startupCheckBox.stateChanged.connect(self.handle_startup_checkbox)
 
         # Connect helpButton to open_help_dialog function
         self.helpButton.clicked.connect(self.open_help_dialog)
         
+    def is_startup_shortcut_exist(self):
+        startup_dir = winshell.startup()
+        shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
+        return os.path.exists(shortcut_path)
+    
     def handle_startup_checkbox(self, state):
         if state == Qt.Checked:
             self.create_shortcut()
