@@ -5,12 +5,14 @@ import subprocess
 import time
 import re
 import threading
+import winshell
 import pygetwindow as gw
 from enum import Enum
 from PIL import Image
 from pystray import Icon, MenuItem, Menu
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QVBoxLayout, QTextEdit, QPushButton, QMessageBox
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
 from PyQt5 import uic
 
 class Mode(Enum):
@@ -239,8 +241,34 @@ class SettingsWindow(QMainWindow):
         self.systemThemeBox.setChecked(self.constants.get('UseSystemTheme', False))
         self.systemThemeBox.stateChanged.connect(self.toggle_system_theme)
 
+        self.startupCheckBox.stateChanged.connect(self.handle_startup_checkbox)
+
         # Connect helpButton to open_help_dialog function
         self.helpButton.clicked.connect(self.open_help_dialog)
+        
+    def handle_startup_checkbox(self, state):
+        if state == Qt.Checked:
+            self.create_shortcut()
+        else:
+            self.remove_shortcut()
+
+    def create_shortcut(self):
+        startup_dir = winshell.startup()
+        shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
+        target = os.path.abspath(sys.argv[0])  # Assumes this is the path to the .exe
+        icon = target  # Use the .exe icon, or specify another icon path
+        winshell.CreateShortcut(
+            Path=shortcut_path,
+            Target=target,
+            Icon=(icon, 0),
+            Description="BigPictureTV Startup Shortcut"
+        )
+
+    def remove_shortcut(self):
+        startup_dir = winshell.startup()
+        shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
+        if os.path.exists(shortcut_path):
+            os.remove(shortcut_path)
 
     def load_settings(self):
         self.constants = load_constants()
