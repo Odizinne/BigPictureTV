@@ -2,4 +2,6 @@ This Python project automates switching between a monitor and a TV when launchin
 
 Readme to be written
 
-![image](https://github.com/Odizinne/bigpicturetv/assets/102679854/06a0dd79-41c6-46a9-a409-68b5f6382ef0)
+![image](https://github.com/Odizinne/bigpicturetv/assets/102679854/90c55be3-dbe8-4635-b655-0c831351e338)
+
+![image](https://github.com/Odizinne/bigpicturetv/assets/102679854/7c78a8ee-8f80-44ea-abb0-d43464e8a1a2)
