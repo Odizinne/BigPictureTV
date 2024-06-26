@@ -1,5 +1,6 @@
 This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.
 
+Exe built with pyinstaller. Windows defender may flag it. Either add an exception or do not use it.
 Readme to be written
 
 ![image](https://github.com/Odizinne/bigpicturetv/assets/102679854/90c55be3-dbe8-4635-b655-0c831351e338)
