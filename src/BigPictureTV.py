@@ -22,7 +22,7 @@ class Mode(Enum):
 
 GAMEMODE_SCREEN = "/external"
 DESKTOP_SCREEN = "/internal"
-SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", "settings.json")
+SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "BigPictureTV", "settings.json")
 UI_FOLDER = os.path.join(os.path.dirname(__file__), 'ui')
 ICONS_FOLDER = os.path.join(os.path.dirname(__file__), 'icons')
 
@@ -51,7 +51,7 @@ def create_default_settings():
         json.dump(settings_template, f, indent=4)
 
 def read_stream_status():
-    file_path = os.path.join(os.environ['APPDATA'], "bigpicture-eternal", "sunshine-status", "status.txt")
+    file_path = os.path.join(os.environ['APPDATA'], "sunshine-status", "status.txt")
     return os.path.exists(file_path)
 
 def get_audio_devices():
@@ -121,8 +121,11 @@ def is_bigpicture_running():
                for window_title in gw.getAllTitles())
 
 def get_mode_file_path():
-    script_dir = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-    return os.path.join(script_dir, 'current_mode.txt')
+    app_data_folder = os.path.join(os.environ['APPDATA'], 'BigPictureTV')
+    if not os.path.exists(app_data_folder):
+        os.makedirs(app_data_folder)
+    return os.path.join(app_data_folder, 'current_mode.txt')
+
 
 def write_current_mode(current_mode):
     file_path = get_mode_file_path()
