@@ -292,9 +292,8 @@ class HelpDialog(QDialog):
     def __init__(self, stylesheet=None):
         super().__init__()
 
-        self.setWindowTitle("Help")
         uic.loadUi(os.path.join(UI_FOLDER, 'help.ui'), self)
-
+        self.setWindowTitle("Help")
         if stylesheet:
             self.setStyleSheet(stylesheet)
 
