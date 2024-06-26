@@ -289,13 +289,19 @@ def restart_main():
     os.execl(sys.executable, sys.executable, *sys.argv)
 
 class HelpDialog(QDialog):
-    def __init__(self, style_sheet):
+    def __init__(self, stylesheet=None):
         super().__init__()
-        uic.loadUi(os.path.join(UI_FOLDER, 'help_dialog.ui'), self)
-        self.setFixedSize(self.size())
-        self.setStyleSheet(style_sheet)
-        self.setWindowTitle("BigPictureTV - Help")
+
+        self.setWindowTitle("Help")
+        uic.loadUi(os.path.join(UI_FOLDER, 'help.ui'), self)
+
+        if stylesheet:
+            self.setStyleSheet(stylesheet)
+
         self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
+        self.closeButton.clicked.connect(self.close)
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
+        self.setFixedSize(self.size())
 
 if __name__ == '__main__':
     constants = load_constants()
