@@ -45,7 +45,8 @@ def create_default_settings():
         "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
         "GAMEMODE_AUDIO": "TV",
         "DESKTOP_AUDIO": "Headset",
-        "UseSystemTheme": False
+        "UseSystemTheme": False,
+        "DisableAudioSwitch": False
     }
     with open(SETTINGS_FILE, 'w') as f:
         json.dump(settings_template, f, indent=4)
@@ -72,6 +73,10 @@ def set_audio_device(device_name, devices):
     return False
 
 def switch_audio(audio_output):
+    if constants.get('DisableAudioSwitch', False):
+        print("Audio switching is disabled.")
+        return
+
     devices = get_audio_devices()
     success = set_audio_device(audio_output, devices)
 
@@ -125,7 +130,6 @@ def get_mode_file_path():
     if not os.path.exists(app_data_folder):
         os.makedirs(app_data_folder)
     return os.path.join(app_data_folder, 'current_mode.txt')
-
 
 def write_current_mode(current_mode):
     file_path = get_mode_file_path()
@@ -210,49 +214,33 @@ class SettingsWindow(QMainWindow):
         self.startupCheckBox.setChecked(self.is_startup_shortcut_exist())
         self.startupCheckBox.stateChanged.connect(self.handle_startup_checkbox)
 
+        self.disableAudioCheckbox.stateChanged.connect(self.toggle_audio_fields)
         self.helpButton.clicked.connect(self.open_help_dialog)
-        
+
         self.set_stylesheet()
 
-    def is_startup_shortcut_exist(self):
-        startup_dir = winshell.startup()
-        shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
-        return os.path.exists(shortcut_path)
-    
-    def handle_startup_checkbox(self, state):
-        if state == Qt.Checked:
-            self.create_shortcut()
-        else:
-            self.remove_shortcut()
-
-    def create_shortcut(self):
-        startup_dir = winshell.startup()
-        shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
-        target = os.path.abspath(sys.argv[0])
-        icon = target
-        winshell.CreateShortcut(
-            Path=shortcut_path,
-            Target=target,
-            Icon=(icon, 0),
-            Description="BigPictureTV Startup Shortcut"
-        )
-
-    def remove_shortcut(self):
-        startup_dir = winshell.startup()
-        shortcut_path = os.path.join(startup_dir, "BigPictureTV.lnk")
-        if os.path.exists(shortcut_path):
-            os.remove(shortcut_path)
+    def toggle_audio_fields(self, state):
+        disable_audio = state == Qt.Checked
+        self.gamemodeEntry.setEnabled(not disable_audio)
+        self.desktopEntry.setEnabled(not disable_audio)
 
     def load_settings(self):
         self.constants = load_constants()
         self.steamEntry.setText(' '.join(self.constants['BIG_PICTURE_KEYWORDS']))
         self.desktopEntry.setText(self.constants['DESKTOP_AUDIO'])
         self.gamemodeEntry.setText(self.constants['GAMEMODE_AUDIO'])
+        
+        disable_audio = self.constants.get('DisableAudioSwitch', False)
+        self.disableAudioCheckbox.setChecked(disable_audio)
+
+        self.desktopEntry.setEnabled(not disable_audio)
+        self.gamemodeEntry.setEnabled(not disable_audio)
 
     def save_settings(self):
         self.constants['BIG_PICTURE_KEYWORDS'] = self.steamEntry.text().split()
         self.constants['DESKTOP_AUDIO'] = self.desktopEntry.text()
         self.constants['GAMEMODE_AUDIO'] = self.gamemodeEntry.text()
+        self.constants['DisableAudioSwitch'] = self.disableAudioCheckbox.isChecked()
 
         try:
             with open(self.constants_path, 'w') as f:
@@ -274,24 +262,40 @@ class SettingsWindow(QMainWindow):
         dialog = HelpDialog(self.styleSheet())
         dialog.exec_()
 
-class HelpDialog(QDialog):
-    def __init__(self, stylesheet=None):
-        super().__init__()
+    def handle_startup_checkbox(self, state):
+        if state == Qt.Checked:
+            self.create_startup_shortcut()
+        else:
+            self.remove_startup_shortcut()
 
-        self.setWindowTitle("Help")
-        uic.loadUi(os.path.join(UI_FOLDER, 'help.ui'), self)
+    def create_startup_shortcut(self):
+        target_path = os.path.join(os.getcwd(), 'bigpicturetv.exe')
+        startup_folder = winshell.startup()
+        shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
+        winshell.CreateShortcut(Path=shortcut_path, Target=target_path, Icon=(target_path, 0), Description="Launch BigPictureTV")
 
-        if stylesheet:
-            self.setStyleSheet(stylesheet)
+    def remove_startup_shortcut(self):
+        startup_folder = winshell.startup()
+        shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
+        if os.path.exists(shortcut_path):
+            os.remove(shortcut_path)
 
-        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
-        self.closeButton.clicked.connect(self.close)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
-        self.setFixedSize(self.size())
+    def is_startup_shortcut_exist(self):
+        startup_folder = winshell.startup()
+        shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
+        return os.path.exists(shortcut_path)
 
 def restart_main():
-    python = sys.executable
-    os.execl(python, python, *sys.argv)
+    os.execl(sys.executable, sys.executable, *sys.argv)
+
+class HelpDialog(QDialog):
+    def __init__(self, style_sheet):
+        super().__init__()
+        uic.loadUi(os.path.join(UI_FOLDER, 'help_dialog.ui'), self)
+        self.setFixedSize(self.size())
+        self.setStyleSheet(style_sheet)
+        self.setWindowTitle("BigPictureTV - Help")
+        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
 
 if __name__ == '__main__':
     constants = load_constants()

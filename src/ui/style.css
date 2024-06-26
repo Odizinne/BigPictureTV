@@ -29,6 +29,12 @@ QLineEdit {
     margin: 8px;
 }
 
+QLineEdit:disabled {
+    background-color: #3a3f47;
+    color: #999999;
+    border: 1px solid #3a3f47;
+}
+
 QTextEdit {
     background-color: #24282f;
     color: white;
