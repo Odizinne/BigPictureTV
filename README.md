@@ -40,4 +40,3 @@ Since we're building with `console=False`, windows defender may not like it. You
 ## Todo
 
 - AudioDeviceCmdlets install prompt
-- Setting for disabling audio device switching
