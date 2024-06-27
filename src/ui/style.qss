@@ -79,3 +79,31 @@ QMenu::item:selected {
     background-color: #555555;
     border-radius: 4px;
 }
+
+QSpinBox {
+    background-color: #24282f;
+    color: white;
+    border: 1px solid #303641;
+    border-radius: 4px;
+    padding: 3px;
+    margin: 8px;
+}
+
+QSpinBox::up-button, QSpinBox::down-button {
+    background-color: #32363d;
+    color: white;
+    border: 1px solid #303641;
+    border-radius: 2px;
+    width: 10px;
+    margin: 1px;
+}
+
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: #43474f;
+    border: 1px solid #3a3f47;
+}
+
+QSpinBox::up-button:pressed, QSpinBox::down-button:pressed {
+    background-color: #555555;
+    border: 1px solid #3a3f47;
+}

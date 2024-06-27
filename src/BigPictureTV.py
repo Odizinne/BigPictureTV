@@ -9,7 +9,7 @@ import pygetwindow as gw
 from enum import Enum
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu, QAction
 from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtCore import Qt, QTimer, QPoint
+from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal
 from PyQt5 import uic
 
 class Mode(Enum):
@@ -42,7 +42,8 @@ def create_default_settings():
         "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
         "GAMEMODE_AUDIO": "TV",
         "DESKTOP_AUDIO": "Headset",
-        "DisableAudioSwitch": False
+        "DisableAudioSwitch": False,
+        "CheckRate": 1000
     }
     with open(SETTINGS_FILE, 'w') as f:
         json.dump(settings_template, f, indent=4)
@@ -206,6 +207,7 @@ def is_audio_device_cmdlets_installed():
         return False
 
 class SettingsWindow(QMainWindow):
+    checkRateChanged = pyqtSignal(int)
     def __init__(self):
         super().__init__()
 
@@ -228,6 +230,10 @@ class SettingsWindow(QMainWindow):
         self.helpButton.clicked.connect(self.open_help_dialog)
         self.audioInstallButton.clicked.connect(self.install_audio_device_cmdlets)
 
+        self.checkRateSpinBox.valueChanged.connect(self.update_check_rate)
+        check_rate = self.constants.get('CheckRate', 1000)
+        self.checkRateSpinBox.setValue(check_rate)
+
         if is_audio_device_cmdlets_installed():
             self.audioInstallButton.setText("AudioDeviceCmdlets Installed")
             self.audioInstallButton.setEnabled(False)
@@ -238,6 +244,10 @@ class SettingsWindow(QMainWindow):
 
         disable_audio = self.constants.get('DisableAudioSwitch', False)
         self.disableAudioCheckbox.setChecked(disable_audio)
+
+    def update_check_rate(self, value):
+        self.constants['CheckRate'] = value
+        self.checkRateChanged.emit(value)
 
     def closeEvent(self, event):
         event.ignore()
@@ -257,6 +267,9 @@ class SettingsWindow(QMainWindow):
         disable_audio = self.constants.get('DisableAudioSwitch', False)
         self.disableAudioCheckbox.setChecked(disable_audio)
 
+        check_rate = self.constants.get('CheckRate', 1000)
+        self.checkRateSpinBox.setValue(check_rate)
+
         self.desktopEntry.setEnabled(not disable_audio)
         self.gamemodeEntry.setEnabled(not disable_audio)
 
@@ -265,6 +278,7 @@ class SettingsWindow(QMainWindow):
         self.constants['DESKTOP_AUDIO'] = self.desktopEntry.text()
         self.constants['GAMEMODE_AUDIO'] = self.gamemodeEntry.text()
         self.constants['DisableAudioSwitch'] = self.disableAudioCheckbox.isChecked()
+        self.constants['CheckRate'] = self.checkRateSpinBox.value()
 
         try:
             with open(self.constants_path, 'w') as f:
@@ -354,10 +368,21 @@ if __name__ == '__main__':
     tray_icon = create_tray_icon(current_mode)
 
     timer = QTimer()
+
+    def update_mode_timer_interval(check_rate):
+        timer_interval = check_rate
+        timer.setInterval(timer_interval)
+        timer.start()
+
+    settings_window = SettingsWindow()
+    settings_window.checkRateChanged.connect(update_mode_timer_interval)
+
     timer.timeout.connect(lambda: (
         switch_mode(Mode.GAMEMODE) if is_bigpicture_running() and current_mode != Mode.GAMEMODE and not read_stream_status() else None,
         switch_mode(Mode.DESKTOP) if not is_bigpicture_running() and current_mode != Mode.DESKTOP else None
     ))
-    timer.start(1000)
+
+    initial_check_rate = constants.get('CheckRate', 1000)
+    update_mode_timer_interval(initial_check_rate)
 
     sys.exit(app.exec_())
