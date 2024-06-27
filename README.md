@@ -22,10 +22,9 @@ Head to [release](https://github.com/Odizinne/BigPictureTV/releases) section and
 - PyQt5 (Ui)
 - winshell (Startup shortcut manipulation)
 - pygetwindow (Big Picture window detection)
-- pystray (Tray icon)
 - pyinstaller (Standalone exe creation)
 
-`pip install pyqt5 winshell pygetwindow pystray pyinstaller`
+`pip install pyqt5 winshell pygetwindow  pyinstaller`
 
 ## Build
 
