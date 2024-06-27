@@ -8,8 +8,8 @@ import winshell
 import pygetwindow as gw
 from enum import Enum
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu, QAction
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QIcon, QCursor
+from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5 import uic
 
 class Mode(Enum):
@@ -162,9 +162,25 @@ def exit_application():
 
 def create_tray_icon(current_mode):
     tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
-    tray_icon.setContextMenu(create_menu(current_mode))
     tray_icon.setToolTip('BigPictureTV')
+
+    menu = create_menu(current_mode)
+    tray_icon.setContextMenu(menu)
     tray_icon.show()
+
+    def on_tray_icon_activated(reason):
+        if reason == QSystemTrayIcon.Context:
+            cursor_pos = QCursor.pos()
+            screen_geometry = QApplication.desktop().screenGeometry()
+            menu_height = menu.sizeHint().height()
+            adjusted_pos = cursor_pos - QPoint(0, menu_height)
+
+            if adjusted_pos.y() < screen_geometry.top():
+                adjusted_pos.setY(screen_geometry.top())
+
+            menu.exec_(adjusted_pos)
+
+    tray_icon.activated.connect(on_tray_icon_activated)
 
     return tray_icon
 
