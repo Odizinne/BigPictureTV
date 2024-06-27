@@ -15,6 +15,20 @@ QPushButton {
     margin: 8px;
 }
 
+QPushButton:hover {
+    background-color: #43474f;
+    border: 1px solid #3a3f47;
+}
+
+QPushButton:disabled {
+    background-color: #3a3f47;
+    color: #999999;
+    border: 1px solid #3a3f47;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 8px;
+}
+
 QLabel {
     color: white;
     margin: 8px;

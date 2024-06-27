@@ -73,10 +73,6 @@ def set_audio_device(device_name, devices):
     return False
 
 def switch_audio(audio_output):
-    if constants.get('DisableAudioSwitch', False):
-        print("Audio switching is disabled.")
-        return
-
     devices = get_audio_devices()
     success = set_audio_device(audio_output, devices)
 
@@ -96,14 +92,20 @@ def switch_screen(mode):
 def switch_mode(mode):
     global current_mode
     global tray_icon
+    global constants
+    constants = load_constants()
+    disabled_audio = constants.get('DisableAudioSwitch')
+    installed_audio = is_audio_device_cmdlets_installed()
 
     if mode == Mode.GAMEMODE:
         switch_screen(GAMEMODE_SCREEN)
-        switch_audio(constants['GAMEMODE_AUDIO'])
+        if not disabled_audio and installed_audio:
+            switch_audio(constants['GAMEMODE_AUDIO'])
         current_mode = Mode.GAMEMODE
     else:
         switch_screen(DESKTOP_SCREEN)
-        switch_audio(constants['DESKTOP_AUDIO'])
+        if not disabled_audio and installed_audio:
+            switch_audio(constants['DESKTOP_AUDIO'])
         current_mode = Mode.DESKTOP
 
     write_current_mode(current_mode)
@@ -176,9 +178,7 @@ def create_tray_icon(current_mode):
 def run_tray_icon():
     global tray_icon
     global current_mode
-    global constants
 
-    constants = load_constants()
     current_mode = read_current_mode()
     tray_icon = create_tray_icon(current_mode)
     tray_icon.run()
@@ -193,6 +193,17 @@ def open_settings_window():
     window.show()
     app.exec_()
 
+def is_audio_device_cmdlets_installed():
+    try:
+        cmd = 'powershell "Get-Module -ListAvailable -Name AudioDeviceCmdlets"'
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+        if "AudioDeviceCmdlets" in result.stdout:
+            return True
+        return False
+    except Exception as e:
+        print(f"Error checking AudioDeviceCmdlets installation: {e}")
+        return False
+    
 class SettingsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -216,7 +227,15 @@ class SettingsWindow(QMainWindow):
 
         self.disableAudioCheckbox.stateChanged.connect(self.toggle_audio_fields)
         self.helpButton.clicked.connect(self.open_help_dialog)
+        self.audioInstallButton.clicked.connect(self.install_audio_device_cmdlets)
 
+        if is_audio_device_cmdlets_installed():
+            self.audioInstallButton.setText("AudioDeviceCmdlets Installed")
+            self.audioInstallButton.setEnabled(False)
+        else:
+            self.disableAudioCheckbox.setEnabled(False)
+            self.desktopEntry.setEnabled(False)
+            self.gamemodeEntry.setEnabled(False)
         self.set_stylesheet()
 
     def toggle_audio_fields(self, state):
@@ -246,7 +265,7 @@ class SettingsWindow(QMainWindow):
             with open(self.constants_path, 'w') as f:
                 json.dump(self.constants, f, indent=4)
             QMessageBox.information(self, 'Success', 'Settings saved successfully.')
-            restart_main()
+            self.close()
         except Exception as e:
             QMessageBox.critical(self, 'Error', f'Failed to save settings: {e}')
 
@@ -284,9 +303,29 @@ class SettingsWindow(QMainWindow):
         startup_folder = winshell.startup()
         shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
         return os.path.exists(shortcut_path)
-
-def restart_main():
-    os.execl(sys.executable, sys.executable, *sys.argv)
+ 
+    def install_audio_device_cmdlets(self):
+        try:
+            self.audioInstallButton.setText("Installing...")
+            self.audioInstallButton.setEnabled(False)
+            cmd = 'powershell Install-Module -Name AudioDeviceCmdlets -Scope CurrentUser -Force -AllowClobber'
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+            if result.returncode == 0:
+                QMessageBox.information(self, 'Success', 'AudioDeviceCmdlets installed successfully.')
+                self.audioInstallButton.setText("AudioDeviceCmdlets Installed")
+                self.audioInstallButton.setEnabled(False)
+                self.disableAudioCheckbox.setEnabled(True)
+                self.desktopEntry.setEnabled(True)
+                self.gamemodeEntry.setEnabled(True)
+            else:
+                QMessageBox.critical(self, 'Error', 'Failed to install AudioDeviceCmdlets. See the console for more details.')
+                print(result.stderr)
+                self.audioInstallButton.setEnabled(True)
+                self.audioInstallButton.setText("Install AudioDeviceCmdlets")
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f'Failed to install AudioDeviceCmdlets: {e}')
+            self.audioInstallButton.setEnabled(True)
+            self.audioInstallButton.setText("Install AudioDeviceCmdlets")
 
 class HelpDialog(QDialog):
     def __init__(self, stylesheet=None):
@@ -303,9 +342,8 @@ class HelpDialog(QDialog):
         self.setFixedSize(self.size())
 
 if __name__ == '__main__':
-    constants = load_constants()
     current_mode = read_current_mode()
-
+    constants = load_constants()
     if current_mode != Mode.DESKTOP:
         switch_mode(Mode.DESKTOP)
 
