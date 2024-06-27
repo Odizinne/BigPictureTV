@@ -239,11 +239,9 @@ class SettingsWindow(QMainWindow):
         disable_audio = self.constants.get('DisableAudioSwitch', False)
         self.disableAudioCheckbox.setChecked(disable_audio)
 
-
     def closeEvent(self, event):
-        global settings_window
-        settings_window = None
-        event.accept()
+        event.ignore()
+        self.hide()
 
     def toggle_audio_fields(self, state):
         disable_audio = state == Qt.Checked
