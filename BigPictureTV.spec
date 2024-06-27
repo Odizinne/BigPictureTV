@@ -9,9 +9,7 @@ a = Analysis(
     ('src/ui/design.ui', 'ui'),
     ('src/ui/help.ui', 'ui'),
     ('src/ui/style.css', 'ui'),
-    ('src/icons/steamos-logo.png', 'icons'),
-    ('src/icons/steamos-logo-light.png', 'icons'),
-    ('src/icons/steamos-logo-dark.png', 'icons')
+    ('src/icons/steamos-logo.png', 'icons')
     ],
     hiddenimports=[],
     hookspath=[],
