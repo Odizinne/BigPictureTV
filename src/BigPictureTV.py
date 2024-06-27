@@ -4,17 +4,13 @@ import json
 import subprocess
 import time
 import re
-import threading
 import winshell
 import pygetwindow as gw
 from enum import Enum
-from PIL import Image
-from pystray import Icon, MenuItem, Menu
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu, QAction
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from PyQt5 import uic
-import winreg
 
 class Mode(Enum):
     DESKTOP = 1
@@ -29,6 +25,7 @@ ICONS_FOLDER = os.path.join(os.path.dirname(__file__), 'icons')
 tray_icon = None
 current_mode = None
 constants = None
+settings_window = None
 
 def load_constants():
     if not os.path.exists(os.path.dirname(SETTINGS_FILE)):
@@ -45,7 +42,6 @@ def create_default_settings():
         "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
         "GAMEMODE_AUDIO": "TV",
         "DESKTOP_AUDIO": "Headset",
-        "UseSystemTheme": False,
         "DisableAudioSwitch": False
     }
     with open(SETTINGS_FILE, 'w') as f:
@@ -111,17 +107,31 @@ def switch_mode(mode):
     write_current_mode(current_mode)
 
     if tray_icon:
-        tray_icon.menu = create_menu(current_mode)
-        tray_icon.update_menu()
+        update_tray_icon_menu()
 
 def create_menu(current_mode):
-    menu_items = [
-        MenuItem(f'Mode: {current_mode.name}', None, enabled=False),
-        MenuItem('', None, enabled=False, visible=False),
-        MenuItem('Settings', lambda icon, item: open_settings_window_in_thread()),
-        MenuItem('Exit', exit_action)
-    ]
-    return Menu(*menu_items)
+    menu = QMenu()
+    
+    mode_action = QAction(f'Mode: {current_mode.name}', menu)
+    mode_action.setDisabled(True)
+    menu.addAction(mode_action)
+
+    menu.addSeparator()
+
+    settings_action = QAction('Settings', menu)
+    settings_action.triggered.connect(open_settings_window)
+    menu.addAction(settings_action)
+
+    exit_action = QAction('Exit', menu)
+    exit_action.triggered.connect(exit_application)
+    menu.addAction(exit_action)
+
+    return menu
+
+def update_tray_icon_menu():
+    global tray_icon
+    if tray_icon:
+        tray_icon.setContextMenu(create_menu(current_mode))
 
 def is_bigpicture_running():
     return any(all(word in window_title for word in constants['BIG_PICTURE_KEYWORDS'])
@@ -147,51 +157,26 @@ def read_current_mode():
     file_path = get_mode_file_path()
     return Mode.GAMEMODE if os.path.exists(file_path) else Mode.DESKTOP
 
-def exit_action(icon, item):
-    icon.stop()
-    os._exit(0)
+def exit_application():
+    QApplication.quit()
 
 def create_tray_icon(current_mode):
-    global tray_icon
+    tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
+    tray_icon.setContextMenu(create_menu(current_mode))
+    tray_icon.setToolTip('BigPictureTV')
+    tray_icon.show()
 
-    use_system_theme = constants.get('UseSystemTheme', False)
-    icon_file = 'steamos-logo.png'
-
-    if use_system_theme:
-        try:
-            reg_path = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize'
-            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path) as key:
-                theme_type = winreg.QueryValueEx(key, 'AppsUseLightTheme')[0]
-                if theme_type == 1:
-                    icon_file = 'steamos-logo-dark.png'
-                else:
-                    icon_file = 'steamos-logo-light.png'
-        except Exception as e:
-            print(f"Failed to read Windows theme: {e}")
-
-    icon_path = os.path.join(ICONS_FOLDER, icon_file)
-    menu = create_menu(current_mode)
-    icon_image = Image.open(icon_path)
-    tray_icon = Icon('BigPictureTV', icon=icon_image, menu=menu)
     return tray_icon
 
-def run_tray_icon():
-    global tray_icon
-    global current_mode
-
-    current_mode = read_current_mode()
-    tray_icon = create_tray_icon(current_mode)
-    tray_icon.run()
-
-def open_settings_window_in_thread():
-    settings_thread = threading.Thread(target=open_settings_window)
-    settings_thread.start()
-
 def open_settings_window():
-    app = QApplication(sys.argv)
-    window = SettingsWindow()
-    window.show()
-    app.exec_()
+    global settings_window
+
+    if settings_window is None:
+        settings_window = SettingsWindow()
+    if not settings_window.isVisible():
+        settings_window.show()
+    settings_window.raise_()
+    settings_window.activateWindow()
 
 def is_audio_device_cmdlets_installed():
     try:
@@ -203,7 +188,7 @@ def is_audio_device_cmdlets_installed():
     except Exception as e:
         print(f"Error checking AudioDeviceCmdlets installation: {e}")
         return False
-    
+
 class SettingsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -219,8 +204,6 @@ class SettingsWindow(QMainWindow):
         self.load_settings()
 
         self.saveButton.clicked.connect(self.save_settings)
-        self.systemThemeBox.setChecked(self.constants.get('UseSystemTheme', False))
-        self.systemThemeBox.stateChanged.connect(self.toggle_system_theme)
 
         self.startupCheckBox.setChecked(self.is_startup_shortcut_exist())
         self.startupCheckBox.stateChanged.connect(self.handle_startup_checkbox)
@@ -236,7 +219,15 @@ class SettingsWindow(QMainWindow):
             self.disableAudioCheckbox.setEnabled(False)
             self.desktopEntry.setEnabled(False)
             self.gamemodeEntry.setEnabled(False)
-        self.set_stylesheet()
+
+        disable_audio = self.constants.get('DisableAudioSwitch', False)
+        self.disableAudioCheckbox.setChecked(disable_audio)
+
+
+    def closeEvent(self, event):
+        global settings_window
+        settings_window = None
+        event.accept()
 
     def toggle_audio_fields(self, state):
         disable_audio = state == Qt.Checked
@@ -265,17 +256,9 @@ class SettingsWindow(QMainWindow):
             with open(self.constants_path, 'w') as f:
                 json.dump(self.constants, f, indent=4)
             QMessageBox.information(self, 'Success', 'Settings saved successfully.')
-            self.close()
+            self.hide()
         except Exception as e:
             QMessageBox.critical(self, 'Error', f'Failed to save settings: {e}')
-
-    def set_stylesheet(self):
-        style_file = os.path.join(os.path.dirname(__file__), UI_FOLDER, 'style.css')
-        with open(style_file, 'r') as f:
-            self.setStyleSheet(f.read())
-
-    def toggle_system_theme(self, state):
-        self.constants['UseSystemTheme'] = (state == Qt.Checked)
 
     def open_help_dialog(self):
         dialog = HelpDialog(self.styleSheet())
@@ -342,22 +325,25 @@ class HelpDialog(QDialog):
         self.setFixedSize(self.size())
 
 if __name__ == '__main__':
+    app = QApplication(sys.argv)
     current_mode = read_current_mode()
     constants = load_constants()
+
+    style_file = os.path.join(os.path.dirname(__file__), UI_FOLDER, 'style.qss')
+    if os.path.exists(style_file):
+        with open(style_file, 'r') as f:
+            app.setStyleSheet(f.read())
+
     if current_mode != Mode.DESKTOP:
         switch_mode(Mode.DESKTOP)
 
-    tray_thread = threading.Thread(target=run_tray_icon, daemon=True)
-    tray_thread.start()
+    tray_icon = create_tray_icon(current_mode)
 
-    try:
-        while True:
-            sunshine_streaming = read_stream_status()
-            bigpicture = is_bigpicture_running()
-            if bigpicture and current_mode != Mode.GAMEMODE and not sunshine_streaming:
-                switch_mode(Mode.GAMEMODE)
-            elif not bigpicture and current_mode != Mode.DESKTOP:
-                switch_mode(Mode.DESKTOP)
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("\nExiting")
+    timer = QTimer()
+    timer.timeout.connect(lambda: (
+        switch_mode(Mode.GAMEMODE) if is_bigpicture_running() and current_mode != Mode.GAMEMODE and not read_stream_status() else None,
+        switch_mode(Mode.DESKTOP) if not is_bigpicture_running() and current_mode != Mode.DESKTOP else None
+    ))
+    timer.start(1000)
+
+    sys.exit(app.exec_())
