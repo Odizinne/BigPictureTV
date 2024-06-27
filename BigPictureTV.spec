@@ -8,7 +8,7 @@ a = Analysis(
     datas = [
     ('src/ui/design.ui', 'ui'),
     ('src/ui/help.ui', 'ui'),
-    ('src/ui/style.css', 'ui'),
+    ('src/ui/style.qss', 'ui'),
     ('src/icons/steamos-logo.png', 'icons')
     ],
     hiddenimports=[],
