@@ -9,7 +9,7 @@ import pygetwindow as gw
 from enum import Enum
 from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu, QAction
 from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal
+from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal, QSharedMemory
 from PyQt5 import uic
 
 class Mode(Enum):
@@ -371,11 +371,16 @@ class HelpDialog(QDialog):
         self.setFixedSize(self.size())
 
 if __name__ == '__main__':
+    shared_memory = QSharedMemory('BigPictureTVSharedMemory')
+
+    if shared_memory.attach() or not shared_memory.create(1):
+        sys.exit(0)
+
     app = QApplication(sys.argv)
     current_mode = read_current_mode()
     constants = load_constants()
 
-    style_file = os.path.join(os.path.join(UI_FOLDER, 'style.qss'))
+    style_file = os.path.join(UI_FOLDER, 'style.qss')
     if os.path.exists(style_file):
         with open(style_file, 'r') as f:
             app.setStyleSheet(f.read())
