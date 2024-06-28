@@ -309,10 +309,18 @@ class SettingsWindow(QMainWindow):
             self.remove_startup_shortcut()
 
     def create_startup_shortcut(self):
-        target_path = os.path.join(os.getcwd(), 'bigpicturetv.exe')
+        target_path = os.path.join(os.getcwd(), 'BigPictureTV.exe')
         startup_folder = winshell.startup()
         shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
-        winshell.CreateShortcut(Path=shortcut_path, Target=target_path, Icon=(target_path, 0), Description="Launch BigPictureTV")
+        working_directory = os.path.dirname(target_path)
+
+        winshell.CreateShortcut(
+            Path=shortcut_path,
+            Target=target_path,
+            Icon=(target_path, 0),
+            Description="Launch BigPictureTV",
+            StartIn=working_directory
+        )
 
     def remove_startup_shortcut(self):
         startup_folder = winshell.startup()
