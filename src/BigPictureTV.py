@@ -33,6 +33,7 @@ tray_icon = None
 current_mode = None
 constants = None
 settings_window = None
+first_run = False
 
 def load_constants():
     if not os.path.exists(os.path.dirname(SETTINGS_FILE)):
@@ -45,6 +46,7 @@ def load_constants():
         return json.load(f)
 
 def create_default_settings():
+    global first_run
     settings_template = {
         "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
         "GAMEMODE_AUDIO": "TV",
@@ -54,6 +56,7 @@ def create_default_settings():
     }
     with open(SETTINGS_FILE, 'w') as f:
         json.dump(settings_template, f, indent=4)
+    first_run = True
 
 def read_stream_status():
     file_path = os.path.join(os.environ['APPDATA'], "sunshine-status", "status.txt")
@@ -392,4 +395,8 @@ if __name__ == '__main__':
     initial_check_rate = constants.get('CheckRate', 1000)
     update_mode_timer_interval(initial_check_rate)
 
+    if first_run:
+        settings_window.show()
+        first_run = False
+    
     sys.exit(app.exec_())
