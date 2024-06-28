@@ -16,11 +16,18 @@ class Mode(Enum):
     DESKTOP = 1
     GAMEMODE = 2
 
+if getattr(sys, 'frozen', False):
+    ICONS_FOLDER = 'icons'
+    UI_FOLDER = 'ui'
+    print("Running in frozen mode (cx_Freeze)")
+else:
+    UI_FOLDER = os.path.join(os.path.dirname(__file__), 'ui')
+    ICONS_FOLDER = os.path.join(os.path.dirname(__file__), 'icons')
+    print("Running in normal Python mode")
+
 GAMEMODE_SCREEN = "/external"
 DESKTOP_SCREEN = "/internal"
 SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "BigPictureTV", "settings.json")
-UI_FOLDER = os.path.join(os.path.dirname(__file__), 'ui')
-ICONS_FOLDER = os.path.join(os.path.dirname(__file__), 'icons')
 
 tray_icon = None
 current_mode = None
@@ -357,7 +364,7 @@ if __name__ == '__main__':
     current_mode = read_current_mode()
     constants = load_constants()
 
-    style_file = os.path.join(os.path.dirname(__file__), UI_FOLDER, 'style.qss')
+    style_file = os.path.join(os.path.join(UI_FOLDER, 'style.qss'))
     if os.path.exists(style_file):
         with open(style_file, 'r') as f:
             app.setStyleSheet(f.read())
