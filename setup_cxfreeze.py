@@ -18,6 +18,7 @@ setup(
             'excludes': [],
             'optimize': 0,
             'build_exe': 'build/BigPictureTV',
+            'zip_include_packages': ['PyQt5', 'winshell', 'PyGetWindow']
         }
     }
 )
