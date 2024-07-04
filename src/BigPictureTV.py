@@ -4,13 +4,14 @@ import json
 import subprocess
 import time
 import re
+import platform
 import winshell
 import pygetwindow as gw
 from enum import Enum
-from PyQt5.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu, QAction
-from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtCore import Qt, QTimer, QPoint, pyqtSignal, QSharedMemory
-from PyQt5 import uic
+from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu
+from PyQt6.QtGui import QIcon, QCursor, QAction
+from PyQt6.QtCore import Qt, QTimer, QPoint, pyqtSignal, QSharedMemory
+from PyQt6 import uic
 
 class Mode(Enum):
     DESKTOP = 1
@@ -124,7 +125,7 @@ def create_menu(current_mode):
     menu = QMenu()
     
     mode_action = QAction(f'Mode: {current_mode.name}', menu)
-    mode_action.setDisabled(True)
+    mode_action.setEnabled(False)
     menu.addAction(mode_action)
 
     menu.addSeparator()
@@ -158,7 +159,7 @@ def write_current_mode(current_mode):
     file_path = get_mode_file_path()
 
     if current_mode == Mode.GAMEMODE:
-        with open(file_path, 'w') as f:
+        with open(file_path, 'w'):
             pass
     elif current_mode == Mode.DESKTOP:
         if os.path.exists(file_path):
@@ -172,26 +173,13 @@ def exit_application():
     QApplication.quit()
 
 def create_tray_icon(current_mode):
+    global tray_icon
     tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
     tray_icon.setToolTip('BigPictureTV')
 
     menu = create_menu(current_mode)
     tray_icon.setContextMenu(menu)
     tray_icon.show()
-
-    def on_tray_icon_activated(reason):
-        if reason == QSystemTrayIcon.Context:
-            cursor_pos = QCursor.pos()
-            screen_geometry = QApplication.desktop().screenGeometry()
-            menu_height = menu.sizeHint().height()
-            adjusted_pos = cursor_pos - QPoint(0, menu_height)
-
-            if adjusted_pos.y() < screen_geometry.top():
-                adjusted_pos.setY(screen_geometry.top())
-
-            menu.exec_(adjusted_pos)
-
-    tray_icon.activated.connect(on_tray_icon_activated)
 
     return tray_icon
 
@@ -264,7 +252,7 @@ class SettingsWindow(QMainWindow):
         self.hide()
 
     def toggle_audio_fields(self, state):
-        disable_audio = state == Qt.Checked
+        disable_audio = state == Qt.CheckState.Checked
         self.gamemodeEntry.setEnabled(not disable_audio)
         self.desktopEntry.setEnabled(not disable_audio)
 
@@ -299,11 +287,11 @@ class SettingsWindow(QMainWindow):
             QMessageBox.critical(self, 'Error', f'Failed to save settings: {e}')
 
     def open_help_dialog(self):
-        dialog = HelpDialog(self.styleSheet())
-        dialog.exec_()
+        dialog = HelpDialog()
+        dialog.exec()
 
     def handle_startup_checkbox(self, state):
-        if state == Qt.Checked:
+        if state == Qt.CheckState.Checked:
             self.create_startup_shortcut()
         else:
             self.remove_startup_shortcut()
@@ -357,18 +345,17 @@ class SettingsWindow(QMainWindow):
             self.audioInstallButton.setText("Install AudioDeviceCmdlets")
 
 class HelpDialog(QDialog):
-    def __init__(self, stylesheet=None):
+    def __init__(self):
         super().__init__()
 
         uic.loadUi(os.path.join(UI_FOLDER, 'help.ui'), self)
         self.setWindowTitle("Help")
-        if stylesheet:
-            self.setStyleSheet(stylesheet)
 
         self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
         self.closeButton.clicked.connect(self.close)
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
         self.setFixedSize(self.size())
+
 
 if __name__ == '__main__':
     shared_memory = QSharedMemory('BigPictureTVSharedMemory')
@@ -377,13 +364,10 @@ if __name__ == '__main__':
         sys.exit(0)
 
     app = QApplication(sys.argv)
+    if platform.system() == 'Windows':
+        app.setStyle('Fusion')
     current_mode = read_current_mode()
     constants = load_constants()
-
-    style_file = os.path.join(UI_FOLDER, 'style.qss')
-    if os.path.exists(style_file):
-        with open(style_file, 'r') as f:
-            app.setStyleSheet(f.read())
 
     if current_mode != Mode.DESKTOP:
         switch_mode(Mode.DESKTOP)
@@ -412,4 +396,4 @@ if __name__ == '__main__':
         settings_window.show()
         first_run = False
     
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
