@@ -9,8 +9,8 @@ import winshell
 import pygetwindow as gw
 from enum import Enum
 from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu
-from PyQt6.QtGui import QIcon, QCursor, QAction
-from PyQt6.QtCore import Qt, QTimer, QPoint, pyqtSignal, QSharedMemory
+from PyQt6.QtGui import QIcon, QAction
+from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSharedMemory
 from PyQt6 import uic
 
 class Mode(Enum):
