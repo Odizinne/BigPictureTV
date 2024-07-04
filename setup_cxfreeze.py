@@ -12,13 +12,12 @@ setup(
             'include_files': [
                 ('src/ui/design.ui', 'ui/design.ui'),
                 ('src/ui/help.ui', 'ui/help.ui'),
-                ('src/ui/style.qss', 'ui/style.qss'),
                 ('src/icons/steamos-logo.png', 'icons/steamos-logo.png')
             ],
             'excludes': [],
             'optimize': 0,
             'build_exe': 'build/BigPictureTV',
-            'zip_include_packages': ['PyQt5', 'winshell', 'PyGetWindow']
+            'zip_include_packages': ['PyQt6', 'winshell', 'PyGetWindow']
         }
     }
 )
