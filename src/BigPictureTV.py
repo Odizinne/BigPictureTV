@@ -250,9 +250,12 @@ class SettingsWindow(QMainWindow, Ui_MainWindow):
         self.hide()
 
     def toggle_audio_fields(self, state):
-        disable_audio = state == Qt.CheckState.Checked
-        self.gamemodeEntry.setEnabled(not disable_audio)
-        self.desktopEntry.setEnabled(not disable_audio)
+        if state == 2:
+            self.desktopEntry.setEnabled(False)
+            self.gamemodeEntry.setEnabled(False)
+        elif state == 0:
+            self.desktopEntry.setEnabled(True)
+            self.gamemodeEntry.setEnabled(True)
 
     def load_settings(self):
         self.constants = load_constants()
@@ -289,30 +292,41 @@ class SettingsWindow(QMainWindow, Ui_MainWindow):
         dialog.exec()
 
     def handle_startup_checkbox(self, state):
-        if state == Qt.CheckState.Checked:
+        if state == 2:
             self.create_startup_shortcut()
-        else:
+        elif state == 0:
             self.remove_startup_shortcut()
 
     def create_startup_shortcut(self):
-        target_path = os.path.join(os.getcwd(), 'BigPictureTV.exe')
-        startup_folder = winshell.startup()
-        shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
-        working_directory = os.path.dirname(target_path)
+        try:
+            print('Creating startup shortcut...')
+            target_path = os.path.join(os.getcwd(), 'BigPictureTV.exe')
+            startup_folder = winshell.startup()
+            shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
+            working_directory = os.path.dirname(target_path)
 
-        winshell.CreateShortcut(
-            Path=shortcut_path,
-            Target=target_path,
-            Icon=(target_path, 0),
-            Description="Launch BigPictureTV",
-            StartIn=working_directory
-        )
+            winshell.CreateShortcut(
+                Path=shortcut_path,
+                Target=target_path,
+                Icon=(target_path, 0),
+                Description="Launch BigPictureTV",
+                StartIn=working_directory
+            )
+
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f'Failed to create startup shortcut: {e}')
+            print(f'Failed to create startup shortcut: {e}')
 
     def remove_startup_shortcut(self):
-        startup_folder = winshell.startup()
-        shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
-        if os.path.exists(shortcut_path):
-            os.remove(shortcut_path)
+        try:
+            startup_folder = winshell.startup()
+            shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
+            if os.path.exists(shortcut_path):
+                os.remove(shortcut_path)
+        except Exception as e:
+            QMessageBox.critical(self, 'Error', f'Failed to remove startup shortcut: {e}')
+            print(f'Failed to remove startup shortcut: {e}')
+
 
     def is_startup_shortcut_exist(self):
         startup_folder = winshell.startup()
