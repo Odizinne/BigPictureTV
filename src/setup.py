@@ -2,7 +2,7 @@ from cx_Freeze import setup, Executable
 
 build_dir = "build/BigPictureTV"
 base = "Win32GUI"
-system_icon = "icons/icon.ico"
+system_icon = "icons/steamos-logo.ico"
 
 zip_include_packages = ['PyQt6', 'winshell', 'PyGetWindow']
 
