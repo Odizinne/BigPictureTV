@@ -11,7 +11,8 @@ from enum import Enum
 from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSharedMemory
-from PyQt6 import uic
+from design import Ui_MainWindow
+from help import Ui_Dialog
 
 class Mode(Enum):
     DESKTOP = 1
@@ -19,10 +20,8 @@ class Mode(Enum):
 
 if getattr(sys, 'frozen', False):
     ICONS_FOLDER = 'icons'
-    UI_FOLDER = 'ui'
     print("Running in frozen mode (cx_Freeze)")
 else:
-    UI_FOLDER = os.path.join(os.path.dirname(__file__), 'ui')
     ICONS_FOLDER = os.path.join(os.path.dirname(__file__), 'icons')
     print("Running in normal Python mode")
 
@@ -204,14 +203,13 @@ def is_audio_device_cmdlets_installed():
         print(f"Error checking AudioDeviceCmdlets installation: {e}")
         return False
 
-class SettingsWindow(QMainWindow):
+class SettingsWindow(QMainWindow, Ui_MainWindow):
     checkRateChanged = pyqtSignal(int)
     def __init__(self):
         super().__init__()
 
         self.constants_path = SETTINGS_FILE
-        uic.loadUi(os.path.join(UI_FOLDER, 'design.ui'), self)
-
+        self.setupUi(self)
         self.setWindowTitle("BigPictureTV - Settings")
         self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
         self.setFixedSize(self.size())
@@ -344,11 +342,10 @@ class SettingsWindow(QMainWindow):
             self.audioInstallButton.setEnabled(True)
             self.audioInstallButton.setText("Install AudioDeviceCmdlets")
 
-class HelpDialog(QDialog):
+class HelpDialog(QDialog, Ui_Dialog):
     def __init__(self):
         super().__init__()
-
-        uic.loadUi(os.path.join(UI_FOLDER, 'help.ui'), self)
+        self.setupUi(self)
         self.setWindowTitle("Help")
 
         self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
