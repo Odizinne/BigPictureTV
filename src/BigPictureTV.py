@@ -10,7 +10,7 @@ import pygetwindow as gw
 from enum import Enum
 from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSharedMemory
+from PyQt6.QtCore import QTimer, pyqtSignal, QSharedMemory
 from design import Ui_MainWindow
 from help import Ui_Dialog
 
@@ -34,6 +34,7 @@ current_mode = None
 constants = None
 settings_window = None
 first_run = False
+paused = False
 
 def load_constants():
     if not os.path.exists(os.path.dirname(SETTINGS_FILE)):
@@ -120,14 +121,25 @@ def switch_mode(mode):
     if tray_icon:
         update_tray_icon_menu()
 
-def create_menu(current_mode):
+def create_menu(current_mode, paused=False):
     menu = QMenu()
     
-    mode_action = QAction(f'Mode: {current_mode.name}', menu)
+    mode_action = QAction(f'Current mode: {current_mode.name}', menu)
     mode_action.setEnabled(False)
     menu.addAction(mode_action)
 
+    tray_state_action = QAction(f'Detection state: {"Paused" if paused else "Active"}', menu)
+    tray_state_action.setEnabled(False)
+    menu.addAction(tray_state_action)
+
     menu.addSeparator()
+
+    if paused:
+        pause_resume_action = QAction('Resume detection', menu)
+    else:
+        pause_resume_action = QAction('Pause detection', menu)
+    pause_resume_action.triggered.connect(toggle_detection)
+    menu.addAction(pause_resume_action)
 
     settings_action = QAction('Settings', menu)
     settings_action.triggered.connect(open_settings_window)
@@ -142,7 +154,7 @@ def create_menu(current_mode):
 def update_tray_icon_menu():
     global tray_icon
     if tray_icon:
-        tray_icon.setContextMenu(create_menu(current_mode))
+        tray_icon.setContextMenu(create_menu(current_mode, paused=paused))
 
 def is_bigpicture_running():
     return any(all(word in window_title for word in constants['BIG_PICTURE_KEYWORDS'])
@@ -176,7 +188,7 @@ def create_tray_icon(current_mode):
     tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
     tray_icon.setToolTip('BigPictureTV')
 
-    menu = create_menu(current_mode)
+    menu = create_menu(current_mode, paused=paused)
     tray_icon.setContextMenu(menu)
     tray_icon.show()
 
@@ -367,6 +379,18 @@ class HelpDialog(QDialog, Ui_Dialog):
         self.closeButton.clicked.connect(self.close)
         self.setFixedSize(self.size())
 
+def toggle_detection():
+    global paused
+    paused = not paused
+
+    if paused:
+        timer.stop()
+        tray_icon.setToolTip('BigPictureTV (Paused)')
+        update_tray_icon_menu()
+    else:
+        timer.start()
+        tray_icon.setToolTip('BigPictureTV')
+        update_tray_icon_menu()
 
 if __name__ == '__main__':
     shared_memory = QSharedMemory('BigPictureTVSharedMemory')
