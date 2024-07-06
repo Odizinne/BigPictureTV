@@ -33,5 +33,5 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: build-artifacts-windows
+        name: BigPictureTV
         path: build/BigPictureTV/
