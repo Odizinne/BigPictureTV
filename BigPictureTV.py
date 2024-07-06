@@ -10,7 +10,7 @@ import pygetwindow as gw
 from enum import Enum
 from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtCore import QTimer, pyqtSignal, QSharedMemory
+from PyQt6.QtCore import QTimer, pyqtSignal, QSharedMemory, Qt
 from design import Ui_MainWindow
 from help import Ui_Dialog
 
