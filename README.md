@@ -17,20 +17,20 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
  
 **Build dependencies:**
 - Python
-- PyQt5 (Ui)
+- PyQt6 (Ui)
 - winshell (Startup shortcut manipulation)
 - pygetwindow (Big Picture window detection)
 - cx_freeze (Standalone exe creation)
 
-`pip install pyqt5 winshell pygetwindow cx_freeze`
+`pip install pyqt6 winshell pygetwindow cx_freeze`
 
 ## Build
 
 Make sure you installed required dependencies.<br/>
 
 - Clone this repository `git clone git@github.com:Odizinne/BigPictureTV.git`.<br/>
-- Move inside the directory `cd BigPictureTV`.<br/>
-- Build the executable `python setup_cxfreeze.py build`.
+- Move inside the source directory `cd BigPictureTV\src`.<br/>
+- Build the executable `python setup.py build`.
 
 ## Todo
 
