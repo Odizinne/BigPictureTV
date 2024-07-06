@@ -13,7 +13,7 @@ build_exe_options = {
 }
 
 executables = [
-    Executable('src/BigPictureTV.py', base=base, icon=system_icon)
+    Executable('BigPictureTV.py', base=base, icon=system_icon)
 ]
 
 setup(
