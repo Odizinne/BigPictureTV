@@ -399,8 +399,6 @@ if __name__ == '__main__':
         sys.exit(0)
 
     app = QApplication(sys.argv)
-    if platform.system() == 'Windows':
-        app.setStyle('Fusion')
     current_mode = read_current_mode()
     constants = load_constants()
 
