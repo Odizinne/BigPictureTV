@@ -4,319 +4,317 @@ import json
 import subprocess
 import time
 import re
-import platform
 import winshell
 import pygetwindow as gw
 from enum import Enum
-from PyQt6.QtWidgets import QApplication, QMainWindow, QDialog, QMessageBox, QSystemTrayIcon, QMenu
+from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow, QDialog
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtCore import QTimer, pyqtSignal, QSharedMemory, Qt
+from PyQt6.QtCore import QTimer, QSharedMemory
 from design import Ui_MainWindow
 from help import Ui_Dialog
+
+SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "BigPictureTV", "settings.json")
+ICONS_FOLDER = 'icons' if getattr(sys, 'frozen', False) else os.path.join(os.path.dirname(__file__), 'icons')
 
 class Mode(Enum):
     DESKTOP = 1
     GAMEMODE = 2
 
-if getattr(sys, 'frozen', False):
-    ICONS_FOLDER = 'icons'
-    print("Running in frozen mode (cx_Freeze)")
-else:
-    ICONS_FOLDER = os.path.join(os.path.dirname(__file__), 'icons')
-    print("Running in normal Python mode")
+class BigPictureTV(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.tray_icon = None
+        self.current_mode = None
+        self.gamemode_audio = None
+        self.desktop_audio = None
+        self.bigpicture_keywords = None
+        self.check_rate = None
+        self.first_run = False
+        self.paused = False
+        self.timer = QTimer()
+        self.settings_window = None
+        self.gamemode_screen = "/external"
+        self.desktop_screen = "/internal"
+        self.connect_ui()
+        self.load_settings()
+        self.is_audio_device_cmdlets_installed()
+        self.current_mode = self.read_current_mode()
 
-GAMEMODE_SCREEN = "/external"
-DESKTOP_SCREEN = "/internal"
-SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "BigPictureTV", "settings.json")
+        if self.current_mode != Mode.DESKTOP:
+            self.switch_mode(Mode.DESKTOP)
 
-tray_icon = None
-current_mode = None
-constants = None
-settings_window = None
-first_run = False
-paused = False
+        self.tray_icon = self.create_tray_icon()
 
-def load_constants():
-    if not os.path.exists(os.path.dirname(SETTINGS_FILE)):
-        os.makedirs(os.path.dirname(SETTINGS_FILE))
+        self.timer.timeout.connect(self.update_mode)
+        self.update_mode_timer_interval(self.check_rate)
 
-    if not os.path.exists(SETTINGS_FILE):
-        create_default_settings()
+        if self.first_run:
+            self.settings_window.show()
+            self.first_run = False
 
-    with open(SETTINGS_FILE, 'r') as f:
-        return json.load(f)
+    def connect_ui(self):
+        self.ui.disableAudioCheckbox.stateChanged.connect(self.on_disableAudioCheckbox_stateChanged)
+        self.ui.startupCheckBox.stateChanged.connect(self.on_startupCheckBox_stateChanged)
+        self.ui.steamEntry.textChanged.connect(self.on_steamEntry_textChanged)
+        self.ui.gamemodeEntry.textChanged.connect(self.on_gamemodeEntry_textChanged)
+        self.ui.desktopEntry.textChanged.connect(self.on_desktopEntry_textChanged)
+        self.ui.checkRateSpinBox.valueChanged.connect(self.on_checkRateSpinBox_valueChanged)
+        self.ui.helpButton.clicked.connect(self.show_help)
+        self.ui.startupCheckBox.setChecked(self.check_startup_shortcut())
 
-def create_default_settings():
-    global first_run
-    settings_template = {
-        "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
-        "GAMEMODE_AUDIO": "TV",
-        "DESKTOP_AUDIO": "Headset",
-        "DisableAudioSwitch": False,
-        "CheckRate": 1000
-    }
-    with open(SETTINGS_FILE, 'w') as f:
-        json.dump(settings_template, f, indent=4)
-    first_run = True
+    def on_disableAudioCheckbox_stateChanged(self, state):
+        self.ui.desktopEntry.setEnabled(not state)
+        self.ui.desktopLabel.setEnabled(not state)
+        self.ui.gamemodeEntry.setEnabled(not state)
+        self.ui.gamemodeLabel.setEnabled(not state)
+        self.save_settings()
 
-def read_stream_status():
-    file_path = os.path.join(os.environ['APPDATA'], "sunshine-status", "status.txt")
-    return os.path.exists(file_path)
+    def on_startupCheckBox_stateChanged(self, state):
+        self.manage_startup_shortcut(state)
 
-def get_audio_devices():
-    cmd = "powershell Get-AudioDevice -list"
-    output = subprocess.check_output(cmd, shell=True, text=True)
-    devices = re.findall(r'Index\s+:\s+(\d+)\s+.*?Name\s+:\s+(.*?)\s+ID\s+:\s+{(.*?)}', output, re.DOTALL)
-    return devices
+    def on_steamEntry_textChanged(self, text):
+        self.bigpicture_keywords = text.split()
+        self.save_settings()
 
-def set_audio_device(device_name, devices):
-    device_words = device_name.lower().split()
+    def on_gamemodeEntry_textChanged(self, text):
+        self.gamemode_audio = text
+        self.save_settings()
 
-    for index, name, _ in devices:
-        lower_name = name.lower()
-        if all(word in lower_name for word in device_words):
-            cmd = f"powershell set-audiodevice -index {index}"
-            result = subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return result.returncode == 0
-    return False
+    def on_desktopEntry_textChanged(self, text):
+        self.desktop_audio = text
+        self.save_settings()
 
-def switch_audio(audio_output):
-    devices = get_audio_devices()
-    success = set_audio_device(audio_output, devices)
+    def on_checkRateSpinBox_valueChanged(self, value):
+        self.check_rate = value
+        self.save_settings()
+        self.update_mode_timer_interval(value)
 
-    retries = 0
-    while not success and retries < 10:
-        print("Failed to switch audio, retrying...")
-        time.sleep(1)
-        success = set_audio_device(audio_output, devices)
-        retries += 1
+    def show_help(self):
+        help_dialog = HelpDialog()
+        help_dialog.exec()
 
-    if not success:
-        print("Failed to switch audio after 10 attempts.")
+    def create_default_settings(self):
+        settings_template = {
+            "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
+            "GAMEMODE_AUDIO": "TV",
+            "DESKTOP_AUDIO": "Headset",
+            "DisableAudioSwitch": False,
+            "CheckRate": 1000
+        }
+        with open(SETTINGS_FILE, 'w') as f:
+            json.dump(settings_template, f, indent=4)
+        self.first_run = True
 
-def switch_screen(mode):
-    subprocess.run(["DisplaySwitch.exe", str(mode)])
+    def load_settings(self):
+        if not os.path.exists(os.path.dirname(SETTINGS_FILE)):
+            os.makedirs(os.path.dirname(SETTINGS_FILE))
 
-def switch_mode(mode):
-    global current_mode
-    global tray_icon
-    global constants
-    constants = load_constants()
-    disabled_audio = constants.get('DisableAudioSwitch')
-    installed_audio = is_audio_device_cmdlets_installed()
+        if not os.path.exists(SETTINGS_FILE):
+            self.create_default_settings()
 
-    if mode == Mode.GAMEMODE:
-        switch_screen(GAMEMODE_SCREEN)
-        if not disabled_audio and installed_audio:
-            switch_audio(constants['GAMEMODE_AUDIO'])
-        current_mode = Mode.GAMEMODE
-    else:
-        switch_screen(DESKTOP_SCREEN)
-        if not disabled_audio and installed_audio:
-            switch_audio(constants['DESKTOP_AUDIO'])
-        current_mode = Mode.DESKTOP
+        with open(SETTINGS_FILE, 'r') as f:
+            settings = json.load(f)
+        
+        self.ui.steamEntry.setText(' '.join(settings.get('BIG_PICTURE_KEYWORDS', [])))
+        self.bigpicture_keywords = settings.get('BIG_PICTURE_KEYWORDS', [])
+        self.ui.gamemodeEntry.setText(settings.get('GAMEMODE_AUDIO', ''))
+        self.gamemode_audio = settings.get('GAMEMODE_AUDIO', '')
+        self.ui.desktopEntry.setText(settings.get('DESKTOP_AUDIO', ''))
+        self.desktop_audio = settings.get('DESKTOP_AUDIO', '')
+        self.ui.disableAudioCheckbox.setChecked(settings.get('DisableAudioSwitch', False))
+        self.ui.checkRateSpinBox.setValue(settings.get('CheckRate', 1000))
+        self.check_rate = settings.get('CheckRate', 1000)
 
-    write_current_mode(current_mode)
+        self.ui.desktopEntry.setEnabled(not self.ui.disableAudioCheckbox.isChecked())
+        self.ui.desktopLabel.setEnabled(not self.ui.disableAudioCheckbox.isChecked())
+        self.ui.gamemodeEntry.setEnabled(not self.ui.disableAudioCheckbox.isChecked())
+        self.ui.gamemodeLabel.setEnabled(not self.ui.disableAudioCheckbox.isChecked())
 
-    if tray_icon:
-        update_tray_icon_menu()
+    def save_settings(self):
+        settings = {
+            "BIG_PICTURE_KEYWORDS": self.ui.steamEntry.text().split(),
+            "GAMEMODE_AUDIO": self.ui.gamemodeEntry.text(),
+            "DESKTOP_AUDIO": self.ui.desktopEntry.text(),
+            "DisableAudioSwitch": self.ui.disableAudioCheckbox.isChecked(),
+            "CheckRate": self.ui.checkRateSpinBox.value()
+        }
 
-def create_menu(current_mode, paused=False):
-    menu = QMenu()
-    
-    mode_action = QAction(f'Current mode: {current_mode.name}', menu)
-    mode_action.setEnabled(False)
-    menu.addAction(mode_action)
+        with open(SETTINGS_FILE, 'w') as f:
+            json.dump(settings, f, indent=4)
 
-    tray_state_action = QAction(f'Detection state: {"Paused" if paused else "Active"}', menu)
-    tray_state_action.setEnabled(False)
-    menu.addAction(tray_state_action)
+    def read_current_mode(self):
+        file_path = self.get_mode_file_path()
+        return Mode.GAMEMODE if os.path.exists(file_path) else Mode.DESKTOP
 
-    menu.addSeparator()
+    def get_mode_file_path(self):
+        app_data_folder = os.path.join(os.environ['APPDATA'], 'BigPictureTV')
+        if not os.path.exists(app_data_folder):
+            os.makedirs(app_data_folder)
+        return os.path.join(app_data_folder, 'current_mode.txt')
 
-    if paused:
-        pause_resume_action = QAction('Resume detection', menu)
-    else:
-        pause_resume_action = QAction('Pause detection', menu)
-    pause_resume_action.triggered.connect(toggle_detection)
-    menu.addAction(pause_resume_action)
+    def switch_mode(self, mode):
+        disabled_audio = self.ui.disableAudioCheckbox.isChecked()
 
-    settings_action = QAction('Settings', menu)
-    settings_action.triggered.connect(open_settings_window)
-    menu.addAction(settings_action)
+        if mode == Mode.GAMEMODE:
+            self.switch_screen(self.gamemode_screen)
+            if not disabled_audio:
+                self.switch_audio(self.gamemode_audio)
+            self.current_mode = Mode.GAMEMODE
+        else:
+            self.switch_screen(self.desktop_screen)
+            if not disabled_audio:
+                self.switch_audio(self.desktop_audio)
+            self.current_mode = Mode.DESKTOP
 
-    exit_action = QAction('Exit', menu)
-    exit_action.triggered.connect(exit_application)
-    menu.addAction(exit_action)
+        self.write_current_mode(self.current_mode)
 
-    return menu
+        if self.tray_icon:
+            self.update_tray_icon_menu()
 
-def update_tray_icon_menu():
-    global tray_icon
-    if tray_icon:
-        tray_icon.setContextMenu(create_menu(current_mode, paused=paused))
+    def switch_screen(self, mode):
+        subprocess.run(["DisplaySwitch.exe", str(mode)])
 
-def is_bigpicture_running():
-    return any(all(word in window_title for word in constants['BIG_PICTURE_KEYWORDS'])
-               for window_title in gw.getAllTitles())
-
-def get_mode_file_path():
-    app_data_folder = os.path.join(os.environ['APPDATA'], 'BigPictureTV')
-    if not os.path.exists(app_data_folder):
-        os.makedirs(app_data_folder)
-    return os.path.join(app_data_folder, 'current_mode.txt')
-
-def write_current_mode(current_mode):
-    file_path = get_mode_file_path()
-
-    if current_mode == Mode.GAMEMODE:
-        with open(file_path, 'w'):
-            pass
-    elif current_mode == Mode.DESKTOP:
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-def read_current_mode():
-    file_path = get_mode_file_path()
-    return Mode.GAMEMODE if os.path.exists(file_path) else Mode.DESKTOP
-
-def exit_application():
-    QApplication.quit()
-
-def create_tray_icon(current_mode):
-    global tray_icon
-    tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
-    tray_icon.setToolTip('BigPictureTV')
-
-    menu = create_menu(current_mode, paused=paused)
-    tray_icon.setContextMenu(menu)
-    tray_icon.show()
-
-    return tray_icon
-
-def open_settings_window():
-    global settings_window
-
-    if settings_window is None:
-        settings_window = SettingsWindow()
-    if not settings_window.isVisible():
-        settings_window.show()
-    settings_window.raise_()
-    settings_window.activateWindow()
-
-def is_audio_device_cmdlets_installed():
-    try:
+    def is_audio_device_cmdlets_installed(self):
         cmd = 'powershell "Get-Module -ListAvailable -Name AudioDeviceCmdlets"'
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
         if "AudioDeviceCmdlets" in result.stdout:
             return True
-        return False
-    except Exception as e:
-        print(f"Error checking AudioDeviceCmdlets installation: {e}")
-        return False
-
-class SettingsWindow(QMainWindow, Ui_MainWindow):
-    checkRateChanged = pyqtSignal(int)
-    def __init__(self):
-        super().__init__()
-
-        self.constants_path = SETTINGS_FILE
-        self.setupUi(self)
-        self.setWindowTitle("BigPictureTV - Settings")
-        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
-        self.setFixedSize(self.size())
-
-        self.constants = load_constants()
-        self.load_settings()
-
-        self.saveButton.clicked.connect(self.save_settings)
-
-        self.startupCheckBox.setChecked(self.is_startup_shortcut_exist())
-        self.startupCheckBox.stateChanged.connect(self.handle_startup_checkbox)
-
-        self.disableAudioCheckbox.stateChanged.connect(self.toggle_audio_fields)
-        self.helpButton.clicked.connect(self.open_help_dialog)
-        self.audioInstallButton.clicked.connect(self.install_audio_device_cmdlets)
-
-        self.checkRateSpinBox.valueChanged.connect(self.update_check_rate)
-        check_rate = self.constants.get('CheckRate', 1000)
-        self.checkRateSpinBox.setValue(check_rate)
-
-        if is_audio_device_cmdlets_installed():
-            self.audioInstallButton.setText("AudioDeviceCmdlets Installed")
-            self.audioInstallButton.setEnabled(False)
         else:
-            self.disableAudioCheckbox.setEnabled(False)
-            self.desktopEntry.setEnabled(False)
-            self.gamemodeEntry.setEnabled(False)
+            self.ui.disableAudioCheckbox.setChecked(True)
+            self.ui.disableAudioCheckbox.setEnabled(False)
+            self.ui.desktopEntry.setEnabled(False)
+            self.ui.desktopLabel.setEnabled(False)
+            self.ui.gamemodeEntry.setEnabled(False)
+            self.ui.gamemodeLabel.setEnabled(False)
+            return False
 
-        disable_audio = self.constants.get('DisableAudioSwitch', False)
-        self.disableAudioCheckbox.setChecked(disable_audio)
+    def get_audio_devices(self):
+        cmd = "powershell Get-AudioDevice -list"
+        output = subprocess.check_output(cmd, shell=True, text=True)
+        devices = re.findall(r'Index\s+:\s+(\d+)\s+.*?Name\s+:\s+(.*?)\s+ID\s+:\s+{(.*?)}', output, re.DOTALL)
+        return devices
+    
+    def set_audio_device(self, device_name, devices):
+        device_words = device_name.lower().split()
 
-    def update_check_rate(self, value):
-        self.constants['CheckRate'] = value
-        self.checkRateChanged.emit(value)
+        for index, name, _ in devices:
+            lower_name = name.lower()
+            if all(word in lower_name for word in device_words):
+                cmd = f"powershell set-audiodevice -index {index}"
+                result = subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return result.returncode == 0
+        return False
+
+    def switch_audio(self, audio_output):
+        devices = self.get_audio_devices()
+        success = self.set_audio_device(audio_output, devices)
+
+        retries = 0
+        while not success and retries < 10:
+            print("Failed to switch audio, retrying...")
+            time.sleep(1)
+            success = self.set_audio_device(audio_output, devices)
+            retries += 1
+
+        if not success:
+            print("Failed to switch audio after 10 attempts.")
+
+    def read_stream_status(self):
+        file_path = os.path.join(os.environ['APPDATA'], "sunshine-status", "status.txt")
+        return os.path.exists(file_path)
+    
+    def update_mode(self):
+        print('Checking mode...')
+        if self.is_bigpicture_running() and self.current_mode != Mode.GAMEMODE and not self.read_stream_status():
+            self.switch_mode(Mode.GAMEMODE)
+        elif not self.is_bigpicture_running() and self.current_mode != Mode.DESKTOP:
+            self.switch_mode(Mode.DESKTOP)
+
+    def update_mode_timer_interval(self, check_rate):
+        timer_interval = check_rate
+        self.timer.setInterval(timer_interval)
+        self.timer.start()
+
+    def create_tray_icon(self):
+        tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
+        tray_icon.setToolTip('BigPictureTV')
+        menu = self.create_menu()
+        tray_icon.setContextMenu(menu)
+        tray_icon.show()
+        return tray_icon
+
+    def create_menu(self):
+        menu = QMenu()
+
+        mode_action = QAction(f'Current mode: {self.current_mode.name}', menu)
+        mode_action.setEnabled(False)
+        menu.addAction(mode_action)
+
+        tray_state_action = QAction(f'Detection state: {"Paused" if self.paused else "Active"}', menu)
+        tray_state_action.setEnabled(False)
+        menu.addAction(tray_state_action)
+
+        menu.addSeparator()
+
+        if self.paused:
+            pause_resume_action = QAction('Resume detection', menu)
+        else:
+            pause_resume_action = QAction('Pause detection', menu)
+        pause_resume_action.triggered.connect(self.toggle_detection)
+        menu.addAction(pause_resume_action)
+
+        settings_action = QAction('Settings', menu)
+        settings_action.triggered.connect(self.show)
+        menu.addAction(settings_action)
+
+        exit_action = QAction('Exit', menu)
+        exit_action.triggered.connect(QApplication.quit)
+        menu.addAction(exit_action)
+
+        return menu
+
+    def update_tray_icon_menu(self):
+        if self.tray_icon:
+            self.tray_icon.setContextMenu(self.create_menu())
+
+    def is_bigpicture_running(self):
+        return any(all(word in window_title for word in self.bigpicture_keywords)
+                   for window_title in gw.getAllTitles())
+
+    def write_current_mode(self, current_mode):
+        file_path = self.get_mode_file_path()
+        if current_mode == Mode.GAMEMODE:
+            with open(file_path, 'w'):
+                pass
+        elif current_mode == Mode.DESKTOP:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+
+    def toggle_detection(self):
+        self.paused = not self.paused
+
+        if self.paused:
+            self.timer.stop()
+            self.tray_icon.setToolTip('BigPictureTV (Paused)')
+            self.update_tray_icon_menu()
+        else:
+            self.timer.start()
+            self.tray_icon.setToolTip('BigPictureTV')
+            self.update_tray_icon_menu()
 
     def closeEvent(self, event):
         event.ignore()
         self.hide()
 
-    def toggle_audio_fields(self, state):
-        if state == 2:
-            self.desktopEntry.setEnabled(False)
-            self.gamemodeEntry.setEnabled(False)
-        elif state == 0:
-            self.desktopEntry.setEnabled(True)
-            self.gamemodeEntry.setEnabled(True)
-
-    def load_settings(self):
-        self.constants = load_constants()
-        self.steamEntry.setText(' '.join(self.constants['BIG_PICTURE_KEYWORDS']))
-        self.desktopEntry.setText(self.constants['DESKTOP_AUDIO'])
-        self.gamemodeEntry.setText(self.constants['GAMEMODE_AUDIO'])
-        
-        disable_audio = self.constants.get('DisableAudioSwitch', False)
-        self.disableAudioCheckbox.setChecked(disable_audio)
-
-        check_rate = self.constants.get('CheckRate', 1000)
-        self.checkRateSpinBox.setValue(check_rate)
-
-        self.desktopEntry.setEnabled(not disable_audio)
-        self.gamemodeEntry.setEnabled(not disable_audio)
-
-    def save_settings(self):
-        self.constants['BIG_PICTURE_KEYWORDS'] = self.steamEntry.text().split()
-        self.constants['DESKTOP_AUDIO'] = self.desktopEntry.text()
-        self.constants['GAMEMODE_AUDIO'] = self.gamemodeEntry.text()
-        self.constants['DisableAudioSwitch'] = self.disableAudioCheckbox.isChecked()
-        self.constants['CheckRate'] = self.checkRateSpinBox.value()
-
-        try:
-            with open(self.constants_path, 'w') as f:
-                json.dump(self.constants, f, indent=4)
-            QMessageBox.information(self, 'Success', 'Settings saved successfully.')
-            self.hide()
-        except Exception as e:
-            QMessageBox.critical(self, 'Error', f'Failed to save settings: {e}')
-
-    def open_help_dialog(self):
-        dialog = HelpDialog()
-        dialog.exec()
-
-    def handle_startup_checkbox(self, state):
-        if state == 2:
-            self.create_startup_shortcut()
-        elif state == 0:
-            self.remove_startup_shortcut()
-
-    def create_startup_shortcut(self):
-        try:
+    def manage_startup_shortcut(self, state):
+        if state:
             print('Creating startup shortcut...')
             target_path = os.path.join(os.getcwd(), 'BigPictureTV.exe')
             startup_folder = winshell.startup()
             shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
             working_directory = os.path.dirname(target_path)
-
             winshell.CreateShortcut(
                 Path=shortcut_path,
                 Target=target_path,
@@ -325,108 +323,29 @@ class SettingsWindow(QMainWindow, Ui_MainWindow):
                 StartIn=working_directory
             )
 
-        except Exception as e:
-            QMessageBox.critical(self, 'Error', f'Failed to create startup shortcut: {e}')
-            print(f'Failed to create startup shortcut: {e}')
-
-    def remove_startup_shortcut(self):
-        try:
+        else: 
             startup_folder = winshell.startup()
             shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
             if os.path.exists(shortcut_path):
                 os.remove(shortcut_path)
-        except Exception as e:
-            QMessageBox.critical(self, 'Error', f'Failed to remove startup shortcut: {e}')
-            print(f'Failed to remove startup shortcut: {e}')
 
-
-    def is_startup_shortcut_exist(self):
+    def check_startup_shortcut(self):
         startup_folder = winshell.startup()
         shortcut_path = os.path.join(startup_folder, 'BigPictureTV.lnk')
         return os.path.exists(shortcut_path)
- 
-    def install_audio_device_cmdlets(self):
-        try:
-            self.audioInstallButton.setText("Installing...")
-            self.audioInstallButton.setEnabled(False)
-            cmd = 'powershell Install-Module -Name AudioDeviceCmdlets -Scope CurrentUser -Force -AllowClobber'
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-            if result.returncode == 0:
-                QMessageBox.information(self, 'Success', 'AudioDeviceCmdlets installed successfully.')
-                self.audioInstallButton.setText("AudioDeviceCmdlets Installed")
-                self.audioInstallButton.setEnabled(False)
-                self.disableAudioCheckbox.setEnabled(True)
-                self.desktopEntry.setEnabled(True)
-                self.gamemodeEntry.setEnabled(True)
-            else:
-                QMessageBox.critical(self, 'Error', 'Failed to install AudioDeviceCmdlets. See the console for more details.')
-                print(result.stderr)
-                self.audioInstallButton.setEnabled(True)
-                self.audioInstallButton.setText("Install AudioDeviceCmdlets")
-        except Exception as e:
-            QMessageBox.critical(self, 'Error', f'Failed to install AudioDeviceCmdlets: {e}')
-            self.audioInstallButton.setEnabled(True)
-            self.audioInstallButton.setText("Install AudioDeviceCmdlets")
-
-class HelpDialog(QDialog, Ui_Dialog):
+    
+class HelpDialog(QDialog):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
-        self.setWindowTitle("Help")
-
-        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
-        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
-        self.closeButton.clicked.connect(self.close)
-        self.setFixedSize(self.size())
-
-def toggle_detection():
-    global paused
-    paused = not paused
-
-    if paused:
-        timer.stop()
-        tray_icon.setToolTip('BigPictureTV (Paused)')
-        update_tray_icon_menu()
-    else:
-        timer.start()
-        tray_icon.setToolTip('BigPictureTV')
-        update_tray_icon_menu()
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        self.ui.closeButton.clicked.connect(self.close)
 
 if __name__ == '__main__':
     shared_memory = QSharedMemory('BigPictureTVSharedMemory')
-
     if shared_memory.attach() or not shared_memory.create(1):
         sys.exit(0)
 
     app = QApplication(sys.argv)
-    current_mode = read_current_mode()
-    constants = load_constants()
-
-    if current_mode != Mode.DESKTOP:
-        switch_mode(Mode.DESKTOP)
-
-    tray_icon = create_tray_icon(current_mode)
-
-    timer = QTimer()
-
-    def update_mode_timer_interval(check_rate):
-        timer_interval = check_rate
-        timer.setInterval(timer_interval)
-        timer.start()
-
-    settings_window = SettingsWindow()
-    settings_window.checkRateChanged.connect(update_mode_timer_interval)
-
-    timer.timeout.connect(lambda: (
-        switch_mode(Mode.GAMEMODE) if is_bigpicture_running() and current_mode != Mode.GAMEMODE and not read_stream_status() else None,
-        switch_mode(Mode.DESKTOP) if not is_bigpicture_running() and current_mode != Mode.DESKTOP else None
-    ))
-
-    initial_check_rate = constants.get('CheckRate', 1000)
-    update_mode_timer_interval(initial_check_rate)
-
-    if first_run:
-        settings_window.show()
-        first_run = False
-    
+    big_picture_tv = BigPictureTV()
     sys.exit(app.exec())
