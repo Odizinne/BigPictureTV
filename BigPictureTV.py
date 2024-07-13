@@ -25,6 +25,8 @@ class BigPictureTV(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.setWindowTitle('BigPictureTV')
+        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
         self.tray_icon = None
         self.current_mode = None
         self.gamemode_audio = None
