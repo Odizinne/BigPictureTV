@@ -32,7 +32,8 @@ Make sure you installed required dependencies.<br/>
 
 - Clone this repository `git clone git@github.com:Odizinne/BigPictureTV.git`.<br/>
 - Move inside the source directory `cd BigPictureTV\src`.<br/>
-- Build the executable `python setup.py build`.
+- Build the executable: `python src\setup.py build`
+- Install directory and create startup shortcut: `python .\src\setup.py install`
 
 ## Todo
 
