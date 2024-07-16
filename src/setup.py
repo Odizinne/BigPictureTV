@@ -1,19 +1,28 @@
+import os
 from cx_Freeze import setup, Executable
 
+src_dir = os.path.dirname(os.path.abspath(__file__))
 build_dir = "build/BigPictureTV"
-base = "Win32GUI"
-system_icon = "icons/steamos-logo.ico"
+
+include_files = [
+    os.path.join(src_dir, "icons")
+]
 
 zip_include_packages = ['PyQt6', 'winshell', 'PyGetWindow', 'pywin32']
 
 build_exe_options = {
-    "include_files": [('icons/steamos-logo.png', 'icons/steamos-logo.png')],
+    "include_files": include_files,
     "build_exe": build_dir,
     "zip_include_packages": zip_include_packages,   
 }
 
 executables = [
-    Executable('BigPictureTV.py', base=base, icon=system_icon)
+    Executable(
+        script = os.path.join(src_dir, 'BigPictureTV.py'), 
+        base = "Win32GUI", 
+        icon = os.path.join(src_dir, "icons/steamos-logo.ico"),
+        target_name = "BigpictureTV"
+    )
 ]
 
 setup(
