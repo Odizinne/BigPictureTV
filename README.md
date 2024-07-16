@@ -20,10 +20,10 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 ## Build
 
 - Install Python.
-- Clone this repository: `git clone git@github.com:Odizinne/BigPictureTV.git`.<br/>
-- CD inside the cloned directory: `cd BigPictureTV`.<br/>
+- Clone this repository: `git clone git@github.com:Odizinne/BigPictureTV.git`<br/>
+- CD inside the cloned directory: `cd BigPictureTV`<br/>
 - Install dependencies: `pip install -r requirements.txt`
-- Build the executable: `python src\setup.py build`.<br/>
+- Build the executable: `python src\setup.py build`<br/>
 - Install directory and create startup shortcut: `python .\src\setup.py install`
 
 ## Todo
