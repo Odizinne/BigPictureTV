@@ -17,22 +17,13 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 **Runtime:**
 - [AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets) for audio output switching.
  
-**Build dependencies:**
-- Python
-- PyQt6 (Ui)
-- winshell (Startup shortcut manipulation)
-- pygetwindow (Big Picture window detection)
-- cx_freeze (Standalone exe creation)
-
-`pip install pyqt6 winshell pygetwindow cx_freeze pywin32`
-
 ## Build
 
-Make sure you installed required dependencies.<br/>
-
-- Clone this repository `git clone git@github.com:Odizinne/BigPictureTV.git`.<br/>
-- Move inside the source directory `cd BigPictureTV\src`.<br/>
-- Build the executable: `python src\setup.py build`
+- Install Python.
+- Clone this repository: `git clone git@github.com:Odizinne/BigPictureTV.git`.<br/>
+- CD inside the cloned directory: `cd BigPictureTV`.<br/>
+- Install dependencies: `pip install -r requirements.txt`
+- Build the executable: `python src\setup.py build`.<br/>
 - Install directory and create startup shortcut: `python .\src\setup.py install`
 
 ## Todo
