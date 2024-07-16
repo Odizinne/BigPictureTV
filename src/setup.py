@@ -11,12 +11,13 @@ include_files = [
     os.path.join(src_dir, "icons")
 ]
 
-zip_include_packages = ['PyQt6', 'winshell', 'PyGetWindow', 'pywin32']
+zip_include_packages = ['PyQt6']
 
 build_exe_options = {
     "include_files": include_files,
     "build_exe": build_dir,
-    "zip_include_packages": zip_include_packages,   
+    "zip_include_packages": zip_include_packages,
+    "excludes": ["tkinter"]
 }
 
 executables = [

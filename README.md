@@ -24,7 +24,7 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 - pygetwindow (Big Picture window detection)
 - cx_freeze (Standalone exe creation)
 
-`pip install pyqt6 winshell pygetwindow cx_freeze`
+`pip install pyqt6 winshell pygetwindow cx_freeze pywin32`
 
 ## Build
 
