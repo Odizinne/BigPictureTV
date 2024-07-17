@@ -25,7 +25,3 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 - Install dependencies: `pip install -r requirements.txt`
 - Build the executable: `python src\setup.py build`<br/>
 - Install directory and create startup shortcut: `python .\src\setup.py install`
-
-## Todo
-
-- code cleanup
