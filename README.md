@@ -3,22 +3,29 @@
 This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
 *Looking for the [linux version](https://github.com/Odizinne/BigpictureTV-Linux)?*
 
-⚠️This application is designed for dual screen setup (monitor + TV)⚠️  
-It might not work with more than 2 screens 
-
-![image](https://github.com/user-attachments/assets/890e2c2a-5302-4ee3-b212-a2ba0dbe8a39)
-
-## Download
-
-Head to [release](https://github.com/Odizinne/BigPictureTV/releases/latest) section and grab the latest one.
-
-Place the directory wherever you like (`%localappdata%\Programs` is a good one)
+![image](assets/screenshot.png)
 
 ## Requirements
 
 **Runtime:**
 - [AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets) for audio output switching.
  
+## Download
+
+Head to [release](https://github.com/Odizinne/BigPictureTV/releases/latest) section and grab the latest one.
+
+Place the directory wherever you like (`%localappdata%\Programs` is a good one)
+
+## Usage
+
+Specify your audio and video outputs for both modes.  
+For audio, you can use a short name. BigPictureTV will try to find the correct audio output from keywords.
+
+Make sure Steam Big Picture Keywords correspond to your steam language.  
+If it does not, replace it with keywords from Big Picture window title. ignore symbols such as ":".
+
+You're all set! Close the settings window, BigPictureTV will run in background and switch audio and video to the one you choosed when Big Picture window is found.
+
 ## Build
 
 - Install Python.
