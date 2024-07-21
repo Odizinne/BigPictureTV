@@ -1,8 +1,10 @@
 # BigPictureTV
 
-This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.
+This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
+*Looking for the [linux version](https://github.com/Odizinne/BigpictureTV-Linux)?*
 
-⚠️This application is designed for dual screen setup (monitor + TV). It might not work with more than 2 screens⚠️  
+⚠️This application is designed for dual screen setup (monitor + TV)⚠️  
+It might not work with more than 2 screens 
 
 ![image](https://github.com/user-attachments/assets/890e2c2a-5302-4ee3-b212-a2ba0dbe8a39)
 
