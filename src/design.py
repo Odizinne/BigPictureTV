@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '.\ui\design.ui'
+# Form implementation generated from reading ui file '.\src\ui\design.ui'
 #
 # Created by: PyQt6 UI code generator 6.7.0
 #
@@ -97,6 +97,7 @@ class Ui_MainWindow(object):
         self.checkRateSpinBox.setFrame(False)
         self.checkRateSpinBox.setMinimum(1)
         self.checkRateSpinBox.setMaximum(1000)
+        self.checkRateSpinBox.setProperty("value", 1000)
         self.checkRateSpinBox.setObjectName("checkRateSpinBox")
         self.gridLayout_5.addWidget(self.checkRateSpinBox, 3, 2, 1, 1)
         self.label_6 = QtWidgets.QLabel(parent=self.gridFrame2)
