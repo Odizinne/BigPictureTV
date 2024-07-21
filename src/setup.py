@@ -8,7 +8,8 @@ build_dir = "build/BigPictureTV"
 install_dir = os.path.join(os.getenv('LOCALAPPDATA'), 'programs', 'BigPictureTV')
 
 include_files = [
-    os.path.join(src_dir, "icons")
+    os.path.join(src_dir, "icons"),
+    os.path.join(src_dir, "dependencies")
 ]
 
 zip_include_packages = ['PyQt6']
@@ -24,7 +25,7 @@ executables = [
     Executable(
         script = os.path.join(src_dir, 'BigPictureTV.py'), 
         base = "Win32GUI", 
-        icon = os.path.join(src_dir, "icons/steamos-logo.ico"),
+        icon = os.path.join(src_dir, "icons/icon.ico"),
         target_name = "BigpictureTV"
     )
 ]
@@ -45,7 +46,7 @@ class InstallCommand(_install):
 
         shortcut_path = os.path.join(winshell.programs(), "BigPictureTV.lnk")
         target = os.path.join(install_dir, "BigPictureTV.exe")
-        icon = os.path.join(src_dir, "icons/steamos-logo.ico")
+        icon = os.path.join(src_dir, "icons/icon.ico")
 
         winshell.CreateShortcut(
             Path=shortcut_path,
