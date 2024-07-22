@@ -27,7 +27,8 @@ class BigPictureTV(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle('BigPictureTV - Settings')
-        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, 'steamos-logo.png')))
+        self.icon = "light" if darkdetect.isDark() else "dark"
+        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, f'icon_desktop_{self.icon}.png')))
         self.tray_icon = None
         self.current_mode = None
         self.settings = {}
