@@ -33,6 +33,7 @@ class BigPictureTV(QMainWindow):
         self.settings = {}
         self.first_run = False
         self.paused = False
+        self.use_displayswitch = False
         self.timer = QTimer()
         self.gamemode_screen = "/external"
         self.desktop_screen = "/internal"
@@ -53,13 +54,14 @@ class BigPictureTV(QMainWindow):
     def initialize_ui(self):
         self.ui.disableAudioCheckbox.stateChanged.connect(self.on_disableAudioCheckbox_stateChanged)
         self.ui.startupCheckBox.stateChanged.connect(self.on_startupCheckBox_stateChanged)
-        self.ui.steamEntry.textChanged.connect(self.on_settings_changed)
-        self.ui.gamemodeEntry.textChanged.connect(self.on_settings_changed)
-        self.ui.desktopEntry.textChanged.connect(self.on_settings_changed)
-        self.ui.checkRateSpinBox.valueChanged.connect(self.on_settings_changed)
+        self.ui.steamEntry.textChanged.connect(self.save_settings)
+        self.ui.gamemodeEntry.textChanged.connect(self.save_settings)
+        self.ui.desktopEntry.textChanged.connect(self.save_settings)
+        self.ui.checkRateSpinBox.valueChanged.connect(self.save_settings)
         self.ui.startupCheckBox.setChecked(self.check_startup_shortcut())
-        self.ui.desktopVideoBox.currentIndexChanged.connect(self.on_settings_changed)
-        self.ui.gamemodeVideoBox.currentIndexChanged.connect(self.on_settings_changed)
+        self.ui.desktopVideoBox.currentIndexChanged.connect(self.save_settings)
+        self.ui.gamemodeVideoBox.currentIndexChanged.connect(self.save_settings)
+        self.ui.displayswitchBox.stateChanged.connect(self.on_displayswitchBox_stateChanged)
 
         self.apply_settings()
 
@@ -96,6 +98,11 @@ class BigPictureTV(QMainWindow):
             self.ui.gamemodeVideoBox.addItem(monitor_name, monitor_id)
             self.ui.desktopVideoBox.addItem(monitor_name, monitor_id)
 
+    def on_displayswitchBox_stateChanged(self):
+        self.use_displayswitch = self.ui.displayswitchBox.isChecked()
+        self.toggle_video_settings(not self.use_displayswitch)
+        self.save_settings()
+
     def on_disableAudioCheckbox_stateChanged(self, state):
         self.toggle_audio_settings(not state)
         self.save_settings()
@@ -103,14 +110,17 @@ class BigPictureTV(QMainWindow):
     def on_startupCheckBox_stateChanged(self, state):
         self.manage_startup_shortcut(state)
 
-    def on_settings_changed(self):
-        self.save_settings()
-
     def toggle_audio_settings(self, enabled):
         self.ui.desktopEntry.setEnabled(enabled)
         self.ui.desktopLabel.setEnabled(enabled)
         self.ui.gamemodeEntry.setEnabled(enabled)
         self.ui.gamemodeLabel.setEnabled(enabled)
+
+    def toggle_video_settings(self, enabled):
+        self.ui.desktopVideoBox.setEnabled(enabled)
+        self.ui.gamemodeVideoBox.setEnabled(enabled)
+        self.ui.desktopVideoLabel.setEnabled(enabled)
+        self.ui.gamemodeVideoLabel.setEnabled(enabled)
 
     def create_default_settings(self):
         self.settings = {
@@ -144,6 +154,9 @@ class BigPictureTV(QMainWindow):
 
         gamemode_monitor = self.settings.get('GAMEMODE_MONITOR', '')
         desktop_monitor = self.settings.get('DESKTOP_MONITOR', '')
+        self.use_displayswitch = self.settings.get('UseDisplaySwitch', False)
+        self.ui.displayswitchBox.setChecked(self.use_displayswitch)
+        self.toggle_video_settings(not self.use_displayswitch)
 
         index = self.ui.gamemodeVideoBox.findText(gamemode_monitor)
         if index != -1:
@@ -161,7 +174,8 @@ class BigPictureTV(QMainWindow):
             "DisableAudioSwitch": self.ui.disableAudioCheckbox.isChecked(),
             "CheckRate": self.ui.checkRateSpinBox.value(),
             "GAMEMODE_MONITOR": self.ui.gamemodeVideoBox.currentText(),
-            "DESKTOP_MONITOR": self.ui.desktopVideoBox.currentText()
+            "DESKTOP_MONITOR": self.ui.desktopVideoBox.currentText(),
+            "UseDisplaySwitch": self.ui.displayswitchBox.isChecked()
         }
         os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
         with open(SETTINGS_FILE, 'w') as f:
@@ -190,6 +204,12 @@ class BigPictureTV(QMainWindow):
             self.update_tray_icon()
 
     def switch_screen(self, mode):
+        if self.use_displayswitch:
+            print("Using displayswitch.exe to switch screens")
+            mode == "/external" if Mode.GAMEMODE else "/internal"
+            subprocess.run(["displayswitch.exe", mode], check=True)
+            return
+
         selected_monitor_id = None
         if mode == self.gamemode_screen:
             selected_monitor_id = self.ui.gamemodeVideoBox.currentData()
