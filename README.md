@@ -19,7 +19,9 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 ## Usage
 
 Specify your audio and video outputs for both modes.  
-For audio, you can use a short name. BigPictureTV will try to find the correct audio output from keywords.
+If you have a two monitors setup (Main monitor + TV), i do recommend you check `Use old screen switch` and do not bother with manual screen select.
+
+For audio, you can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
 Make sure Steam Big Picture Keywords correspond to your steam language.  
 If it does not, replace it with keywords from Big Picture window title. ignore symbols such as ":".
@@ -34,3 +36,6 @@ You're all set! Close the settings window, BigPictureTV will run in background a
 - Install dependencies: `pip install -r requirements.txt`
 - Build the executable: `python src\setup.py build`<br/>
 - Install directory and create startup shortcut: `python .\src\setup.py install`
+
+## To-do
+- Autodetect steam language
