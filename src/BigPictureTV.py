@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow, Q
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import QTimer, QSharedMemory
 from design import Ui_MainWindow
+from color_utils import set_frame_color_based_on_window
 
 SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "BigPictureTV", "settings.json")
 ICONS_FOLDER = 'icons' if getattr(sys, 'frozen', False) else os.path.join(os.path.dirname(__file__), 'icons')
@@ -53,6 +54,9 @@ class BigPictureTV(QMainWindow):
             self.first_run = False
 
     def initialize_ui(self):
+        set_frame_color_based_on_window(self, self.ui.settingsFrame)
+        set_frame_color_based_on_window(self, self.ui.videoFrame)
+        set_frame_color_based_on_window(self, self.ui.audioFrame)
         self.ui.disableAudioCheckbox.stateChanged.connect(self.on_disableAudioCheckbox_stateChanged)
         self.ui.startupCheckBox.stateChanged.connect(self.on_startupCheckBox_stateChanged)
         self.ui.steamEntry.textChanged.connect(self.save_settings)
@@ -364,5 +368,6 @@ if __name__ == '__main__':
     if shared_memory.attach() or not shared_memory.create(1):
         sys.exit(0)
     app = QApplication(sys.argv)
+    app.setStyle('Fusion')
     big_picture_tv = BigPictureTV()
     sys.exit(app.exec())
