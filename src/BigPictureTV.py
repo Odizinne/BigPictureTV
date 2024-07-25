@@ -72,7 +72,12 @@ class BigPictureTV(QMainWindow):
 
     def generate_monitor_list(self):
         output_file = os.path.join(os.environ['APPDATA'], "BigPictureTV", "monitors.txt")
-        subprocess.run([MULTIMONITORTOOL_PATH, "/stext", output_file], check=True)
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+        try:
+            subprocess.run([MULTIMONITORTOOL_PATH, "/stext", output_file], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"An error occurred while generating the monitor list: {e}")
 
     def parse_monitors(self):
         monitor_file = os.path.join(os.environ['APPDATA'], "BigPictureTV", "monitors.txt")
@@ -132,7 +137,8 @@ class BigPictureTV(QMainWindow):
             "GAMEMODE_AUDIO": "TV",
             "DESKTOP_AUDIO": "Headset",
             "DisableAudioSwitch": False,
-            "CheckRate": 1000
+            "CheckRate": 1000,
+            "UseDisplaySwitch": True,
         }
         self.apply_settings()
         self.save_settings()
@@ -157,7 +163,7 @@ class BigPictureTV(QMainWindow):
 
         gamemode_monitor = self.settings.get('GAMEMODE_MONITOR', '')
         desktop_monitor = self.settings.get('DESKTOP_MONITOR', '')
-        self.use_displayswitch = self.settings.get('UseDisplaySwitch', False)
+        self.use_displayswitch = self.settings.get('UseDisplaySwitch', True)
         self.ui.displayswitchBox.setChecked(self.use_displayswitch)
         self.toggle_video_settings(not self.use_displayswitch)
 

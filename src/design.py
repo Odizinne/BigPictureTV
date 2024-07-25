@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '.\src\ui\design.ui'
+# Form implementation generated from reading ui file '.\ui\design.ui'
 #
 # Created by: PyQt6 UI code generator 6.7.0
 #
@@ -116,6 +116,7 @@ class Ui_MainWindow(object):
         self.displayswitchBox.setMinimumSize(QtCore.QSize(0, 25))
         self.displayswitchBox.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
         self.displayswitchBox.setText("")
+        self.displayswitchBox.setChecked(True)
         self.displayswitchBox.setObjectName("displayswitchBox")
         self.gridLayout_5.addWidget(self.displayswitchBox, 2, 2, 1, 1)
         self.displayswitchLabel = QtWidgets.QLabel(parent=self.settingsFrame)
