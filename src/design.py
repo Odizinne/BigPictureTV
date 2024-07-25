@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '.\ui\design.ui'
+# Form implementation generated from reading ui file '.\src\ui\design.ui'
 #
 # Created by: PyQt6 UI code generator 6.7.0
 #
@@ -154,6 +154,13 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        MainWindow.setTabOrder(self.startupCheckBox, self.disableAudioCheckbox)
+        MainWindow.setTabOrder(self.disableAudioCheckbox, self.displayswitchBox)
+        MainWindow.setTabOrder(self.displayswitchBox, self.checkRateSpinBox)
+        MainWindow.setTabOrder(self.checkRateSpinBox, self.gamemodeEntry)
+        MainWindow.setTabOrder(self.gamemodeEntry, self.desktopEntry)
+        MainWindow.setTabOrder(self.desktopEntry, self.gamemodeVideoBox)
+        MainWindow.setTabOrder(self.gamemodeVideoBox, self.desktopVideoBox)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

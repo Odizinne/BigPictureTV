@@ -413,6 +413,16 @@ For 3 monitors or more, it is recommended to specify your outputs.</string>
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>startupCheckBox</tabstop>
+  <tabstop>disableAudioCheckbox</tabstop>
+  <tabstop>displayswitchBox</tabstop>
+  <tabstop>checkRateSpinBox</tabstop>
+  <tabstop>gamemodeEntry</tabstop>
+  <tabstop>desktopEntry</tabstop>
+  <tabstop>gamemodeVideoBox</tabstop>
+  <tabstop>desktopVideoBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
