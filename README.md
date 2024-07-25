@@ -3,6 +3,14 @@
 This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
 *Looking for the [linux version](https://github.com/Odizinne/BigpictureTV-Linux)?*
 
+**If you appreciate my work and would like to support me:**
+
+<a href="https://ko-fi.com/odizinne">
+  <img src="assets/kofi_button_red.png" alt="Ko-fi" width="200" height="auto">
+</a>
+
+## Overview
+
 ![image](assets/screenshot.png)
 
 ## Requirements
@@ -23,7 +31,9 @@ If you have a two monitors setup (Main monitor + TV), i do recommend you keep `l
 
 For audio, you can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
-You're all set! Close the settings window, BigPictureTV will run in background and switch audio and video to the one you choosed when Big Picture window is found.
+**You're all set!** You can now close the settings window.
+
+BigPictureTV will run in the background and perform audio and monitor switch as needed.
 
 ## Build
 
@@ -34,6 +44,7 @@ You're all set! Close the settings window, BigPictureTV will run in background a
 - Build the executable: `python src\setup.py build`<br/>
 - Install directory and create startup shortcut: `python .\src\setup.py install`
 
-## To-do
-- ~~Autodetect steam language~~
+## I found a bug
 
+Feel free to [open an issue](https://github.com/Odizinne/BigPictureTV/issues/new) in the repository.  
+Be sure to add as many information as possible to help me reproduce it!
