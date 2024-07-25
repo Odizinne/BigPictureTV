@@ -324,9 +324,15 @@ class BigPictureTV(QMainWindow):
             self.tray_icon.setIcon(QIcon(os.path.join(ICONS_FOLDER, f'icon_desktop_{theme}.png')))
 
     def is_bigpicture_running(self):
-        big_picture_window_title = get_big_picture_window_title()
-        return any(all(word in window_title for word in big_picture_window_title)
-                   for window_title in gw.getAllTitles())
+        big_picture_title = get_big_picture_window_title().lower()
+        big_picture_words = big_picture_title.split()
+        current_window_titles = [title.lower() for title in gw.getAllTitles()]
+
+        for window_title in current_window_titles:
+            if all(word in window_title for word in big_picture_words):
+                return True
+
+        return False
 
     def write_current_mode(self, current_mode):
         file_path = self.get_mode_file_path()
