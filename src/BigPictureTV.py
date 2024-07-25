@@ -13,6 +13,7 @@ from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import QTimer, QSharedMemory
 from design import Ui_MainWindow
 from color_utils import set_frame_color_based_on_window
+from steam_language_reader import get_big_picture_window_title
 
 SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "BigPictureTV", "settings.json")
 ICONS_FOLDER = 'icons' if getattr(sys, 'frozen', False) else os.path.join(os.path.dirname(__file__), 'icons')
@@ -59,7 +60,6 @@ class BigPictureTV(QMainWindow):
         set_frame_color_based_on_window(self, self.ui.audioFrame)
         self.ui.disableAudioCheckbox.stateChanged.connect(self.on_disableAudioCheckbox_stateChanged)
         self.ui.startupCheckBox.stateChanged.connect(self.on_startupCheckBox_stateChanged)
-        self.ui.steamEntry.textChanged.connect(self.save_settings)
         self.ui.gamemodeEntry.textChanged.connect(self.save_settings)
         self.ui.desktopEntry.textChanged.connect(self.save_settings)
         self.ui.checkRateSpinBox.valueChanged.connect(self.save_settings)
@@ -129,7 +129,6 @@ class BigPictureTV(QMainWindow):
 
     def create_default_settings(self):
         self.settings = {
-            "BIG_PICTURE_KEYWORDS": ["Steam", "mode", "Big", "Picture"],
             "GAMEMODE_AUDIO": "TV",
             "DESKTOP_AUDIO": "Headset",
             "DisableAudioSwitch": False,
@@ -150,7 +149,6 @@ class BigPictureTV(QMainWindow):
         self.apply_settings()
 
     def apply_settings(self):
-        self.ui.steamEntry.setText(' '.join(self.settings.get('BIG_PICTURE_KEYWORDS', [])))
         self.ui.gamemodeEntry.setText(self.settings.get('GAMEMODE_AUDIO', ''))
         self.ui.desktopEntry.setText(self.settings.get('DESKTOP_AUDIO', ''))
         self.ui.disableAudioCheckbox.setChecked(self.settings.get('DisableAudioSwitch', False))
@@ -173,7 +171,6 @@ class BigPictureTV(QMainWindow):
 
     def save_settings(self):
         self.settings = {
-            "BIG_PICTURE_KEYWORDS": self.ui.steamEntry.text().split(),
             "GAMEMODE_AUDIO": self.ui.gamemodeEntry.text(),
             "DESKTOP_AUDIO": self.ui.desktopEntry.text(),
             "DisableAudioSwitch": self.ui.disableAudioCheckbox.isChecked(),
@@ -321,7 +318,8 @@ class BigPictureTV(QMainWindow):
             self.tray_icon.setIcon(QIcon(os.path.join(ICONS_FOLDER, f'icon_desktop_{theme}.png')))
 
     def is_bigpicture_running(self):
-        return any(all(word in window_title for word in self.settings.get('BIG_PICTURE_KEYWORDS', []))
+        big_picture_window_title = get_big_picture_window_title()
+        return any(all(word in window_title for word in big_picture_window_title)
                    for window_title in gw.getAllTitles())
 
     def write_current_mode(self, current_mode):
