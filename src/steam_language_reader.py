@@ -53,6 +53,3 @@ def get_big_picture_window_title():
     else:
         return BIG_PICTURE_WINDOW_TITLES["english"]
 
-if __name__ == "__main__":
-    window_title = get_big_picture_window_title()
-    print(f"Steam Big Picture window title in the current language: {window_title}")
