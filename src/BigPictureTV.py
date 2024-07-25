@@ -12,7 +12,6 @@ from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow, Q
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import QTimer, QSharedMemory
 from design import Ui_MainWindow
-from color_utils import set_frame_color_based_on_window
 from steam_language_reader import get_big_picture_window_title
 
 SETTINGS_FILE = os.path.join(os.environ['APPDATA'], "BigPictureTV", "settings.json")
@@ -55,9 +54,6 @@ class BigPictureTV(QMainWindow):
             self.first_run = False
 
     def initialize_ui(self):
-        set_frame_color_based_on_window(self, self.ui.settingsFrame)
-        set_frame_color_based_on_window(self, self.ui.videoFrame)
-        set_frame_color_based_on_window(self, self.ui.audioFrame)
         self.ui.disableAudioCheckbox.stateChanged.connect(self.on_disableAudioCheckbox_stateChanged)
         self.ui.startupCheckBox.stateChanged.connect(self.on_startupCheckBox_stateChanged)
         self.ui.gamemodeEntry.textChanged.connect(self.save_settings)
@@ -125,12 +121,14 @@ class BigPictureTV(QMainWindow):
         self.ui.desktopLabel.setEnabled(enabled)
         self.ui.gamemodeEntry.setEnabled(enabled)
         self.ui.gamemodeLabel.setEnabled(enabled)
+        self.ui.audioOutputLabel.setEnabled(enabled)
 
     def toggle_video_settings(self, enabled):
         self.ui.desktopVideoBox.setEnabled(enabled)
         self.ui.gamemodeVideoBox.setEnabled(enabled)
         self.ui.desktopVideoLabel.setEnabled(enabled)
         self.ui.gamemodeVideoLabel.setEnabled(enabled)
+        self.ui.videoOutputLabel.setEnabled(enabled)
 
     def create_default_settings(self):
         self.settings = {
@@ -378,6 +376,5 @@ if __name__ == '__main__':
     if shared_memory.attach() or not shared_memory.create(1):
         sys.exit(0)
     app = QApplication(sys.argv)
-    app.setStyle('Fusion')
     big_picture_tv = BigPictureTV()
     sys.exit(app.exec())

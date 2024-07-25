@@ -19,7 +19,7 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 ## Usage
 
 Specify your audio and video outputs for both modes.  
-If you have a two monitors setup (Main monitor + TV), i do recommend you keep `Use old screen switch` checked and do not bother with manual screen select.
+If you have a two monitors setup (Main monitor + TV), i do recommend you keep `legacy screen control` checked and do not bother with manual screen select.
 
 For audio, you can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
