@@ -23,12 +23,13 @@ build_exe_options = {
 
 executables = [
     Executable(
-        script = os.path.join(src_dir, 'BigPictureTV.py'), 
-        base = "Win32GUI", 
-        icon = os.path.join(src_dir, "icons/icon.ico"),
-        target_name = "BigpictureTV"
+        script=os.path.join(src_dir, 'BigPictureTV.py'),
+        base="Win32GUI",
+        icon=os.path.join(src_dir, "icons/icon.ico"),
+        target_name="BigpictureTV"
     )
 ]
+
 
 class InstallCommand(_install):
     def run(self):
@@ -57,6 +58,7 @@ class InstallCommand(_install):
         )
 
         print("Created shortcut in start menu")
+
 
 setup(
     name='BigPictureTV',
