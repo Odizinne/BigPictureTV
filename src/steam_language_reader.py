@@ -33,6 +33,7 @@ BIG_PICTURE_WINDOW_TITLES = {
     "ukrainian": "Steam у режимі Big Picture"
 }
 
+
 def get_steam_language():
     try:
         key_path = r"Software\Valve\Steam\steamglobal"
@@ -45,6 +46,7 @@ def get_steam_language():
     except Exception as e:
         print(f"An error occurred while accessing the registry: {e}")
         return None
+
 
 def get_big_picture_window_title():
     language = get_steam_language()
