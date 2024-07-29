@@ -26,23 +26,24 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
 ## Usage
 
-Specify your audio and video outputs for both modes.  
-If you have a two monitors setup (Main monitor + TV), i do recommend you keep `legacy screen control` checked and do not bother with manual screen select.
 
-For audio, you can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
+If you have a two monitors setup (Main monitor + TV), i do recommend you uncheck `Do not use displayswitch`.  
+displayswitch.exe will automatically disable your primary monitor and enable your external monitor.
+
+If you have more than two monitors, you'll need to check it, and select your preferred monitor in Steam Big Picture settings.  
+
+Specify your audio outputs.  
+You can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
 **You're all set!** You can now close the settings window.
-
-BigPictureTV will run in the background and perform audio and monitor switch as needed.
 
 ## Build
 
 - Install Python.
-- Clone this repository: `git clone git@github.com:Odizinne/BigPictureTV.git`<br/>
+- Clone this repository: `git clone https://github.com/Odizinne/BigPictureTV.git`<br/>
 - CD inside the cloned directory: `cd BigPictureTV`<br/>
 - Install dependencies: `pip install -r requirements.txt`
 - Build the executable: `python src\setup.py build`<br/>
-- Install directory and create startup shortcut: `python .\src\setup.py install`
 
 ## I found a bug
 
