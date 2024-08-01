@@ -26,14 +26,13 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
 ## Usage
 
-
-If you have a two monitors setup (Main monitor + TV), i do recommend you uncheck `Do not use displayswitch`.  
-displayswitch.exe will automatically disable your primary monitor and enable your external monitor.
-
-If you have more than two monitors, you'll need to check it, and select your preferred monitor in Steam Big Picture settings.  
-
 Specify your audio outputs.  
 You can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
+
+For monitor switching, BigPictureTV relies on Windows built in `displayswitch.exe`.
+Documentation for this is pretty weak, from my personal testing when using external screen with multiple monitors displayswitch seems to select the highest resolution monitor. For most case it will work just fine but not always.
+
+If it does not work for you, you should check `Clone screen instead of switching`.
 
 **You're all set!** You can now close the settings window.
 
