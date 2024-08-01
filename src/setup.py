@@ -3,7 +3,6 @@ from cx_Freeze import setup, Executable
 
 src_dir = os.path.dirname(os.path.abspath(__file__))
 build_dir = "build/BigPictureTV"
-install_dir = os.path.join(os.getenv("LOCALAPPDATA"), "programs", "BigPictureTV")
 
 include_files = [
     os.path.join(src_dir, "icons"),
