@@ -5,6 +5,7 @@ import subprocess
 import time
 import re
 import winshell
+import configparser
 import pygetwindow as gw
 from enum import Enum
 import darkdetect
@@ -14,9 +15,10 @@ from PyQt6.QtCore import QTimer, QSharedMemory
 from design import Ui_MainWindow
 from steam_language_reader import get_big_picture_window_title
 
+MONITOR_CONFIG_FILE = os.path.join(os.environ["APPDATA"], "BigPictureTV", "desktop_monitor_config.cfg")
 SETTINGS_FILE = os.path.join(os.environ["APPDATA"], "BigPictureTV", "settings.json")
 ICONS_FOLDER = "icons" if getattr(sys, "frozen", False) else os.path.join(os.path.dirname(__file__), "icons")
-MULTIMONITORTOOL_PATH = "dependencies/multimonitortool-x64/MultiMonitorTool.exe"
+MULTIMONITORTOOL_PATH = "dependencies/MultiMonitorTool.exe"
 
 
 class Mode(Enum):
@@ -119,10 +121,10 @@ class BigPictureTV(QMainWindow):
         self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_desktop_{self.icon}.png")))
         self.tray_icon = None
         self.current_mode = None
+        self.monitors = None
         self.settings = {}
         self.first_run = False
         self.paused = False
-        self.use_displayswitch = False
         self.timer = QTimer()
         self.gamemode_screen = "/external"
         self.desktop_screen = "/internal"
@@ -139,12 +141,20 @@ class BigPictureTV(QMainWindow):
             self.first_run = False
 
     def initialize_ui(self):
+        self.save_current_monitor_config()
+        self.monitors = self.parse_monitor_config(os.path.join(MONITOR_CONFIG_FILE))
+        self.ui.gamemode_video_combobox.clear()
+        for section in self.monitors:
+            self.ui.gamemode_video_combobox.addItem(self.monitors[section][1])
+            self.ui.desktop_video_combobox.addItem(self.monitors[section][1])
+
         self.ui.disableAudioCheckbox.stateChanged.connect(self.handle_disableaudio_checkbox_state_changed)
         self.ui.startupCheckBox.stateChanged.connect(handle_startup_checkbox_state_changed)
         self.ui.gamemodeEntry.textChanged.connect(self.save_settings)
         self.ui.desktopEntry.textChanged.connect(self.save_settings)
         self.ui.checkRateSpinBox.valueChanged.connect(self.save_settings)
-        self.ui.disable_displayswitch_box.stateChanged.connect(self.save_settings)
+        self.ui.gamemode_video_combobox.currentIndexChanged.connect(self.save_settings)
+        self.ui.desktop_video_combobox.currentIndexChanged.connect(self.save_settings)
         self.ui.startupCheckBox.setChecked(check_startup_shortcut())
 
         self.apply_settings()
@@ -186,8 +196,16 @@ class BigPictureTV(QMainWindow):
         self.ui.desktopEntry.setText(self.settings.get("DESKTOP_AUDIO", ""))
         self.ui.disableAudioCheckbox.setChecked(self.settings.get("DisableAudioSwitch", False))
         self.ui.checkRateSpinBox.setValue(self.settings.get("CheckRate", 1000))
-        self.ui.disable_displayswitch_box.setChecked(self.settings.get("DisableDisplayswitch", False))
         self.toggle_audio_settings(not self.ui.disableAudioCheckbox.isChecked())
+
+        saved_gamemode_video = self.settings.get("GAMEMODE_VIDEO", "")
+        saved_desktop_video = self.settings.get("DESKTOP_VIDEO", "")
+        gamemode_index = self.ui.gamemode_video_combobox.findText(saved_gamemode_video)
+        desktop_index = self.ui.gamemode_video_combobox.findText(saved_desktop_video)
+        if gamemode_index != -1:
+            self.ui.gamemode_video_combobox.setCurrentIndex(gamemode_index)
+        if desktop_index != -1:
+            self.ui.gamemode_video_combobox.setCurrentIndex(desktop_index)
 
     def save_settings(self):
         self.settings = {
@@ -195,7 +213,8 @@ class BigPictureTV(QMainWindow):
             "DESKTOP_AUDIO": self.ui.desktopEntry.text(),
             "DisableAudioSwitch": self.ui.disableAudioCheckbox.isChecked(),
             "CheckRate": self.ui.checkRateSpinBox.value(),
-            "DisableDisplayswitch": self.ui.disable_displayswitch_box.isChecked(),
+            "GAMEMODE_VIDEO": self.ui.gamemode_video_combobox.currentText(),
+            "DESKTOP_VIDEO": self.ui.gamemode_video_combobox.currentText(),
         }
         os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
         with open(SETTINGS_FILE, "w") as f:
@@ -216,12 +235,52 @@ class BigPictureTV(QMainWindow):
             self.update_tray_icon()
 
     def switch_screen(self, mode):
-        if not self.ui.disable_displayswitch_box.isChecked():
-            if mode == self.gamemode_screen:
-                mode = "/external"
-            else:
-                mode = "/internal"
-            subprocess.run(["displayswitch.exe", mode], check=True)
+        self.save_current_monitor_config()
+        self.monitors = self.parse_monitor_config(os.path.join(MONITOR_CONFIG_FILE))
+
+        if mode == self.gamemode_screen:
+            for section in self.monitors:
+                if self.monitors[section][1] == self.ui.gamemode_video_combobox.currentText():
+                    subprocess.run([MULTIMONITORTOOL_PATH, "/Enable", self.monitors[section][0]])
+                    subprocess.run([MULTIMONITORTOOL_PATH, "/SetPrimary", self.monitors[section][0]])
+                    subprocess.run([MULTIMONITORTOOL_PATH, "/MoveWindow", "primary", "all"])
+        else:
+            for section in self.monitors:
+                if self.monitors[section][1] == self.ui.desktop_video_combobox.currentText():
+                    subprocess.run([MULTIMONITORTOOL_PATH, "/Enable", self.monitors[section][0]])
+                    subprocess.run([MULTIMONITORTOOL_PATH, "/SetPrimary", self.monitors[section][0]])
+                    subprocess.run([MULTIMONITORTOOL_PATH, "/MoveWindow", "primary", "all"])
+
+    def save_current_monitor_config(self):
+        print("Saving current monitor config")
+        subprocess.run([MULTIMONITORTOOL_PATH, "/SaveConfig", MONITOR_CONFIG_FILE, "desktop_monitor_config.cfg"])
+
+    def load_current_monitor_config(self):
+        print("Loading current monitor config")
+        subprocess.run([MULTIMONITORTOOL_PATH, "/LoadConfig", MONITOR_CONFIG_FILE, "desktop_monitor_config.cfg"])
+
+    def extract_monitor_id(self, monitor_id):
+        match = re.search(r"MONITOR\\([^\\]+)", monitor_id)
+        if match:
+            return match.group(1)
+        return None
+
+    def parse_monitor_config(self, file_path):
+        print("Parsing monitor config")
+        config = configparser.ConfigParser()
+        config.read(file_path)
+
+        monitors = {}
+
+        for section in config.sections():
+            if section.startswith("Monitor"):
+                name = config.get(section, "Name")
+                monitor_id = config.get(section, "MonitorID")
+                skg_code = self.extract_monitor_id(monitor_id)
+
+                monitors[section] = (name, skg_code)
+
+        return monitors
 
     def is_audio_device_cmdlets_installed(self):
         cmd = 'powershell "Get-Module -ListAvailable -Name AudioDeviceCmdlets"'
