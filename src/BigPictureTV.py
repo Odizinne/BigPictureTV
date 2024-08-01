@@ -1,33 +1,19 @@
 import sys
 import os
 import json
-import subprocess
-import pygetwindow as gw
 import darkdetect
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import QTimer, QSharedMemory
 from design import Ui_MainWindow
-from steam_language_reader import get_big_picture_window_title
 from monitor_manager import enable_clone_mode, enable_external_mode, enable_internal_mode
 from audio_manager import switch_audio, is_audio_device_cmdlets_installed
 from mode_manager import Mode, read_current_mode, write_current_mode
 from shortcut_manager import check_startup_shortcut, handle_startup_checkbox_state_changed
+from window_monitor import is_bigpicture_running
 
 SETTINGS_FILE = os.path.join(os.environ["APPDATA"], "BigPictureTV", "settings.json")
 ICONS_FOLDER = "icons" if getattr(sys, "frozen", False) else os.path.join(os.path.dirname(__file__), "icons")
-
-
-def is_bigpicture_running():
-    big_picture_title = get_big_picture_window_title().lower()
-    big_picture_words = big_picture_title.split()
-    current_window_titles = [title.lower() for title in gw.getAllTitles()]
-
-    for window_title in current_window_titles:
-        if all(word in window_title for word in big_picture_words):
-            return True
-
-    return False
 
 
 class BigPictureTV(QMainWindow):
