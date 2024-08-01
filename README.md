@@ -29,8 +29,8 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 Specify your audio outputs.  
 You can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
-For monitor changes, BigPictureTV relies on windows built in `displayswitch.exe`.
-Documentation for this is pretty weak, from my personal testing, when using external screen with multiple monitors, displayswitch seems to select the highest resolution monitor. For most case it will work just fine but not always.
+For monitor switching, BigPictureTV relies on Windows built in `displayswitch.exe`.
+Documentation for this is pretty weak, from my personal testing when using external screen with multiple monitors displayswitch seems to select the highest resolution monitor. For most case it will work just fine but not always.
 
 If it does not work for you, you should check `Clone screen instead of switching`.
 
