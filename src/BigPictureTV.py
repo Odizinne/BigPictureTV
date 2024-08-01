@@ -255,10 +255,6 @@ class BigPictureTV(QMainWindow):
         print("Saving current monitor config")
         subprocess.run([MULTIMONITORTOOL_PATH, "/SaveConfig", MONITOR_CONFIG_FILE, "desktop_monitor_config.cfg"])
 
-    def load_current_monitor_config(self):
-        print("Loading current monitor config")
-        subprocess.run([MULTIMONITORTOOL_PATH, "/LoadConfig", MONITOR_CONFIG_FILE, "desktop_monitor_config.cfg"])
-
     def extract_monitor_id(self, monitor_id):
         match = re.search(r"MONITOR\\([^\\]+)", monitor_id)
         if match:
