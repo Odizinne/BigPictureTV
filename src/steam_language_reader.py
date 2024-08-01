@@ -30,14 +30,14 @@ BIG_PICTURE_WINDOW_TITLES = {
     "swedish": "Steams Big Picture-läge",
     "turkish": "Steam Geniş Ekran Modu",
     "vietnamese": "Chế độ Big Picture trên Steam",
-    "ukrainian": "Steam у режимі Big Picture"
+    "ukrainian": "Steam у режимі Big Picture",
 }
 
 
 def get_steam_language():
     try:
         key_path = r"Software\Valve\Steam\steamglobal"
-        
+
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path) as key:
             language, reg_type = winreg.QueryValueEx(key, "Language")
             return language
@@ -54,4 +54,3 @@ def get_big_picture_window_title():
         return BIG_PICTURE_WINDOW_TITLES.get(language, BIG_PICTURE_WINDOW_TITLES["english"])
     else:
         return BIG_PICTURE_WINDOW_TITLES["english"]
-
