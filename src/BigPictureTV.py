@@ -5,7 +5,6 @@ import subprocess
 import time
 import re
 import winshell
-import configparser
 import xml.etree.ElementTree as ET
 import pygetwindow as gw
 from enum import Enum
@@ -255,27 +254,8 @@ class BigPictureTV(QMainWindow):
     def generate_monitor_list(self):
         subprocess.run([MULTIMONITORTOOL_PATH, "/sxml", MONITOR_CONFIG_FILE])
 
-    # def extract_monitor_id(self, monitor_id):
-    #    match = re.search(r"MONITOR\\([^\\]+)", monitor_id)
-    #    if match:
-    #        return match.group(1)
-    #    return None
-
     def parse_monitor_config(self, file_path):
-        # config = configparser.ConfigParser()
-        # config.read(file_path)
-        #
-        # monitors = {}
-        #
-        # for section in config.sections():
-        #    if section.startswith("Monitor"):
-        #        name = config.get(section, "Name")
-        #        monitor_id = config.get(section, "MonitorID")
-        #        skg_code = self.extract_monitor_id(monitor_id)
-        #
-        #        monitors[section] = (name, skg_code)
-        #
-        # return monitors
+
         tree = ET.parse(file_path)
         root = tree.getroot()
 
@@ -283,9 +263,7 @@ class BigPictureTV(QMainWindow):
 
         for item in root.findall("item"):
             name = item.find("name").text
-            print(name)
             monitor_name = item.find("monitor_name").text
-            print(monitor_name)
             monitors.append((name, monitor_name))
 
         return monitors
