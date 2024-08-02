@@ -31,12 +31,3 @@ def switch_audio(audio_output):
         retries += 1
     if not success:
         print("Failed to switch audio after 10 attempts.")
-
-
-def is_audio_device_cmdlets_installed():
-    cmd = 'powershell "Get-Module -ListAvailable -Name AudioDeviceCmdlets"'
-    result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-    if "AudioDeviceCmdlets" in result.stdout:
-        return True
-    else:
-        return False

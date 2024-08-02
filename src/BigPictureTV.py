@@ -7,10 +7,17 @@ from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import QTimer, QSharedMemory
 from design import Ui_MainWindow
 from monitor_manager import enable_clone_mode, enable_external_mode, enable_internal_mode
-from audio_manager import switch_audio, is_audio_device_cmdlets_installed
+from audio_manager import switch_audio
 from mode_manager import Mode, read_current_mode, write_current_mode
 from shortcut_manager import check_startup_shortcut, handle_startup_checkbox_state_changed
-from status_monitor import is_bigpicture_running, is_sunshine_stream_active
+from utils import (
+    is_bigpicture_running,
+    is_sunshine_stream_active,
+    is_audio_device_cmdlets_installed,
+    close_discord,
+    start_discord,
+    is_discord_installed,
+)
 
 SETTINGS_FILE = os.path.join(os.environ["APPDATA"], "BigPictureTV", "settings.json")
 ICONS_FOLDER = "icons" if getattr(sys, "frozen", False) else os.path.join(os.path.dirname(__file__), "icons")
@@ -50,6 +57,10 @@ class BigPictureTV(QMainWindow):
         self.ui.checkRateSpinBox.valueChanged.connect(self.save_settings)
         self.ui.startupCheckBox.setChecked(check_startup_shortcut())
         self.ui.clone_checkbox.stateChanged.connect(self.save_settings)
+        self.ui.close_discord_checkbox.stateChanged.connect(self.save_settings)
+
+        self.ui.close_discord_checkbox.setEnabled(is_discord_installed())
+        self.ui.close_discord_label.setEnabled(is_discord_installed())
 
         self.apply_settings()
 
@@ -92,6 +103,7 @@ class BigPictureTV(QMainWindow):
         self.ui.checkRateSpinBox.setValue(self.settings.get("CheckRate", 1000))
         self.toggle_audio_settings(not self.ui.disableAudioCheckbox.isChecked())
         self.ui.clone_checkbox.setChecked(self.settings.get("use_clone", False))
+        self.ui.close_discord_checkbox.setChecked(self.settings.get("discord_action", False))
 
     def save_settings(self):
         self.settings = {
@@ -100,6 +112,7 @@ class BigPictureTV(QMainWindow):
             "DisableAudioSwitch": self.ui.disableAudioCheckbox.isChecked(),
             "CheckRate": self.ui.checkRateSpinBox.value(),
             "use_clone": self.ui.clone_checkbox.isChecked(),
+            "discord_action": self.ui.close_discord_checkbox.isChecked(),
         }
         os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
         with open(SETTINGS_FILE, "w") as f:
@@ -114,6 +127,7 @@ class BigPictureTV(QMainWindow):
         desktop_audio = self.settings.get("DESKTOP_AUDIO")
 
         self.switch_screen("gamemode" if mode == Mode.GAMEMODE else "desktop")
+        close_discord() if mode == Mode.GAMEMODE else start_discord()
 
         if not self.ui.disableAudioCheckbox.isChecked():
             switch_audio(gamemode_audio if mode == Mode.GAMEMODE else desktop_audio)
