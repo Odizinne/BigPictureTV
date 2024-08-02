@@ -1,5 +1,8 @@
+import os
 import pygetwindow as gw
 from steam_language_reader import get_big_picture_window_title
+
+SUNSHINE_STATUS_FILE = os.path.join(os.environ.get("APPDATA"), "sunshine-status", "status.txt")
 
 
 def is_bigpicture_running():
@@ -12,3 +15,8 @@ def is_bigpicture_running():
             return True
 
     return False
+
+
+def is_sunshine_stream_active():
+    # To be used with https://github.com/Odizinne/Sunshine-Toolbox
+    return os.path.exists("SUNSHINE_STATUS_FILE")
