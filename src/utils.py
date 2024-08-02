@@ -31,7 +31,7 @@ def is_bigpicture_running():
 
 def is_sunshine_stream_active():
     # To be used with https://github.com/Odizinne/Sunshine-Toolbox
-    return os.path.exists("SUNSHINE_STATUS_FILE")
+    return os.path.exists(SUNSHINE_STATUS_FILE)
 
 
 def close_discord():
