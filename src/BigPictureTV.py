@@ -10,7 +10,7 @@ from monitor_manager import enable_clone_mode, enable_external_mode, enable_inte
 from audio_manager import switch_audio, is_audio_device_cmdlets_installed
 from mode_manager import Mode, read_current_mode, write_current_mode
 from shortcut_manager import check_startup_shortcut, handle_startup_checkbox_state_changed
-from window_monitor import is_bigpicture_running
+from status_monitor import is_bigpicture_running, is_sunshine_stream_active
 
 SETTINGS_FILE = os.path.join(os.environ["APPDATA"], "BigPictureTV", "settings.json")
 ICONS_FOLDER = "icons" if getattr(sys, "frozen", False) else os.path.join(os.path.dirname(__file__), "icons")
@@ -139,7 +139,7 @@ class BigPictureTV(QMainWindow):
             return
 
     def update_mode(self):
-        if is_bigpicture_running() and self.current_mode != Mode.GAMEMODE:
+        if is_bigpicture_running() and self.current_mode != Mode.GAMEMODE and not is_sunshine_stream_active():
             self.switch_mode(Mode.GAMEMODE)
         elif not is_bigpicture_running() and self.current_mode != Mode.DESKTOP:
             self.switch_mode(Mode.DESKTOP)
