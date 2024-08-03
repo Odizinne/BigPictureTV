@@ -39,8 +39,9 @@ class BigPictureTV(QMainWindow):
         self.paused = False
         self.timer = QTimer()
         self.init_checkrate_tooltipedslider()
+        self.populate_comboboxes()
         self.load_settings()
-        self.initialize_ui()
+        self.setup_ui_connections()
         self.get_audio_capabilities()
         self.current_mode = read_current_mode()
         self.switch_mode(self.current_mode or Mode.DESKTOP)
@@ -51,9 +52,7 @@ class BigPictureTV(QMainWindow):
             self.show()
             self.first_run = False
 
-    def initialize_ui(self):
-        self.ui.gamemode_monitor_combobox.addItems([" External", " Clone"])
-        self.ui.desktop_monitor_combobox.addItems([" Internal", " Extend"])
+    def setup_ui_connections(self):
         self.ui.disableAudioCheckbox.stateChanged.connect(self.handle_disableaudio_checkbox_state_changed)
         self.ui.startupCheckBox.stateChanged.connect(handle_startup_checkbox_state_changed)
         self.ui.gamemodeEntry.textChanged.connect(self.save_settings)
@@ -66,6 +65,10 @@ class BigPictureTV(QMainWindow):
         self.ui.desktop_monitor_combobox.currentIndexChanged.connect(self.save_settings)
         self.ui.checkrate_slider.valueChanged.connect(self.handle_checkrate_slider_value_changed)
         self.ui.checkrate_slider.sliderReleased.connect(self.save_settings)
+
+    def populate_comboboxes(self):
+        self.ui.gamemode_monitor_combobox.addItems([" External", " Clone"])
+        self.ui.desktop_monitor_combobox.addItems([" Internal", " Extend"])
 
     def init_checkrate_tooltipedslider(self):
         self.checkrate_tooltipedslider = TooltipedSlider(Qt.Orientation.Horizontal, self.ui.centralwidget)
