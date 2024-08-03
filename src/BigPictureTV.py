@@ -1,13 +1,11 @@
 import sys
 import os
 import json
-import darkdetect
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import Qt, QTimer, QSharedMemory
 from design import Ui_MainWindow
 from tooltiped_slider import TooltipedSlider
-from monitor_manager import enable_clone_mode, enable_external_mode, enable_internal_mode, enable_extend_mode
 from audio_manager import switch_audio
 from mode_manager import Mode, read_current_mode, write_current_mode
 from shortcut_manager import check_startup_shortcut, handle_startup_checkbox_state_changed
@@ -18,6 +16,8 @@ from utils import (
     close_discord,
     start_discord,
     is_discord_installed,
+    get_theme,
+    run_displayswitch,
 )
 
 SETTINGS_FILE = os.path.join(os.environ["APPDATA"], "BigPictureTV", "settings.json")
@@ -30,20 +30,17 @@ class BigPictureTV(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("BigPictureTV - Settings")
-        self.icon = "light" if darkdetect.isDark() else "dark"
-        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_desktop_{self.icon}.png")))
-        self.tray_icon = None
-        self.current_mode = None
+        self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_desktop_{get_theme()}.png")))
+        self.current_mode = read_current_mode()
         self.settings = {}
         self.first_run = False
         self.paused = False
         self.timer = QTimer()
         self.init_checkrate_tooltipedslider()
+        self.get_audio_capabilities()
         self.populate_comboboxes()
         self.load_settings()
         self.setup_ui_connections()
-        self.get_audio_capabilities()
-        self.current_mode = read_current_mode()
         self.switch_mode(self.current_mode or Mode.DESKTOP)
         self.tray_icon = self.create_tray_icon()
         self.timer.timeout.connect(self.update_mode)
@@ -155,32 +152,33 @@ class BigPictureTV(QMainWindow):
             return
 
         self.current_mode = mode
-        gamemode_audio = self.settings.get("GAMEMODE_AUDIO")
-        desktop_audio = self.settings.get("DESKTOP_AUDIO")
 
-        self.switch_screen("gamemode" if mode == Mode.GAMEMODE else "desktop")
-        close_discord() if mode == Mode.GAMEMODE else start_discord()
+        if self.current_mode == Mode.GAMEMODE and self.ui.gamemode_monitor_combobox.currentIndex() == 0:
+            run_displayswitch("/external")
+        elif self.current_mode == Mode.GAMEMODE and self.ui.gamemode_monitor_combobox.currentIndex() == 1:
+            run_displayswitch("/clone")
+        elif self.current_mode == Mode.DESKTOP and self.ui.desktop_monitor_combobox.currentIndex() == 0:
+            run_displayswitch("/internal")
+        elif self.current_mode == Mode.DESKTOP and self.ui.desktop_monitor_combobox.currentIndex() == 1:
+            run_displayswitch("/extend")
+
+        if self.ui.close_discord_checkbox.isChecked():
+            close_discord() if self.current_mode == Mode.GAMEMODE else start_discord()
 
         if not self.ui.disableAudioCheckbox.isChecked():
-            switch_audio(gamemode_audio if mode == Mode.GAMEMODE else desktop_audio)
-        write_current_mode(mode)
+            gamemode_audio = self.settings.get("GAMEMODE_AUDIO")
+            desktop_audio = self.settings.get("DESKTOP_AUDIO")
+            switch_audio(gamemode_audio if self.current_mode == Mode.GAMEMODE else desktop_audio)
+
+        write_current_mode(self.current_mode)
 
         if self.tray_icon:
-            self.update_tray_icon_menu()
-            self.update_tray_icon()
-
-    def switch_screen(self, screen):
-        if screen == "gamemode" and self.ui.gamemode_monitor_combobox.currentIndex() == 0:
-            enable_external_mode()
-        elif screen == "gamemode" and self.ui.gamemode_monitor_combobox.currentIndex() == 1:
-            enable_clone_mode()
-        elif screen == "desktop" and self.ui.desktop_monitor_combobox.currentIndex() == 0:
-            enable_internal_mode()
-        elif screen == "desktop" and self.ui.desktop_monitor_combobox.currentIndex() == 1:
-            enable_extend_mode()
+            variant = "gamemode" if self.current_mode == Mode.GAMEMODE else "desktop"
+            self.tray_icon.setIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_{variant}_{get_theme()}.png")))
+            self.tray_icon.setContextMenu(self.create_menu())
 
     def get_audio_capabilities(self):
-        if is_audio_device_cmdlets_installed() is False:
+        if not is_audio_device_cmdlets_installed():
             self.ui.disableAudioCheckbox.setChecked(True)
             self.ui.disableAudioCheckbox.setEnabled(False)
             self.toggle_audio_settings(False)
@@ -189,16 +187,17 @@ class BigPictureTV(QMainWindow):
     def update_mode(self):
         if is_bigpicture_running() and self.current_mode != Mode.GAMEMODE and not is_sunshine_stream_active():
             self.switch_mode(Mode.GAMEMODE)
+            print("Switching to gamemode")
         elif not is_bigpicture_running() and self.current_mode != Mode.DESKTOP:
             self.switch_mode(Mode.DESKTOP)
+            print("Switching to desktop")
 
     def update_mode_timer_interval(self, check_rate):
         self.timer.setInterval(check_rate)
         self.timer.start()
 
     def create_tray_icon(self):
-        theme = "light" if darkdetect.isDark() else "dark"
-        tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_desktop_{theme}.png")))
+        tray_icon = QSystemTrayIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_desktop_{get_theme()}.png")))
         tray_icon.setToolTip("BigPictureTV")
         tray_icon.setContextMenu(self.create_menu())
         tray_icon.show()
@@ -208,32 +207,23 @@ class BigPictureTV(QMainWindow):
         menu = QMenu()
         mode_action = QAction(f"Current mode: {self.current_mode.name}", menu)
         mode_action.setEnabled(False)
-        menu.addAction(mode_action)
         tray_state_action = QAction(f'Detection state: {"Paused" if self.paused else "Active"}', menu)
         tray_state_action.setEnabled(False)
-        menu.addAction(tray_state_action)
-        menu.addSeparator()
         pause_resume_action = QAction("Resume detection" if self.paused else "Pause detection", menu)
         pause_resume_action.triggered.connect(self.toggle_detection)
-        menu.addAction(pause_resume_action)
         settings_action = QAction("Settings", menu)
         settings_action.triggered.connect(self.show)
-        menu.addAction(settings_action)
         exit_action = QAction("Exit", menu)
         exit_action.triggered.connect(QApplication.quit)
+
+        menu.addAction(mode_action)
+        menu.addAction(tray_state_action)
+        menu.addSeparator()
+        menu.addAction(pause_resume_action)
+        menu.addAction(settings_action)
         menu.addAction(exit_action)
+
         return menu
-
-    def update_tray_icon_menu(self):
-        self.tray_icon.setContextMenu(self.create_menu())
-
-    def update_tray_icon(self):
-        theme = "light" if darkdetect.isDark() else "dark"
-
-        if self.current_mode == Mode.GAMEMODE:
-            self.tray_icon.setIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_gamemode_{theme}.png")))
-        else:
-            self.tray_icon.setIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_desktop_{theme}.png")))
 
     def toggle_detection(self):
         self.paused = not self.paused
@@ -243,7 +233,7 @@ class BigPictureTV(QMainWindow):
         else:
             self.timer.start()
             self.tray_icon.setToolTip("BigPictureTV")
-        self.update_tray_icon_menu()
+        self.tray_icon.setContextMenu(self.create_menu())
 
     def closeEvent(self, event):
         event.ignore()

@@ -1,6 +1,7 @@
 import os
 import subprocess
 import psutil
+import darkdetect
 import pygetwindow as gw
 from steam_language_reader import get_big_picture_window_title
 
@@ -52,3 +53,11 @@ def start_discord():
 
 def is_discord_installed():
     return os.path.exists(DISCORD_EXE)
+
+
+def get_theme():
+    return "light" if darkdetect.isDark() else "dark"
+
+
+def run_displayswitch(command):
+    subprocess.run(["DisplaySwitch.exe", command])
