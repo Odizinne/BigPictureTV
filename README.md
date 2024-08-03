@@ -57,7 +57,7 @@ There are 4 modes available:
 3. Choose your desired monitor setup by disconnecting all monitors except the one you want to use in game mode.
 4. Press Win + P again and switch back to "Internal" or "Extend".
 
-If you'd prefer to skip the screen configuration, simply select `Clone` in BigPictureTV settings.
+If you'd prefer to skip the screen configuration, simply select `Clone` in BigPictureTV settings.  
 **You're all set!** You can now close the settings window.
 
 ## Build
