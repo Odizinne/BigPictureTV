@@ -34,10 +34,15 @@ Specify your audio outputs.
 You can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
 For monitor switching, BigPictureTV relies on Windows built in `displayswitch.exe`.
-Documentation for this is pretty weak, from my personal testing when using external screen with multiple monitors displayswitch seems to select the highest resolution monitor. For most case it will work just fine but not always.
 
-If it does not work for you, you should check `Clone screen instead of switching`.
+**If you have multiple monitors, follow these steps to configure your preferred external monitor:**
 
+1. Press Win + P and select the "External" option.
+2. Go to Windows Settings > System > Displays.
+3. Choose your desired monitor setup by disconnecting all monitors except the one you want to use in game mode.
+4. Press Win + P again and switch back to "Internal."
+
+If you'd prefer to skip the screen configuration, simply select `Clone screen instead of switching`.
 **You're all set!** You can now close the settings window.
 
 ## Build
