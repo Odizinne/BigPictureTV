@@ -9,6 +9,7 @@ from tooltiped_slider import TooltipedSlider
 from audio_manager import switch_audio
 from mode_manager import Mode, read_current_mode, write_current_mode
 from shortcut_manager import check_startup_shortcut, handle_startup_checkbox_state_changed
+from color_utils import set_frame_color_based_on_window
 from utils import (
     is_bigpicture_running,
     is_sunshine_stream_active,
@@ -18,6 +19,7 @@ from utils import (
     is_discord_installed,
     get_theme,
     run_displayswitch,
+    is_windows_10,
 )
 
 SETTINGS_FILE = os.path.join(os.environ["APPDATA"], "BigPictureTV", "settings.json")
@@ -36,11 +38,12 @@ class BigPictureTV(QMainWindow):
         self.first_run = False
         self.paused = False
         self.timer = QTimer()
+        self.set_fusion_frames()
         self.init_checkrate_tooltipedslider()
-        self.get_audio_capabilities()
         self.populate_comboboxes()
         self.load_settings()
         self.setup_ui_connections()
+        self.get_audio_capabilities()
         self.switch_mode(self.current_mode or Mode.DESKTOP)
         self.tray_icon = self.create_tray_icon()
         self.timer.timeout.connect(self.update_mode)
@@ -48,6 +51,13 @@ class BigPictureTV(QMainWindow):
         if self.first_run:
             self.show()
             self.first_run = False
+
+    def set_fusion_frames(self):
+        if app.style().objectName() == "fusion":
+            set_frame_color_based_on_window(self, self.ui.gridFrame)
+            set_frame_color_based_on_window(self, self.ui.gridFrame1)
+            set_frame_color_based_on_window(self, self.ui.audioFrame)
+            set_frame_color_based_on_window(self, self.ui.settingsFrame)
 
     def setup_ui_connections(self):
         self.ui.disableAudioCheckbox.stateChanged.connect(self.handle_disableaudio_checkbox_state_changed)
@@ -187,10 +197,8 @@ class BigPictureTV(QMainWindow):
     def update_mode(self):
         if is_bigpicture_running() and self.current_mode != Mode.GAMEMODE and not is_sunshine_stream_active():
             self.switch_mode(Mode.GAMEMODE)
-            print("Switching to gamemode")
         elif not is_bigpicture_running() and self.current_mode != Mode.DESKTOP:
             self.switch_mode(Mode.DESKTOP)
-            print("Switching to desktop")
 
     def update_mode_timer_interval(self, check_rate):
         self.timer.setInterval(check_rate)
@@ -245,5 +253,7 @@ if __name__ == "__main__":
     if shared_memory.attach() or not shared_memory.create(1):
         sys.exit(0)
     app = QApplication(sys.argv)
+    if is_windows_10():
+        app.setStyle("Fusion")
     big_picture_tv = BigPictureTV()
     sys.exit(app.exec())

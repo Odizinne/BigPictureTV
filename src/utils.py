@@ -1,6 +1,7 @@
 import os
 import subprocess
 import psutil
+import platform
 import darkdetect
 import pygetwindow as gw
 from steam_language_reader import get_big_picture_window_title
@@ -61,3 +62,9 @@ def get_theme():
 
 def run_displayswitch(command):
     subprocess.run(["DisplaySwitch.exe", command])
+
+
+def is_windows_10():
+    os_version = platform.version()
+    os_name = platform.system()
+    return os_name == "Windows" and os_version.startswith("10")
