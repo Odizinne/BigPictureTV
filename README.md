@@ -5,8 +5,6 @@
 This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
 *Looking for the [linux version](https://github.com/Odizinne/BigpictureTV-Linux)?*
 
-
-
 **If you appreciate my work and would like to support me:**
 
 <a href="https://ko-fi.com/odizinne">
@@ -30,19 +28,36 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
 ## Usage
 
+### Window check rate
+
+In ms, from 100 to 1000, the interval for checking Steam Big Picture window presence.  
+1000 is the default value.  
+100 ms will lead to next to no delay mode switch but will consume more resources.  
+Do not change if unsure.
+
+### Audio configuration
+Install [AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets) to allow audio output switching and restart BigPictureTV.  
+You can now uncheck `Disable audio switching`.  
 Specify your audio outputs.  
 You can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
+### Monitor configuration
 For monitor switching, BigPictureTV relies on Windows built in `displayswitch.exe`.
+
+There are 4 modes available:
+- Internal: Default monitor enabled, all others disabled
+- Extend: Default monitor enabled, selected monitors enabled.
+- Clone: Every monitors enabled, mirrored.
+- External: Default monitor disabled, selected monitors enabled.
 
 **If you have multiple monitors, follow these steps to configure your preferred external monitor:**
 
 1. Press Win + P and select the "External" option.
 2. Go to Windows Settings > System > Displays.
 3. Choose your desired monitor setup by disconnecting all monitors except the one you want to use in game mode.
-4. Press Win + P again and switch back to "Internal."
+4. Press Win + P again and switch back to "Internal" or "Extend".
 
-If you'd prefer to skip the screen configuration, simply select `Clone screen instead of switching`.
+If you'd prefer to skip the screen configuration, simply select `Clone` in BigPictureTV settings.
 **You're all set!** You can now close the settings window.
 
 ## Build

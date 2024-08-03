@@ -4,9 +4,10 @@ import json
 import darkdetect
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtCore import QTimer, QSharedMemory
+from PyQt6.QtCore import Qt, QTimer, QSharedMemory
 from design import Ui_MainWindow
-from monitor_manager import enable_clone_mode, enable_external_mode, enable_internal_mode
+from tooltiped_slider import TooltipedSlider
+from monitor_manager import enable_clone_mode, enable_external_mode, enable_internal_mode, enable_extend_mode
 from audio_manager import switch_audio
 from mode_manager import Mode, read_current_mode, write_current_mode
 from shortcut_manager import check_startup_shortcut, handle_startup_checkbox_state_changed
@@ -37,6 +38,7 @@ class BigPictureTV(QMainWindow):
         self.first_run = False
         self.paused = False
         self.timer = QTimer()
+        self.init_checkrate_tooltipedslider()
         self.load_settings()
         self.initialize_ui()
         self.get_audio_capabilities()
@@ -50,19 +52,44 @@ class BigPictureTV(QMainWindow):
             self.first_run = False
 
     def initialize_ui(self):
+        self.ui.gamemode_monitor_combobox.addItems([" External", " Clone"])
+        self.ui.desktop_monitor_combobox.addItems([" Internal", " Extend"])
         self.ui.disableAudioCheckbox.stateChanged.connect(self.handle_disableaudio_checkbox_state_changed)
         self.ui.startupCheckBox.stateChanged.connect(handle_startup_checkbox_state_changed)
         self.ui.gamemodeEntry.textChanged.connect(self.save_settings)
         self.ui.desktopEntry.textChanged.connect(self.save_settings)
-        self.ui.checkRateSpinBox.valueChanged.connect(self.save_settings)
         self.ui.startupCheckBox.setChecked(check_startup_shortcut())
-        self.ui.clone_checkbox.stateChanged.connect(self.save_settings)
         self.ui.close_discord_checkbox.stateChanged.connect(self.save_settings)
-
         self.ui.close_discord_checkbox.setEnabled(is_discord_installed())
         self.ui.close_discord_label.setEnabled(is_discord_installed())
+        self.ui.gamemode_monitor_combobox.currentIndexChanged.connect(self.save_settings)
+        self.ui.desktop_monitor_combobox.currentIndexChanged.connect(self.save_settings)
+        self.ui.checkrate_slider.valueChanged.connect(self.handle_checkrate_slider_value_changed)
+        self.ui.checkrate_slider.sliderReleased.connect(self.save_settings)
 
-        self.apply_settings()
+    def init_checkrate_tooltipedslider(self):
+        self.checkrate_tooltipedslider = TooltipedSlider(Qt.Orientation.Horizontal, self.ui.centralwidget)
+        layout = self.ui.settings_layout
+        index = layout.indexOf(self.ui.checkrate_label)
+        position = layout.getItemPosition(index)
+        row = position[0]
+        column = position[1]
+        layout.addWidget(self.checkrate_tooltipedslider, row, column + 1)
+        self.ui.checkrate_slider.deleteLater()
+        self.ui.checkrate_slider = self.checkrate_tooltipedslider
+        self.ui.checkrate_slider.setTickInterval(100)
+        self.ui.checkrate_slider.setRange(100, 1000)
+
+    def handle_checkrate_slider_value_changed(self, value):
+        remainder = value % 100
+        if remainder != 0:
+            if remainder < 50:
+                value -= remainder
+            else:
+                value += 100 - remainder
+            self.ui.checkrate_slider.setValue(value)
+
+        self.update_mode_timer_interval(value)
 
     def handle_disableaudio_checkbox_state_changed(self, state):
         self.toggle_audio_settings(not state)
@@ -100,19 +127,21 @@ class BigPictureTV(QMainWindow):
         self.ui.gamemodeEntry.setText(self.settings.get("GAMEMODE_AUDIO", ""))
         self.ui.desktopEntry.setText(self.settings.get("DESKTOP_AUDIO", ""))
         self.ui.disableAudioCheckbox.setChecked(self.settings.get("DisableAudioSwitch", False))
-        self.ui.checkRateSpinBox.setValue(self.settings.get("CheckRate", 1000))
+        self.ui.checkrate_slider.setValue(self.settings.get("CheckRate", 1000))
         self.toggle_audio_settings(not self.ui.disableAudioCheckbox.isChecked())
-        self.ui.clone_checkbox.setChecked(self.settings.get("use_clone", False))
         self.ui.close_discord_checkbox.setChecked(self.settings.get("discord_action", False))
+        self.ui.gamemode_monitor_combobox.setCurrentIndex(self.settings.get("GAMEMODE_MONITOR", 0))
+        self.ui.desktop_monitor_combobox.setCurrentIndex(self.settings.get("DESKTOP_MONITOR", 0))
 
     def save_settings(self):
         self.settings = {
             "GAMEMODE_AUDIO": self.ui.gamemodeEntry.text(),
             "DESKTOP_AUDIO": self.ui.desktopEntry.text(),
             "DisableAudioSwitch": self.ui.disableAudioCheckbox.isChecked(),
-            "CheckRate": self.ui.checkRateSpinBox.value(),
-            "use_clone": self.ui.clone_checkbox.isChecked(),
+            "CheckRate": self.ui.checkrate_slider.value(),
             "discord_action": self.ui.close_discord_checkbox.isChecked(),
+            "GAMEMODE_MONITOR": self.ui.gamemode_monitor_combobox.currentIndex(),
+            "DESKTOP_MONITOR": self.ui.desktop_monitor_combobox.currentIndex(),
         }
         os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
         with open(SETTINGS_FILE, "w") as f:
@@ -138,12 +167,14 @@ class BigPictureTV(QMainWindow):
             self.update_tray_icon()
 
     def switch_screen(self, screen):
-        if screen == "gamemode" and self.ui.clone_checkbox.isChecked():
-            enable_clone_mode()
-        elif screen == "gamemode" and not self.ui.clone_checkbox.isChecked():
+        if screen == "gamemode" and self.ui.gamemode_monitor_combobox.currentIndex() == 0:
             enable_external_mode()
-        elif screen == "desktop":
+        elif screen == "gamemode" and self.ui.gamemode_monitor_combobox.currentIndex() == 1:
+            enable_clone_mode()
+        elif screen == "desktop" and self.ui.desktop_monitor_combobox.currentIndex() == 0:
             enable_internal_mode()
+        elif screen == "desktop" and self.ui.desktop_monitor_combobox.currentIndex() == 1:
+            enable_extend_mode()
 
     def get_audio_capabilities(self):
         if is_audio_device_cmdlets_installed() is False:

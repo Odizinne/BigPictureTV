@@ -4,6 +4,7 @@ DISPLAYSWITCH = "DisplaySwitch.exe"
 CLONE = "/clone"
 INTERNAL = "/internal"
 EXTERNAL = "/external"
+EXTEND = "/extend"
 
 
 def enable_clone_mode():
@@ -16,3 +17,7 @@ def enable_external_mode():
 
 def enable_internal_mode():
     subprocess.run([DISPLAYSWITCH, INTERNAL])
+
+
+def enable_extend_mode():
+    subprocess.run([DISPLAYSWITCH, EXTEND])
