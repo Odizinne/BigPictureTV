@@ -24,9 +24,10 @@ def switch_audio(audio_output):
     devices = get_audio_devices()
     success = set_audio_device(audio_output, devices)
     retries = 0
-    while not success and retries < 10:
+    while not success and retries < 5:
         print("Failed to switch audio, retrying...")
         time.sleep(1)
+        devices = get_audio_devices()
         success = set_audio_device(audio_output, devices)
         retries += 1
     if not success:
