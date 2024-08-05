@@ -1,7 +1,7 @@
 import sys
 import os
 import json
-from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow
+from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow, QMessageBox
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import Qt, QTimer, QSharedMemory
 from design import Ui_MainWindow
@@ -14,6 +14,7 @@ from utils import (
     is_bigpicture_running,
     is_sunshine_stream_active,
     is_audio_device_cmdlets_installed,
+    install_audio_module,
     close_discord,
     start_discord,
     is_discord_installed,
@@ -72,6 +73,7 @@ class BigPictureTV(QMainWindow):
         self.ui.desktop_monitor_combobox.currentIndexChanged.connect(self.save_settings)
         self.ui.checkrate_slider.valueChanged.connect(self.handle_checkrate_slider_value_changed)
         self.ui.checkrate_slider.sliderReleased.connect(self.save_settings)
+        self.ui.install_audio_button.clicked.connect(self.handle_audio_button_clicked)
 
     def populate_comboboxes(self):
         self.ui.gamemode_monitor_combobox.addItems([" External", " Clone"])
@@ -89,6 +91,17 @@ class BigPictureTV(QMainWindow):
         self.ui.checkrate_slider = self.checkrate_tooltipedslider
         self.ui.checkrate_slider.setTickInterval(100)
         self.ui.checkrate_slider.setRange(100, 1000)
+
+    def handle_audio_button_clicked(self):
+        self.ui.install_audio_button.setEnabled(False)
+        status, message = install_audio_module()
+        if status == "Success":
+            QMessageBox.information(self, status, message)
+        else:
+            QMessageBox.critical(self, status, message)
+            self.ui.install_audio_button.setEnabled(True)
+
+        self.get_audio_capabilities()
 
     def handle_checkrate_slider_value_changed(self, value):
         remainder = value % 100
@@ -188,11 +201,18 @@ class BigPictureTV(QMainWindow):
             self.tray_icon.setContextMenu(self.create_menu())
 
     def get_audio_capabilities(self):
+        print("Checking audio capabilities")
         if not is_audio_device_cmdlets_installed():
+            print("AudioDeviceCmdlets module not installed")
             self.ui.disableAudioCheckbox.setChecked(True)
             self.ui.disableAudioCheckbox.setEnabled(False)
             self.toggle_audio_settings(False)
-            return
+        else:
+            self.toggle_audio_settings(True)
+            print("AudioDeviceCmdlets module installed")
+            self.ui.disableAudioCheckbox.setEnabled(True)
+            self.ui.install_audio_button.setVisible(False)
+            self.adjustSize()
 
     def update_mode(self):
         if is_bigpicture_running() and self.current_mode != Mode.GAMEMODE and not is_sunshine_stream_active():

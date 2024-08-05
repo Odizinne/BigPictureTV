@@ -19,6 +19,21 @@ def is_audio_device_cmdlets_installed():
         return False
 
 
+def install_audio_module():
+    try:
+        audiodevicecmdlets_command = "Install-Module AudioDeviceCmdlets -Force -Scope CurrentUser"
+        command = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", audiodevicecmdlets_command]
+        subprocess.run(command, check=True)
+        return ("Success", "AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.")
+    except:
+        return (
+            "Error",
+            "Failed to install AudioDeviceCmdlets module.\n"
+            "Please install it manually by running this command in PowerShell: "
+            f"{audiodevicecmdlets_command}",
+        )
+
+
 def is_bigpicture_running():
     big_picture_title = get_big_picture_window_title().lower()
     big_picture_words = big_picture_title.split()

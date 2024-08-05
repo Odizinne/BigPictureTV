@@ -36,12 +36,14 @@ In ms, from 100 to 1000, the interval for checking Steam Big Picture window pres
 Do not change if unsure.
 
 ### Audio configuration
-Install [AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets) to allow audio output switching and restart BigPictureTV.  
-You can now uncheck `Disable audio switching`.  
-Specify your audio outputs.  
+
+1. Click on "Install audio module" button and wait for its completion.    
+2. You can now uncheck `Disable audio switching`.  
+3. Specify your audio outputs.  
 You can use a short name. BigPictureTV will try to find the correct audio output from keywords. Less is more.
 
 ### Monitor configuration
+
 For monitor switching, BigPictureTV relies on Windows built in `displayswitch.exe`.
 
 There are 4 modes available:
@@ -50,7 +52,7 @@ There are 4 modes available:
 - Clone: Every monitors enabled, mirrored.
 - External: Default monitor disabled, selected monitors enabled.
 
-**If you have multiple monitors, follow these steps to configure your preferred external monitor:**
+**If you have more than two monitors, follow these steps to configure your preferred external monitor:**
 
 1. Press Win + P and select the "External" option.
 2. Go to Windows Settings > System > Displays.
