@@ -25,7 +25,7 @@ def install_audio_module():
         command = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", audiodevicecmdlets_command]
         subprocess.run(command, check=True)
         return ("Success", "AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.")
-    except:
+    except Exception:
         return (
             "Error",
             "Failed to install AudioDeviceCmdlets module.\n"
@@ -80,6 +80,8 @@ def run_displayswitch(command):
 
 
 def is_windows_10():
-    os_version = platform.version()
     os_name = platform.system()
-    return os_name == "Windows" and os_version.startswith("10")
+    os_release = platform.release()
+    if os_name == "Windows" and os_release == "10":
+        return True
+    return False

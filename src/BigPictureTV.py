@@ -201,17 +201,15 @@ class BigPictureTV(QMainWindow):
             self.tray_icon.setContextMenu(self.create_menu())
 
     def get_audio_capabilities(self):
-        print("Checking audio capabilities")
         if not is_audio_device_cmdlets_installed():
-            print("AudioDeviceCmdlets module not installed")
             self.ui.disableAudioCheckbox.setChecked(True)
             self.ui.disableAudioCheckbox.setEnabled(False)
             self.toggle_audio_settings(False)
         else:
-            self.toggle_audio_settings(True)
-            print("AudioDeviceCmdlets module installed")
             self.ui.disableAudioCheckbox.setEnabled(True)
             self.ui.install_audio_button.setVisible(False)
+            if not self.ui.disableAudioCheckbox.isChecked():
+                self.toggle_audio_settings(True)
             self.adjustSize()
 
     def update_mode(self):
