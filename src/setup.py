@@ -6,6 +6,7 @@ build_dir = "build/BigPictureTV"
 
 include_files = [
     os.path.join(src_dir, "icons"),
+    os.path.join(src_dir, "tr"),
 ]
 
 zip_include_packages = ["PyQt6"]

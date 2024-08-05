@@ -3,7 +3,7 @@ import os
 import json
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMainWindow, QMessageBox
 from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtCore import Qt, QTimer, QSharedMemory
+from PyQt6.QtCore import Qt, QTimer, QSharedMemory, QTranslator, QLocale, QCoreApplication
 from design import Ui_MainWindow
 from tooltiped_slider import TooltipedSlider
 from audio_manager import switch_audio
@@ -32,7 +32,7 @@ class BigPictureTV(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle("BigPictureTV - Settings")
+        self.setWindowTitle(QCoreApplication.translate("BigPictureTV", "BigPictureTV - Settings"))
         self.setWindowIcon(QIcon(os.path.join(ICONS_FOLDER, f"icon_desktop_{get_theme()}.png")))
         self.current_mode = read_current_mode()
         self.settings = {}
@@ -76,8 +76,10 @@ class BigPictureTV(QMainWindow):
         self.ui.install_audio_button.clicked.connect(self.handle_audio_button_clicked)
 
     def populate_comboboxes(self):
-        self.ui.gamemode_monitor_combobox.addItems([" External", " Clone"])
-        self.ui.desktop_monitor_combobox.addItems([" Internal", " Extend"])
+        self.ui.gamemode_monitor_combobox.addItem(QCoreApplication.translate("BigPictureTV", "External"))
+        self.ui.gamemode_monitor_combobox.addItem(QCoreApplication.translate("BigPictureTV", "Clone"))
+        self.ui.desktop_monitor_combobox.addItem(QCoreApplication.translate("BigPictureTV", "Internal"))
+        self.ui.desktop_monitor_combobox.addItem(QCoreApplication.translate("BigPictureTV", "Extend"))
 
     def init_checkrate_tooltipedslider(self):
         self.checkrate_tooltipedslider = TooltipedSlider(Qt.Orientation.Horizontal, self.ui.centralwidget)
@@ -231,20 +233,13 @@ class BigPictureTV(QMainWindow):
 
     def create_menu(self):
         menu = QMenu()
-        mode_action = QAction(f"Current mode: {self.current_mode.name}", menu)
-        mode_action.setEnabled(False)
-        tray_state_action = QAction(f'Detection state: {"Paused" if self.paused else "Active"}', menu)
-        tray_state_action.setEnabled(False)
         pause_resume_action = QAction("Resume detection" if self.paused else "Pause detection", menu)
         pause_resume_action.triggered.connect(self.toggle_detection)
-        settings_action = QAction("Settings", menu)
+        settings_action = QAction(QCoreApplication.translate("BigPictureTV", "Settings"), menu)
         settings_action.triggered.connect(self.show)
-        exit_action = QAction("Exit", menu)
+        exit_action = QAction(QCoreApplication.translate("BigPictureTV", "Exit"), menu)
         exit_action.triggered.connect(QApplication.quit)
 
-        menu.addAction(mode_action)
-        menu.addAction(tray_state_action)
-        menu.addSeparator()
         menu.addAction(pause_resume_action)
         menu.addAction(settings_action)
         menu.addAction(exit_action)
@@ -270,8 +265,26 @@ if __name__ == "__main__":
     shared_memory = QSharedMemory("BigPictureTVSharedMemory")
     if shared_memory.attach() or not shared_memory.create(1):
         sys.exit(0)
+
     app = QApplication(sys.argv)
     if is_windows_10():
         app.setStyle("Fusion")
+
+    translator = QTranslator()
+    locale = QLocale.system().name()
+    if locale.startswith("en"):
+        file_name = "tr/en.qm"
+    elif locale.startswith("es"):
+        file_name = "tr/es.qm"
+    elif locale.startswith("fr"):
+        file_name = "tr/fr.qm"
+    elif locale.startswith("de"):
+        file_name = "tr/de.qm"
+    else:
+        file_name = None
+
+    if file_name and translator.load(file_name):
+        app.installTranslator(translator)
+
     big_picture_tv = BigPictureTV()
     sys.exit(app.exec())

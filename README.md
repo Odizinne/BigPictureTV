@@ -74,3 +74,11 @@ If you'd prefer to skip the screen configuration, simply select `Clone` in BigPi
 
 Feel free to [open an issue](https://github.com/Odizinne/BigPictureTV/issues/new) in the repository.  
 Be sure to add as many information as possible to help me reproduce it!
+
+## I want to help
+
+I need help for translating the app.
+
+What is currently done:
+- English
+- french

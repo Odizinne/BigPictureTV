@@ -1,4 +1,4 @@
-# Form implementation generated from reading ui file '.\src\ui\design.ui'
+# Form implementation generated from reading ui file '.\ui\design.ui'
 #
 # Created by: PyQt6 UI code generator 6.7.0
 #
@@ -66,6 +66,7 @@ class Ui_MainWindow(object):
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.gamemode_monitor_combobox = QtWidgets.QComboBox(parent=self.gridFrame1)
         self.gamemode_monitor_combobox.setMinimumSize(QtCore.QSize(0, 25))
+        self.gamemode_monitor_combobox.setSizeAdjustPolicy(QtWidgets.QComboBox.SizeAdjustPolicy.AdjustToContents)
         self.gamemode_monitor_combobox.setObjectName("gamemode_monitor_combobox")
         self.gridLayout_4.addWidget(self.gamemode_monitor_combobox, 0, 2, 1, 1)
         self.desktop_monitor_combobox = QtWidgets.QComboBox(parent=self.gridFrame1)
@@ -174,6 +175,8 @@ class Ui_MainWindow(object):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.gridLayout_2.addWidget(self.label_2, 0, 0, 1, 2)
+        self.gridLayout_2.setColumnStretch(0, 1)
+        self.gridLayout_2.setColumnStretch(1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
