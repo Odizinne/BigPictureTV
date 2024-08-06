@@ -187,7 +187,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "BigPictureTV - Settings"))
         self.audioOutputLabel.setText(_translate("MainWindow", "Audio output configuration"))
         self.label_3.setText(_translate("MainWindow", "Gamemode actions"))
         self.close_discord_label.setText(_translate("MainWindow", "Close discord"))

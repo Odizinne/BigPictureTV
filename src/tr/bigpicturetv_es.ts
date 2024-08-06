@@ -1,40 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="es_ES">
   <context>
     <name>BigPictureTV</name>
     <message>
-      <location filename="..\BigPictureTV.py" line="35" />
-      <source>BigPictureTV - Settings</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\BigPictureTV.py" line="79" />
+      <location filename="..\BigPictureTV.py" line="78" />
       <source>External</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="80" />
+      <location filename="..\BigPictureTV.py" line="79" />
       <source>Clone</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="81" />
+      <location filename="..\BigPictureTV.py" line="80" />
       <source>Internal</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="82" />
+      <location filename="..\BigPictureTV.py" line="81" />
       <source>Extend</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="238" />
+      <location filename="..\BigPictureTV.py" line="235" />
+      <source>Resume detection</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\BigPictureTV.py" line="235" />
+      <source>Pause detection</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\BigPictureTV.py" line="237" />
       <source>Settings</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="240" />
+      <location filename="..\BigPictureTV.py" line="239" />
       <source>Exit</source>
       <translation type="unfinished" />
     </message>
@@ -43,7 +48,7 @@
     <name>MainWindow</name>
     <message>
       <location filename="..\ui\design.ui" line="0" />
-      <source>MainWindow</source>
+      <source>BigPictureTV - Settings</source>
       <translation type="unfinished" />
     </message>
     <message>
