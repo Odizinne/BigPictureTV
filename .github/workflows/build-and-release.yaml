@@ -24,18 +24,18 @@ jobs:
       - name: Build executable
         run: python src/setup.py build
 
-      - name: Zip BigPictureTV folder
+      - name: Zip binaries folder
         run: |
-          $zipFile = "build/BigPictureTV.zip"
-          $folder = "build/BigPictureTV"
+          $zipFile = "build/${{ github.event.repository.name }}.zip"
+          $folder = "build/${{ github.event.repository.name }}"
           Compress-Archive -Path $folder -DestinationPath $zipFile
         shell: pwsh
 
-      - name: Upload BigPictureTV zip
+      - name: Upload artifact zip
         uses: actions/upload-artifact@v4
         with:
-          name: BigPictureTV
-          path: build/BigPictureTV.zip
+          name: ${{ github.event.repository.name }}
+          path: build/${{ github.event.repository.name }}.zip
 
   release:
     runs-on: ubuntu-latest
@@ -44,10 +44,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download BigPictureTV zip
+      - name: Download artifact zip
         uses: actions/download-artifact@v4
         with:
-          name: BigPictureTV
+          name: ${{ github.event.repository.name }}
 
       - name: Bump version and create release
         id: bump_release
@@ -90,8 +90,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: BigPictureTV.zip
-          asset_name: BigPictureTV.zip
+          asset_path: ${{ github.event.repository.name }}.zip
+          asset_name: ${{ github.event.repository.name }}.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
