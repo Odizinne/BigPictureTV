@@ -1,4 +1,4 @@
-name: Build
+name: Build and Release
 
 on:
   push:
@@ -26,15 +26,8 @@ jobs:
       - name: Build executable
         run: python src/setup.py build
 
-      - name: Zip BigPictureTV folder
-        run: |
-          $zipFile = "build/BigPictureTV.zip"
-          $folder = "build/BigPictureTV"
-          Compress-Archive -Path $folder -DestinationPath $zipFile
-        shell: pwsh
-
-      - name: Upload BigPictureTV zip
+      - name: Upload project artifact
         uses: actions/upload-artifact@v4
         with:
-          name: BigPictureTV
-          path: build/BigPictureTV.zip
+          name: ${{ github.event.repository.name }}_win64
+          path: build/${{ github.event.repository.name }}

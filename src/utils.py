@@ -82,6 +82,4 @@ def run_displayswitch(command):
 def is_windows_10():
     os_name = platform.system()
     os_release = platform.release()
-    if os_name == "Windows" and os_release == "10":
-        return True
-    return False
+    return os_name == "Windows" and os_release == "10"
