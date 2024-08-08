@@ -4,42 +4,42 @@
   <context>
     <name>BigPictureTV</name>
     <message>
-      <location filename="..\BigPictureTV.py" line="78" />
+      <location filename="..\BigPictureTV.py" line="79" />
       <source>External</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="79" />
+      <location filename="..\BigPictureTV.py" line="80" />
       <source>Clone</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="80" />
+      <location filename="..\BigPictureTV.py" line="81" />
       <source>Internal</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="81" />
+      <location filename="..\BigPictureTV.py" line="82" />
       <source>Extend</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="235" />
+      <location filename="..\BigPictureTV.py" line="239" />
       <source>Resume detection</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="235" />
+      <location filename="..\BigPictureTV.py" line="239" />
       <source>Pause detection</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="237" />
+      <location filename="..\BigPictureTV.py" line="241" />
       <source>Settings</source>
       <translation type="unfinished" />
     </message>
     <message>
-      <location filename="..\BigPictureTV.py" line="239" />
+      <location filename="..\BigPictureTV.py" line="243" />
       <source>Exit</source>
       <translation type="unfinished" />
     </message>
@@ -85,6 +85,16 @@
     </message>
     <message>
       <location filename="..\ui\design.ui" line="0" />
+      <source>Install audio module</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\design.ui" line="0" />
+      <source>Window check rate</source>
+      <translation type="unfinished" />
+    </message>
+    <message>
+      <location filename="..\ui\design.ui" line="0" />
       <source>Disable audio switching</source>
       <translation type="unfinished" />
     </message>
@@ -95,12 +105,7 @@
     </message>
     <message>
       <location filename="..\ui\design.ui" line="0" />
-      <source>Window check rate</source>
-      <translation type="unfinished" />
-    </message>
-    <message>
-      <location filename="..\ui\design.ui" line="0" />
-      <source>Install audio module</source>
+      <source>Disable monitor switching</source>
       <translation type="unfinished" />
     </message>
     <message>

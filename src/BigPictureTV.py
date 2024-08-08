@@ -73,6 +73,7 @@ class BigPictureTV(QMainWindow):
         self.ui.checkrate_slider.valueChanged.connect(self.handle_checkrate_slider_value_changed)
         self.ui.checkrate_slider.sliderReleased.connect(self.save_settings)
         self.ui.install_audio_button.clicked.connect(self.handle_audio_button_clicked)
+        self.ui.disable_monitor_checkbox.stateChanged.connect(self.handle_disablemonitor_checkbox_state_changed)
 
     def populate_comboboxes(self):
         self.ui.gamemode_monitor_combobox.addItem(self.tr("External"))
@@ -119,12 +120,23 @@ class BigPictureTV(QMainWindow):
         self.toggle_audio_settings(not state)
         self.save_settings()
 
+    def handle_disablemonitor_checkbox_state_changed(self, state):
+        self.toggle_monitor_settings(not state)
+        self.save_settings()
+
     def toggle_audio_settings(self, enabled):
         self.ui.desktopEntry.setEnabled(enabled)
         self.ui.desktopLabel.setEnabled(enabled)
         self.ui.gamemodeEntry.setEnabled(enabled)
         self.ui.gamemodeLabel.setEnabled(enabled)
         self.ui.audioOutputLabel.setEnabled(enabled)
+
+    def toggle_monitor_settings(self, enabled):
+        self.ui.gamemode_monitor_combobox.setEnabled(enabled)
+        self.ui.desktop_monitor_combobox.setEnabled(enabled)
+        self.ui.label.setEnabled(enabled)
+        self.ui.label_7.setEnabled(enabled)
+        self.ui.label_8.setEnabled(enabled)
 
     def create_default_settings(self):
         self.settings = {
@@ -156,6 +168,8 @@ class BigPictureTV(QMainWindow):
         self.ui.close_discord_checkbox.setChecked(self.settings.get("discord_action", False))
         self.ui.gamemode_monitor_combobox.setCurrentIndex(self.settings.get("GAMEMODE_MONITOR", 0))
         self.ui.desktop_monitor_combobox.setCurrentIndex(self.settings.get("DESKTOP_MONITOR", 0))
+        self.ui.disable_monitor_checkbox.setChecked(self.settings.get("DisableMonitorSwitch", False))
+        self.toggle_monitor_settings(not self.ui.disable_monitor_checkbox.isChecked())
 
     def save_settings(self):
         self.settings = {
@@ -166,6 +180,7 @@ class BigPictureTV(QMainWindow):
             "discord_action": self.ui.close_discord_checkbox.isChecked(),
             "GAMEMODE_MONITOR": self.ui.gamemode_monitor_combobox.currentIndex(),
             "DESKTOP_MONITOR": self.ui.desktop_monitor_combobox.currentIndex(),
+            "DisableMonitorSwitch": self.ui.disable_monitor_checkbox.isChecked(),
         }
         os.makedirs(os.path.dirname(SETTINGS_FILE), exist_ok=True)
         with open(SETTINGS_FILE, "w") as f:
@@ -176,15 +191,16 @@ class BigPictureTV(QMainWindow):
             return
 
         self.current_mode = mode
-
-        if self.current_mode == Mode.GAMEMODE and self.ui.gamemode_monitor_combobox.currentIndex() == 0:
-            run_displayswitch("/external")
-        elif self.current_mode == Mode.GAMEMODE and self.ui.gamemode_monitor_combobox.currentIndex() == 1:
-            run_displayswitch("/clone")
-        elif self.current_mode == Mode.DESKTOP and self.ui.desktop_monitor_combobox.currentIndex() == 0:
-            run_displayswitch("/internal")
-        elif self.current_mode == Mode.DESKTOP and self.ui.desktop_monitor_combobox.currentIndex() == 1:
-            run_displayswitch("/extend")
+        if not self.ui.disable_monitor_checkbox.isChecked():
+            if self.current_mode == Mode.GAMEMODE and self.ui.gamemode_monitor_combobox.currentIndex() == 0:
+                monitor_mode = "/external"
+            elif self.current_mode == Mode.GAMEMODE and self.ui.gamemode_monitor_combobox.currentIndex() == 1:
+                monitor_mode = "/clone"
+            elif self.current_mode == Mode.DESKTOP and self.ui.desktop_monitor_combobox.currentIndex() == 0:
+                monitor_mode = "/internal"
+            elif self.current_mode == Mode.DESKTOP and self.ui.desktop_monitor_combobox.currentIndex() == 1:
+                monitor_mode = "/extend"
+            run_displayswitch(monitor_mode)
 
         if self.ui.close_discord_checkbox.isChecked():
             close_discord() if self.current_mode == Mode.GAMEMODE else start_discord()
