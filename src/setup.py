@@ -16,11 +16,13 @@ build_exe_options = {
     "build_exe": build_dir,
     "zip_include_packages": zip_include_packages,
     "excludes": ["tkinter"],
+    "silent": True,
+    "include_msvcr": True,
 }
 
 executables = [
     Executable(
-        script=os.path.join(src_dir, "BigPictureTV.py"),
+        script=os.path.join(src_dir, "bigpicturetv.py"),
         base="Win32GUI",
         icon=os.path.join(src_dir, "icons/icon.ico"),
         target_name="BigpictureTV",

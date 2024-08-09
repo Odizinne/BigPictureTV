@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>SettingsWindow</class>
+ <widget class="QMainWindow" name="SettingsWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -28,7 +28,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1">
     <item row="2" column="0">
-     <widget class="QLabel" name="audioOutputLabel">
+     <widget class="QLabel" name="audio_output_label">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -64,7 +64,7 @@
      </widget>
     </item>
     <item row="5" column="0" colspan="2">
-     <widget class="QFrame" name="gridFrame">
+     <widget class="QFrame" name="actions_frame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -120,7 +120,7 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QFrame" name="gridFrame">
+     <widget class="QFrame" name="monitor_frame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -167,7 +167,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label_8">
+        <widget class="QLabel" name="desktop_monitor_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -180,7 +180,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="gamemode_monitor_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -209,7 +209,7 @@
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="monitor_configuration_label">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -227,7 +227,7 @@
      </widget>
     </item>
     <item row="3" column="0">
-     <widget class="QFrame" name="audioFrame">
+     <widget class="QFrame" name="audio_frame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -248,7 +248,7 @@
         <number>12</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="gamemodeLabel">
+        <widget class="QLabel" name="gamemode_audio_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -261,7 +261,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="desktopLabel">
+        <widget class="QLabel" name="desktop_audio_label">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -274,7 +274,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="desktopEntry">
+        <widget class="QLineEdit" name="desktop_audio_lineedit">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -290,7 +290,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="gamemodeEntry">
+        <widget class="QLineEdit" name="gamemode_audio_lineedit">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -309,7 +309,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QFrame" name="settingsFrame">
+     <widget class="QFrame" name="settings_frame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -393,7 +393,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QCheckBox" name="disableAudioCheckbox">
+        <widget class="QCheckBox" name="disable_audio_checkbox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -422,7 +422,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QCheckBox" name="startupCheckBox">
+        <widget class="QCheckBox" name="startup_checkbox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -504,10 +504,10 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>startupCheckBox</tabstop>
-  <tabstop>disableAudioCheckbox</tabstop>
-  <tabstop>gamemodeEntry</tabstop>
-  <tabstop>desktopEntry</tabstop>
+  <tabstop>startup_checkbox</tabstop>
+  <tabstop>disable_audio_checkbox</tabstop>
+  <tabstop>gamemode_audio_lineedit</tabstop>
+  <tabstop>desktop_audio_lineedit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

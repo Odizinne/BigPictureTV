@@ -20,7 +20,3 @@ def manage_startup_shortcut(state):
 
 def check_startup_shortcut():
     return os.path.exists(os.path.join(winshell.startup(), "BigPictureTV.lnk"))
-
-
-def handle_startup_checkbox_state_changed(state):
-    manage_startup_shortcut(state)

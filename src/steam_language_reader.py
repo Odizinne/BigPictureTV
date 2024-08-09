@@ -1,6 +1,5 @@
 import winreg
 
-# Map language codes to Big Picture mode window titles
 BIG_PICTURE_WINDOW_TITLES = {
     "schinese": "Steam 大屏幕模式",
     "tchinese": "Steam Big Picture 模式",
