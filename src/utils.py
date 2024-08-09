@@ -78,6 +78,11 @@ def get_theme():
 def run_displayswitch(command):
     subprocess.run(["DisplaySwitch.exe", command])
 
+    # To be used with https://github.com/Odizinne/QMS-QuickMonitorSwitcher
+    os.makedirs(os.path.join(os.environ.get("APPDATA"), "displayswitch_history"), exist_ok=True)
+    with open(os.path.join(os.environ.get("APPDATA"), "displayswitch_history", "displayswitch.txt"), "w") as f:
+        f.write(command.lstrip("/"))
+
 
 def is_windows_10():
     os_name = platform.system()
