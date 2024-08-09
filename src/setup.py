@@ -17,7 +17,7 @@ build_exe_options = {
     "zip_include_packages": zip_include_packages,
     "excludes": ["tkinter"],
     "silent": True,
-    "include_msvcr": True,
+    "include_msvcr": False,
 }
 
 executables = [
