@@ -28,6 +28,10 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
 ## Usage
 
+### Error: The program can't start ...
+
+Download and install [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+
 ### Window check rate
 
 In ms, from 100 to 1000, the interval for checking Steam Big Picture window presence.  
