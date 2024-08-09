@@ -25,7 +25,7 @@ executables = [
         script=os.path.join(src_dir, "bigpicturetv.py"),
         base="Win32GUI",
         icon=os.path.join(src_dir, "icons/icon.ico"),
-        target_name="BigpictureTV",
+        target_name="BigPictureTV",
     )
 ]
 
