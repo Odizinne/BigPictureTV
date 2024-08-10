@@ -2,7 +2,7 @@ import os
 import subprocess
 import psutil
 import platform
-import darkdetect
+import winreg
 import pygetwindow as gw
 from steam_language_reader import get_big_picture_window_title
 
@@ -30,7 +30,8 @@ def install_audio_module():
             "Error",
             "Failed to install AudioDeviceCmdlets module.\n"
             "Please install it manually by running this command in PowerShell: "
-            f"{audiodevicecmdlets_command}",
+            f"{audiodevicecmdlets_command}\n"
+            "You should then restart BigPictureTV.",
         )
 
 
@@ -47,7 +48,9 @@ def is_bigpicture_running():
 
 
 def is_sunshine_stream_active():
-    # To be used with https://github.com/Odizinne/Sunshine-Toolbox
+    """
+    To be used with https://github.com/Odizinne/Sunshine-Toolbox
+    """
     return os.path.exists(SUNSHINE_STATUS_FILE)
 
 
@@ -76,13 +79,27 @@ def switch_power_plan(plan_guid):
 
 
 def get_theme():
-    return "light" if darkdetect.isDark() else "dark"
+    """
+    Returns windows current theme.
+    If the value is 1, the theme is light; if 0, it's dark.
+    This function returns the opposite to match icon names.
+    """
+    registry_key = winreg.OpenKey(
+        winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"
+    )
+    value, regtype = winreg.QueryValueEx(registry_key, "AppsUseLightTheme")
+    winreg.CloseKey(registry_key)
+
+    theme = "light" if value == 0 else "dark"
+    return theme
 
 
 def run_displayswitch(command):
+    """
+    To be used with https://github.com/Odizinne/QMS-QuickMonitorSwitcher
+    """
     subprocess.run(["DisplaySwitch.exe", command])
 
-    # To be used with https://github.com/Odizinne/QMS-QuickMonitorSwitcher
     os.makedirs(os.path.join(os.environ.get("APPDATA"), "displayswitch_history"), exist_ok=True)
     with open(os.path.join(os.environ.get("APPDATA"), "displayswitch_history", "displayswitch.txt"), "w") as f:
         f.write(command.lstrip("/"))
