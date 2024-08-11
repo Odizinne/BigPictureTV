@@ -52,6 +52,7 @@ private:
     void toggleDetection();
     bool gamemodeActive;
     bool discordInstalled;
+    bool firstRun;
     void getAudioCapabilities();
     void setFrames();
     void populateComboboxes();

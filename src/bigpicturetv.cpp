@@ -27,6 +27,7 @@ const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(QSta
 BigPictureTV::BigPictureTV(QWidget *parent)
     : QMainWindow(parent)
     , gamemodeActive(false)
+    , firstRun(false)
     , ui(new Ui::BigPictureTV)
     , windowCheckTimer(new QTimer(this))
 
@@ -44,6 +45,10 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
     createTrayIcon();
+    if (firstRun)
+    {
+        this->show();
+    }
 }
 
 BigPictureTV::~BigPictureTV()
@@ -308,6 +313,7 @@ void BigPictureTV::handleActions(bool isDesktopMode)
 
 void BigPictureTV::createDefaultSettings()
 {
+    firstRun = true;
     ui->desktop_audio_lineedit->setText("Headset");
     ui->gamemode_audio_lineedit->setText("TV");
     saveSettings();

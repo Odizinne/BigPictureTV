@@ -25,7 +25,6 @@ int main(int argc, char *argv[])
     }
 
     BigPictureTV w;
-    w.show();
 
     // Release the shared memory when the application exits
     QObject::connect(&a, &QApplication::aboutToQuit, [&sharedMemory]() {
