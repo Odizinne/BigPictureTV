@@ -8,30 +8,30 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
 SOURCES += \
-    audiomanager.cpp \
-    colorutils.cpp \
-    main.cpp \
-    bigpicturetv.cpp \
-    shortcutmanager.cpp \
-    steamwindowmanager.cpp \
-    utils.cpp
+    src/audiomanager.cpp \
+    src/colorutils.cpp \
+    src/main.cpp \
+    src/bigpicturetv.cpp \
+    src/shortcutmanager.cpp \
+    src/steamwindowmanager.cpp \
+    src/utils.cpp
 
 HEADERS += \
-    audiomanager.h \
-    bigpicturetv.h \
-    colorutils.h \
-    shortcutmanager.h \
-    steamwindowmanager.h \
-    utils.h
+    src/audiomanager.h \
+    src/bigpicturetv.h \
+    src/colorutils.h \
+    src/shortcutmanager.h \
+    src/steamwindowmanager.h \
+    src/utils.h
 
 FORMS += \
-    bigpicturetv.ui
+    src/bigpicturetv.ui
 
 # Add the necessary libraries for COM functionality, Shell operations, and other Windows API functions
 LIBS += -lole32 -lshell32 -luser32 -ladvapi32
 
-RESOURCES += resources.qrc
-RC_FILE = appicon.rc
+RESOURCES += src/resources.qrc
+RC_FILE = src/appicon.rc
 
 # Default rules for deployment
 qnx: target.path = /tmp/$${TARGET}/bin
