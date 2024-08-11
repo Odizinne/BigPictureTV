@@ -1,6 +1,6 @@
 # BigPictureTV-CPP
 
-This is a reimplementation of [BigPictureTV]() for the sake of learning c++.
+This is a reimplementation of [BigPictureTV](https://github.com/Odizinne/bigpicturetv) for the sake of learning c++.
 
 Not everything is implemented yet but core function is working.
 
