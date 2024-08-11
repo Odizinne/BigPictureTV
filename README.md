@@ -1,5 +1,5 @@
 # BigPictureTV
-[![Github All Releases](https://img.shields.io/github/downloads/odizinne/bigpicturetv/total.svg)]()
+[![Github All Releases](https://img.shields.io/github/downloads/odizinne/bigpicturetv-python/total.svg)]()
 [![license](https://img.shields.io/github/license/odizinne/bigpicturetv)]()
 
 This Python project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
