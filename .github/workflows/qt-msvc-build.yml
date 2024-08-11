@@ -1,0 +1,80 @@
+name: Build Qt Project
+
+on:
+  push:
+    branches:
+      - cpp
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Visual Studio shell
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.7.2'
+          add-tools-to-path: true
+          tools: 'tools_qtcreator,qt.tools.qtcreator'
+
+      - name: Build with qmake and jom
+        shell: pwsh
+        run: |
+          mkdir build
+          cd build
+          qmake ..\BigPictureTV.pro CONFIG+=release
+          D:\a\BigPictureTV\Qt\Tools\QtCreator\bin\jom\jom.exe
+
+      - name: Remove source and object files
+        shell: pwsh
+        run: |
+          # Define the directory
+          $buildDir = "build/release"
+
+          # Check if the directory exists
+          if (Test-Path $buildDir) {
+              # Remove .cpp, .h, .obj, and .res files
+              Get-ChildItem -Path $buildDir -Include *.cpp, *.h, *.obj, *.res -Recurse | Remove-Item -Force
+          } else {
+              Write-Host "Directory not found: $buildDir"
+          }
+
+      - name: Run windeployqt
+        shell: pwsh
+        run: |
+          # Navigate to the directory containing the executable
+          cd build
+
+          # Use the found path to windeployqt
+          $windeployqtPath = "D:\a\BigPictureTV\Qt\6.7.2\msvc2019_64\bin\windeployqt6.exe"
+
+          # Check if the executable exists
+          if (Test-Path $windeployqtPath) {
+              # Run windeployqt with the updated options
+              & $windeployqtPath `
+                  --exclude-plugins qmodernwindowsstyle,qsvgicon,qsvg,qico,qjpeg,qgif,qnetworklistmanager,qtuiotouchplugin `
+                  --no-opengl-sw `
+                  --no-system-dxc-compiler `
+                  --no-compiler-runtime `
+                  --no-translations `
+                  --no-system-d3d-compiler `
+                  D:\a\BigPictureTV\BigPictureTV\build\release\BigPictureTV.exe
+          } else {
+              Write-Error "windeployqt not found at the expected path!"
+              exit 1
+          }
+
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BigPictureTV_msvc_64
+          path: build/release/

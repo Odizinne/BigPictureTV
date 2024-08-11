@@ -31,6 +31,7 @@ FORMS += \
 LIBS += -lole32 -lshell32 -luser32 -ladvapi32
 
 RESOURCES += resources.qrc
+RC_FILE = appicon.rc
 
 # Default rules for deployment
 qnx: target.path = /tmp/$${TARGET}/bin
