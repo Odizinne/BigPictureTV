@@ -4,6 +4,8 @@
 #include "steamwindowmanager.h"
 #include "ui_bigpicturetv.h"
 #include "audiomanager.h"
+#include "utils.h"
+
 #include <QDir>
 #include <QStandardPaths>
 #include <QFile>
@@ -57,6 +59,7 @@ void BigPictureTV::setupConnections()
     connect(ui->disable_audio_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
     connect(ui->disable_monitor_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
     connect(ui->checkrate_slider, &QSlider::sliderReleased, this, &BigPictureTV::onCheckrateSliderReleased);
+    discordInstalled = isDiscordInstalled();
 }
 
 void BigPictureTV::setFrames()
@@ -135,95 +138,101 @@ void BigPictureTV::onDisableMonitorCheckboxStateChanged(int state)
     toggleMonitorSettings(!isChecked);
 }
 
-void BigPictureTV::runDisplaySwitchCommand(const QString &command)
-{
-    QProcess process;
-    process.start("displayswitch.exe", QStringList() << command);
-
-    if (!process.waitForStarted()) {
-        qWarning() << "Failed to start process:" << process.errorString();
-        return;
-    }
-
-    if (!process.waitForFinished()) {
-        qWarning() << "Process did not finish:" << process.errorString();
-        return;
-    }
-
-    QString output = process.readAllStandardOutput();
-    QString error = process.readAllStandardError();
-
-    if (!output.isEmpty()) {
-        qDebug() << "Process Output:" << output;
-    }
-
-    if (!error.isEmpty()) {
-        qWarning() << "Process Error:" << error;
-    }
-}
 
 void BigPictureTV::checkWindowTitle()
 {
-    qDebug() << "checking";
+    //qDebug() << "checking";
     bool isRunning = isBigPictureRunning();
     bool disableVideo = ui->disable_monitor_checkbox->isChecked();
     bool disableAudio = ui->disable_audio_checkbox->isChecked();
 
     if (isRunning && !gamemodeActive)
     {
-        int index = ui->gamemode_monitor_combobox->currentIndex();
-        std::string audioDevice = ui->gamemode_audio_lineedit->text().toStdString();;
         gamemodeActive = true;
-        if (!disableVideo)
-        {
-            qDebug() << "Switching to gamemode";
-            if (index == 0)
-            {
-                runDisplaySwitchCommand("/external");
-            }
-            else if (index == 1)
-            {
-                runDisplaySwitchCommand("/clone");
-            }
-        }
-        if (!disableAudio)
-        {
-            try {
-                // Attempt to set the default audio device
-                setAudioDevice(audioDevice);
-                std::cout << "Audio device set successfully." << std::endl;
-            } catch (const std::runtime_error& e) {
-                std::cerr << "Error: " << e.what() << std::endl;
-            }
-        }
+        handleMonitorChanges(false, disableVideo);
+        handleAudioChanges(false, disableAudio);
+        handleActions(false);
     }
     else if (!isRunning && gamemodeActive)
     {
-        std::string audioDevice = ui->desktop_audio_lineedit->text().toStdString();;
         gamemodeActive = false;
-        if (!disableVideo)
-        {
-            int index = ui->desktop_monitor_combobox->currentIndex();
+        handleMonitorChanges(true, disableVideo);
+        handleAudioChanges(true, disableAudio);
+        handleActions(true);
+    }
+}
 
-            if (index == 0)
-            {
-                runDisplaySwitchCommand("/internal");
-            }
-            else if (index == 1)
-            {
-                runDisplaySwitchCommand("/extend");
-            }
-        }
-        if (!disableAudio)
+void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
+{
+    if (disableVideo) return;
+
+    int index = isDesktopMode ? ui->desktop_monitor_combobox->currentIndex() : ui->gamemode_monitor_combobox->currentIndex();
+
+    if (isDesktopMode)
+    {
+        if (index == 0)
         {
-            try {
-                setAudioDevice(audioDevice);
-                std::cout << "Audio device set successfully." << std::endl;
-            } catch (const std::runtime_error& e) {
-                std::cerr << "Error: " << e.what() << std::endl;
-            }
+            runDisplayswitch("/internal");
+        }
+        else if (index == 1)
+        {
+            runDisplayswitch("/extend");
         }
     }
+    else
+    {
+        if (index == 0)
+        {
+            runDisplayswitch("/external");
+        }
+        else if (index == 1)
+        {
+            runDisplayswitch("/clone");
+        }
+    }
+}
+
+void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
+{
+    if (disableAudio) return;
+
+    std::string audioDevice = isDesktopMode ? ui->desktop_audio_lineedit->text().toStdString() : ui->gamemode_audio_lineedit->text().toStdString();
+
+    try {
+        setAudioDevice(audioDevice);
+        std::cout << "Audio device set successfully." << std::endl;
+    } catch (const std::runtime_error& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+}
+
+void BigPictureTV::handleActions(bool isDesktopMode)
+{
+    bool performDiscordAction = ui->close_discord_checkbox->isChecked();
+    bool setPowerPlan = ui->performance_powerplan_checkbox->isChecked();
+    if (isDesktopMode)
+    {
+        if (performDiscordAction)
+        {
+            startDiscord();
+        }
+        if (setPowerPlan)
+        {
+            switchPowerPlan(L"381b4222-f694-41f0-9685-ff5bb260df2e");
+        }
+    }
+    else
+    {
+        if (performDiscordAction)
+        {
+            closeDiscord();
+        }
+        if (setPowerPlan)
+        {
+            switchPowerPlan(L"8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
+        }
+    }
+
 }
 
 void BigPictureTV::createDefaultSettings()

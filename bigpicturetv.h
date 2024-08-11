@@ -49,16 +49,17 @@ private:
     void createTrayIcon();
     QMenu* createMenu();
     void toggleDetection();
-    //void showSettings();
     bool gamemodeActive;
+    bool discordInstalled;
     void setFrames();
     void populateComboboxes();
-    void runDisplaySwitchCommand(const QString &command);
     void toggleAudioSettings(bool state);
     void toggleMonitorSettings(bool state);
     void setupConnections();
-    void handleMonitorChanges();
-    void handleAudioChanges();
+    void handleMonitorChanges(bool isDesktopMode, bool disableVideo);
+    void handleAudioChanges(bool isDesktopMode, bool disableAudio);
+    void handleActions(bool isDesktopMode);
+
     Ui::BigPictureTV *ui;
     QTimer *windowCheckTimer;
     std::wstring shortcutName = L"BigPictureTV.lnk"; // Default values or set them appropriately
