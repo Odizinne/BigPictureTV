@@ -22,7 +22,7 @@ This Python project automates switching between a monitor and a TV when launchin
  
 ## Download
 
-Head to [release](https://github.com/Odizinne/BigPictureTV/releases/latest) section and grab the latest one.
+Head to [release](https://github.com/Odizinne/BigPictureTV-Python/releases/latest) section and grab the latest one.
 
 Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
