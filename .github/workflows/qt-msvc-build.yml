@@ -3,7 +3,7 @@ name: Build Qt Project
 on:
   push:
     branches:
-      - cpp
+      - main
 
 jobs:
   build:
