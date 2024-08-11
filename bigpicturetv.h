@@ -39,6 +39,7 @@ private slots:
     void onStartupCheckboxStateChanged();
     void onDisableAudioCheckboxStateChanged(int state);
     void onDisableMonitorCheckboxStateChanged(int state);
+    void onAudioButtonClicked();
     void checkWindowTitle();
     void onCheckrateSliderReleased();
     void showSettings();
@@ -51,6 +52,7 @@ private:
     void toggleDetection();
     bool gamemodeActive;
     bool discordInstalled;
+    void getAudioCapabilities();
     void setFrames();
     void populateComboboxes();
     void toggleAudioSettings(bool state);
@@ -66,6 +68,8 @@ private:
     QString settingsFilePath;
     QJsonObject settings;
     static const QString settingsFile; // Use QString for Qt compatibility
+    QString status;
+    QString message;
 
 protected:
     void closeEvent(QCloseEvent *event) override;

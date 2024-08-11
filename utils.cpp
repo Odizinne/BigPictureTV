@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <QProcess>
 #include <QDebug>
+#include <QIcon>
 #include <windows.h>
 #include <iostream>
 #include <string>
@@ -62,8 +63,23 @@ std::string getTheme() {
     }
 
     // Determine the theme based on the registry value
-    std::string theme = (value == 0) ? "dark" : "light";
+    // Return the opposite to match icon (dark icon on light theme)
+    std::string theme = (value == 0) ? "light" : "dark";
     return theme;
+}
+
+QIcon getIconForTheme() {
+    // Get the system theme
+    std::string theme = getTheme();
+
+    // Convert theme to QString
+    QString themeStr = QString::fromStdString(theme);
+
+    // Construct the icon path based on the theme
+    QString iconPath = QString(":/icons/icon_%1.png").arg(themeStr);
+
+    // Return the QIcon object
+    return QIcon(iconPath);
 }
 
 bool switchPowerPlan(const std::wstring& planGuid) {
@@ -161,4 +177,38 @@ void startDiscord() {
     if (!process.startDetached()) {
         std::wcerr << L"Failed to start Discord with arguments" << std::endl;
     }
+}
+
+
+bool isAudioDeviceCmdletsInstalled() {
+    // Create a QProcess instance
+    QProcess process;
+
+    // Set up the command to execute
+    process.setProgram("powershell");
+    process.setArguments({"-Command", "Get-Module -ListAvailable -Name AudioDeviceCmdlets"});
+
+    // Start the process
+    process.start();
+    if (!process.waitForStarted()) {
+        qWarning() << "Failed to start process.";
+        return false;
+    }
+
+    // Wait for the process to finish
+    if (!process.waitForFinished()) {
+        qWarning() << "Process did not finish correctly.";
+        return false;
+    }
+
+    // Get the output from the process
+    QString output = process.readAllStandardOutput();
+    QString error = process.readAllStandardError();
+
+    if (!error.isEmpty()) {
+        qWarning() << "Error:" << error;
+    }
+
+    // Check if the output contains the module name
+    return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
 }

@@ -18,6 +18,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QCloseEvent>
+#include <QMessageBox>
 #include <QDebug>
 #include <iostream>
 
@@ -31,12 +32,12 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 
 {
     ui->setupUi(this);
-    setWindowIcon(QIcon(":/icons/icon_desktop_light.png"));
-
+    setWindowIcon(getIconForTheme());
     setFrames();
     populateComboboxes();
     loadSettings();
     setupConnections();
+    getAudioCapabilities();
 
 
     windowCheckTimer->setInterval(ui->checkrate_slider->value());
@@ -59,7 +60,35 @@ void BigPictureTV::setupConnections()
     connect(ui->disable_audio_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
     connect(ui->disable_monitor_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
     connect(ui->checkrate_slider, &QSlider::sliderReleased, this, &BigPictureTV::onCheckrateSliderReleased);
-    discordInstalled = isDiscordInstalled();
+    ui->close_discord_checkbox->setEnabled(isDiscordInstalled());
+    ui->close_discord_label->setEnabled(isDiscordInstalled());
+    connect(ui->close_discord_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->performance_powerplan_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->desktop_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->gamemode_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->install_audio_button, &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
+}
+
+void BigPictureTV::getAudioCapabilities()
+{
+    if (!isAudioDeviceCmdletsInstalled())
+    {
+        qDebug() << "here:";
+        ui->disable_audio_checkbox->setChecked(true);
+        ui->disable_audio_checkbox->setEnabled(false);
+        toggleAudioSettings(false);
+    }
+    else
+    {
+        qDebug() << "there:";
+        ui->disable_audio_checkbox->setEnabled(true);
+        ui->install_audio_button->setVisible(false);
+        if (!ui->disable_audio_checkbox->isChecked())
+        {
+            toggleAudioSettings(true);
+        }
+        this->adjustSize();
+    }
 }
 
 void BigPictureTV::setFrames()
@@ -78,15 +107,16 @@ void BigPictureTV::populateComboboxes()
     ui->gamemode_monitor_combobox->addItem("Clone");
 }
 
-void BigPictureTV::createTrayIcon() {
-    QIcon icon(":/icons/icon_desktop_light.png");
-    trayIcon = new QSystemTrayIcon(icon, this);
+void BigPictureTV::createTrayIcon()
+{
+    trayIcon = new QSystemTrayIcon(getIconForTheme(), this);
     trayIcon->setToolTip("BigPictureTV");
     trayIcon->setContextMenu(createMenu());
     trayIcon->show();
 }
 
-QMenu* BigPictureTV::createMenu() {
+QMenu* BigPictureTV::createMenu()
+{
     QMenu *menu = new QMenu(this);
 
     QAction *settingsAction = new QAction("Settings", this);
@@ -101,9 +131,9 @@ QMenu* BigPictureTV::createMenu() {
     return menu;
 }
 
-void BigPictureTV::closeEvent(QCloseEvent *event) {
+void BigPictureTV::closeEvent(QCloseEvent *event)
+{
     hide();
-    // Ignore the  event so the application continues running
     event->ignore();
 }
 
@@ -130,12 +160,53 @@ void BigPictureTV::onDisableAudioCheckboxStateChanged(int state)
 {
     bool isChecked = (state == Qt::Checked);
     toggleAudioSettings(!isChecked);
+    saveSettings();
 }
 
 void BigPictureTV::onDisableMonitorCheckboxStateChanged(int state)
 {
     bool isChecked = (state == Qt::Checked);
     toggleMonitorSettings(!isChecked);
+    saveSettings();
+}
+
+void BigPictureTV::onAudioButtonClicked()
+{
+    ui->install_audio_button->setEnabled(false);
+
+    QProcess process;
+    process.start("powershell", QStringList() << "-NoProfile" << "-ExecutionPolicy" << "Bypass" << "-Command"
+                                              << "Install-Module AudioDeviceCmdlets -Force -Scope CurrentUser");
+
+    if (!process.waitForFinished()) {
+        status = "Error";
+        message = "Failed to execute the PowerShell command.\n"
+                  "Please check if PowerShell is installed and properly configured.";
+    } else {
+        QString output = process.readAllStandardOutput();
+        QString errorOutput = process.readAllStandardError();
+        int exitCode = process.exitCode();
+
+        if (exitCode == 0) {
+            status = "Success";
+            message = "AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.";
+        } else {
+            status = "Error";
+            message = "Failed to install AudioDeviceCmdlets module.\n"
+                      "Please install it manually by running this command in PowerShell: "
+                      "Install-Module AudioDeviceCmdlets -Force -Scope CurrentUser\n"
+                      "You should then restart the application.\n"
+                      "Error details:\n" + errorOutput;
+        }
+    }
+
+    if (status == "Success") {
+        QMessageBox::information(this, status, message);
+    } else {
+        QMessageBox::critical(this, status, message);
+        ui->install_audio_button->setEnabled(true);
+    }
+    getAudioCapabilities();
 }
 
 
