@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <algorithm>
+#include <QDebug>
 
 const std::unordered_map<std::string, std::string> BIG_PICTURE_WINDOW_TITLES = {
     {"schinese", "Steam 大屏幕模式"},
@@ -39,21 +40,47 @@ const std::unordered_map<std::string, std::string> BIG_PICTURE_WINDOW_TITLES = {
 
 std::string getBigPictureWindowTitle() {
     std::string language = getSteamLanguage();
+    qDebug() << "Steam language:" << QString::fromStdString(language);
+
     auto it = BIG_PICTURE_WINDOW_TITLES.find(language);
     if (it != BIG_PICTURE_WINDOW_TITLES.end()) {
+        qDebug() << "Big Picture title for language:" << QString::fromStdString(it->second);
         return it->second;
     }
+    qDebug() << "Default Big Picture title (English):" << QString::fromStdString(BIG_PICTURE_WINDOW_TITLES.at("english"));
     return BIG_PICTURE_WINDOW_TITLES.at("english");
 }
 
 bool isBigPictureRunning() {
     std::string bigPictureTitle = getBigPictureWindowTitle();
+    qDebug() << "Searching for window with title:" << QString::fromStdString(bigPictureTitle);
+
     std::vector<std::string> bigPictureWords = extractWords(bigPictureTitle);
+
+    // Convert all Big Picture words to lowercase
+    std::transform(bigPictureWords.begin(), bigPictureWords.end(), bigPictureWords.begin(),
+                   [](const std::string& word) { return toLower(word); });
+
+    qDebug() << "Big Picture title words:";
+    for (const auto& word : bigPictureWords) {
+        qDebug() << QString::fromStdString(word);
+    }
 
     std::vector<std::wstring> currentWindowTitles = getAllWindowTitles();
     for (const auto& windowTitle : currentWindowTitles) {
         std::string windowTitleStr = convertWStringToString(windowTitle);
+        qDebug() << "Current window title:" << QString::fromStdString(windowTitleStr);
+
         std::vector<std::string> windowWords = extractWords(windowTitleStr);
+
+        // Convert all window words to lowercase
+        std::transform(windowWords.begin(), windowWords.end(), windowWords.begin(),
+                       [](const std::string& word) { return toLower(word); });
+
+        qDebug() << "Window title words:";
+        for (const auto& word : windowWords) {
+            qDebug() << QString::fromStdString(word);
+        }
 
         bool allWordsFound = std::all_of(bigPictureWords.begin(), bigPictureWords.end(),
                                          [&windowWords](const std::string& word) {
@@ -61,14 +88,19 @@ bool isBigPictureRunning() {
                                          });
 
         if (allWordsFound) {
+            qDebug() << "Matching window found!";
             return true;
         }
     }
+    qDebug() << "No matching window found.";
     return false;
 }
 
+
 std::string getSteamLanguage() {
-    return getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
+    std::string language = getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
+    qDebug() << "Retrieved Steam language from registry:" << QString::fromStdString(language);
+    return language;
 }
 
 std::string getRegistryValue(const std::wstring& keyPath, const std::wstring& valueName) {
@@ -80,27 +112,45 @@ std::string getRegistryValue(const std::wstring& keyPath, const std::wstring& va
     if (RegOpenKeyEx(HKEY_CURRENT_USER, keyPath.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
         if (RegQueryValueEx(hKey, valueName.c_str(), NULL, NULL, (LPBYTE)value, &valueLength) == ERROR_SUCCESS) {
             result = toLower(convertWStringToString(value));
+            qDebug() << "Registry value:" << QString::fromStdString(result);
+        } else {
+            qDebug() << "Failed to query registry value:" << QString::fromStdWString(valueName);
         }
         RegCloseKey(hKey);
+    } else {
+        qDebug() << "Failed to open registry key:" << QString::fromStdWString(keyPath);
     }
 
     return result;
 }
 
-std::vector<std::wstring> getAllWindowTitles() {
-    std::vector<std::wstring> titles;
-    HWND hwnd = GetTopWindow(NULL);
+std::vector<std::wstring> g_windowTitles; // Global or static variable to store window titles
 
-    while (hwnd) {
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
+    std::vector<std::wstring>* titles = reinterpret_cast<std::vector<std::wstring>*>(lParam);
+
+    // Check if the window is visible and not minimized
+    if (IsWindowVisible(hwnd) && !(GetWindowLong(hwnd, GWL_STYLE) & WS_MINIMIZE)) {
         wchar_t windowTitle[256];
-        GetWindowText(hwnd, windowTitle, sizeof(windowTitle) / sizeof(wchar_t));
-        if (wcslen(windowTitle) > 0) {
-            titles.push_back(windowTitle);
+        if (GetWindowText(hwnd, windowTitle, sizeof(windowTitle) / sizeof(wchar_t)) > 0) {
+            titles->push_back(windowTitle);
         }
-        hwnd = GetNextWindow(hwnd, GW_HWNDNEXT);
+    }
+    return TRUE;  // Continue enumeration
+}
+
+std::vector<std::wstring> getAllWindowTitles() {
+    g_windowTitles.clear();
+
+    // Enumerate all top-level windows
+    EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&g_windowTitles));
+
+    qDebug() << "Retrieved window titles:";
+    for (const auto& title : g_windowTitles) {
+        qDebug() << QString::fromStdWString(title);
     }
 
-    return titles;
+    return g_windowTitles;
 }
 
 std::vector<std::string> extractWords(const std::string& str) {
