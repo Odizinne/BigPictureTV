@@ -70,23 +70,11 @@ jobs:
               exit 1
           }
 
-      - name: Rename release directory
-        shell: pwsh
-        run: |
-          $releaseDir = "build/release"
-          $newDir = "BigPictureTV"
-          
-          if (Test-Path $releaseDir) {
-              Rename-Item -Path $releaseDir -NewName $newDir
-          } else {
-              Write-Host "Release directory not found: $releaseDir"
-          }
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: BigPictureTV_msvc_64
-          path: build/BigPictureTV
+          path: build/release/
 
   release:
     runs-on: ubuntu-latest
