@@ -188,7 +188,7 @@ void BigPictureTV::onAudioButtonClicked()
 
         if (exitCode == 0) {
             status = "Success";
-            message = "NuGet package provider and AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.";
+            message = "AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.";
         } else {
             status = "Error";
             message = "Failed to install NuGet package provider or AudioDeviceCmdlets module.\n"

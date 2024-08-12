@@ -173,20 +173,24 @@ bool isAudioDeviceCmdletsInstalled() {
     return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
 }
 
+// Function to check if the OS is Windows 10 by querying the registry
 bool isWindows10() {
-    OSVERSIONINFOEXW osvi = {0};
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXW);
+    HKEY hKey;
+    RegOpenKeyExW(HKEY_LOCAL_MACHINE,
+                  L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
+                  0, KEY_READ, &hKey);
 
-    // Retrieve the version information
-    if (GetVersionExW(reinterpret_cast<OSVERSIONINFO*>(&osvi))) {
-        // Check if the major version is 10 and minor version is 0
-        if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0) {
-            // Windows 10 build numbers start from 10240
-            // Windows 11 build numbers start from 22000
-            if (osvi.dwBuildNumber >= 10240 && osvi.dwBuildNumber < 22000) {
-                return true; // Windows 10
-            }
-        }
-    }
-    return false;
+    WCHAR buildNumberString[256];
+    DWORD bufferSize = sizeof(buildNumberString);
+    RegQueryValueExW(hKey, L"CurrentBuild", NULL, NULL,
+                     reinterpret_cast<LPBYTE>(buildNumberString),
+                     &bufferSize);
+
+    std::wstring buildNumberWStr(buildNumberString);
+    DWORD buildNumber = std::stoi(buildNumberWStr);
+
+    RegCloseKey(hKey);
+
+    return (buildNumber >= 10240 && buildNumber < 22000);
 }
+
