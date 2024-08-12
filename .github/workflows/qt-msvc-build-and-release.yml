@@ -129,7 +129,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: BigPictureTV_msvc_64.zip
+          asset_path: BigPictureTV_msvc_64
           asset_name: BigPictureTV_msvc_64.zip
           asset_content_type: application/zip
         env:
