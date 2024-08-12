@@ -47,7 +47,7 @@ jobs:
               Write-Host "Directory not found: $buildDir"
           }
 
-      - name: Run windeployqt
+      - name: Deploy Qt
         shell: pwsh
         run: |
           # Navigate to the directory containing the executable

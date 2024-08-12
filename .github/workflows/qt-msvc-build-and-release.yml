@@ -1,4 +1,4 @@
-name: Build
+name: Build and Release
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
               Write-Host "Directory not found: $buildDir"
           }
 
-      - name: Run windeployqt
+      - name: Deploy Qt
         shell: pwsh
         run: |
           # Navigate to the directory containing the executable
