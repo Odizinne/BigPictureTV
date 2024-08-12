@@ -72,8 +72,15 @@ jobs:
               exit 1
           }
 
+      - name: Zip binaries folder
+        run: |
+          $zipFile = "build/BigPictureTV_msvc_64.zip"
+          $folder = "build/release"
+          Compress-Archive -Path $folder -DestinationPath $zipFile
+        shell: pwsh
+          
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: BigPictureTV_msvc_64
-          path: build/release/
+          path: build/BigPictureTV_msvc_64.zip

@@ -70,11 +70,18 @@ jobs:
               exit 1
           }
 
+      - name: Zip binaries folder
+        run: |
+          $zipFile = "build/BigPictureTV_msvc_64.zip"
+          $folder = "build/release"
+          Compress-Archive -Path $folder -DestinationPath $zipFile
+        shell: pwsh
+          
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: BigPictureTV_msvc_64
-          path: build/release/
+          path: build/BigPictureTV_msvc_64.zip
 
   release:
     runs-on: ubuntu-latest
@@ -132,7 +139,7 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: BigPictureTV_msvc_64
+          asset_path: BigPictureTV_msvc_64.zip
           asset_name: BigPictureTV_msvc_64.zip
           asset_content_type: application/zip
         env:
