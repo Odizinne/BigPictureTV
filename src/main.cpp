@@ -1,4 +1,5 @@
 #include "bigpicturetv.h"
+#include "utils.h"
 #include <QApplication>
 #include <QSharedMemory>
 #include <QMessageBox>
@@ -18,7 +19,10 @@ int main(int argc, char *argv[])
     }
 
     QApplication a(argc, argv);
-    a.setStyle("fusion");
+    if (isWindows10())
+    {
+        a.setStyle("fusion");
+    }
 
     BigPictureTV w;
     QObject::connect(&a, &QApplication::aboutToQuit, [&sharedMemory]() {

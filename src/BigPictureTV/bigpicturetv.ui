@@ -361,8 +361,8 @@
        <property name="spacing">
         <number>12</number>
        </property>
-       <item row="0" column="0" colspan="2">
-        <widget class="QPushButton" name="install_audio_button">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_6">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -370,7 +370,20 @@
           </size>
          </property>
          <property name="text">
-          <string>Install audio module</string>
+          <string>Disable audio switching</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Disable monitor switching</string>
          </property>
         </widget>
        </item>
@@ -387,42 +400,8 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
-        <widget class="QSlider" name="checkrate_slider">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="minimum">
-          <number>100</number>
-         </property>
-         <property name="maximum">
-          <number>1000</number>
-         </property>
-         <property name="singleStep">
-          <number>100</number>
-         </property>
-         <property name="pageStep">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>1000</number>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TickPosition::TicksBothSides</enum>
-         </property>
-         <property name="tickInterval">
-          <number>100</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QCheckBox" name="disable_audio_checkbox">
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="startup_checkbox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -437,8 +416,33 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_6">
+       <item row="4" column="2">
+        <widget class="QSpinBox" name="checkrateSpinBox">
+         <property name="minimumSize">
+          <size>
+           <width>90</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="minimum">
+          <number>100</number>
+         </property>
+         <property name="maximum">
+          <number>1000</number>
+         </property>
+         <property name="singleStep">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>1000</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="3">
+        <widget class="QPushButton" name="install_audio_button">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -446,12 +450,28 @@
           </size>
          </property>
          <property name="text">
-          <string>Disable audio switching</string>
+          <string>Install audio module</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="startup_checkbox">
+       <item row="3" column="2">
+        <widget class="QCheckBox" name="disable_monitor_checkbox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QCheckBox" name="disable_audio_checkbox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -479,34 +499,18 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="minimumSize">
+       <item row="4" column="1">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
           <size>
-           <width>0</width>
-           <height>25</height>
+           <width>40</width>
+           <height>20</height>
           </size>
          </property>
-         <property name="text">
-          <string>Disable monitor switching</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QCheckBox" name="disable_monitor_checkbox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
+        </spacer>
        </item>
       </layout>
      </widget>

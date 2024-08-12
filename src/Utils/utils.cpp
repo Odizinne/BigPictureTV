@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <tlhelp32.h>
+#include <windows.h>
 #include <filesystem>
 
 const std::wstring DISCORD_EXECUTABLE_NAME = L"Update.exe";
@@ -147,7 +148,6 @@ void startDiscord() {
     }
 }
 
-
 bool isAudioDeviceCmdletsInstalled() {
     QProcess process;
     process.setProgram("powershell");
@@ -171,4 +171,22 @@ bool isAudioDeviceCmdletsInstalled() {
     }
 
     return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
+}
+
+bool isWindows10() {
+    OSVERSIONINFOEXW osvi = {0};
+    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXW);
+
+    // Retrieve the version information
+    if (GetVersionExW(reinterpret_cast<OSVERSIONINFO*>(&osvi))) {
+        // Check if the major version is 10 and minor version is 0
+        if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0) {
+            // Windows 10 build numbers start from 10240
+            // Windows 11 build numbers start from 22000
+            if (osvi.dwBuildNumber >= 10240 && osvi.dwBuildNumber < 22000) {
+                return true; // Windows 10
+            }
+        }
+    }
+    return false;
 }

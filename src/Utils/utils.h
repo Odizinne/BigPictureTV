@@ -9,6 +9,7 @@ bool isDiscordInstalled();
 bool isAudioDeviceCmdletsInstalled();
 void closeDiscord();
 void startDiscord();
+bool isWindows10();
 std::string getTheme();
 QIcon getIconForTheme();
 

@@ -40,7 +40,7 @@ private slots:
     void onDisableMonitorCheckboxStateChanged(int state);
     void onAudioButtonClicked();
     void checkWindowTitle();
-    void onCheckrateSliderReleased();
+    void onCheckrateSpinBoxValueChanged();
     void showSettings();
 
 private:
@@ -48,7 +48,6 @@ private:
 
     void createTrayIcon();
     QMenu* createMenu();
-    void toggleDetection();
     bool gamemodeActive;
     bool discordInstalled;
     bool firstRun;

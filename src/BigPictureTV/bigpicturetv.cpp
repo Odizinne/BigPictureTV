@@ -24,14 +24,18 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
-    setFrames();
+    if (isWindows10())
+    {
+        setFrames();
+
+    }
     populateComboboxes();
     loadSettings();
     setupConnections();
     getAudioCapabilities();
 
 
-    windowCheckTimer->setInterval(ui->checkrate_slider->value());
+    windowCheckTimer->setInterval(ui->checkrateSpinBox->value());
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
     createTrayIcon();
@@ -54,7 +58,7 @@ void BigPictureTV::setupConnections()
     connect(ui->gamemode_audio_lineedit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
     connect(ui->disable_audio_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
     connect(ui->disable_monitor_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
-    connect(ui->checkrate_slider, &QSlider::sliderReleased, this, &BigPictureTV::onCheckrateSliderReleased);
+    connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
     ui->close_discord_checkbox->setEnabled(isDiscordInstalled());
     ui->close_discord_label->setEnabled(isDiscordInstalled());
     connect(ui->close_discord_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
@@ -91,6 +95,7 @@ void BigPictureTV::setFrames()
     setFrameColorBasedOnWindow(this, ui->audio_frame);
     setFrameColorBasedOnWindow(this, ui->monitor_frame);
     setFrameColorBasedOnWindow(this, ui->settings_frame);
+    ui->checkrateSpinBox->setFrame(true);
 }
 
 void BigPictureTV::populateComboboxes()
@@ -136,9 +141,9 @@ void BigPictureTV::showSettings()
     this->show();
 }
 
-void BigPictureTV::onCheckrateSliderReleased()
+void BigPictureTV::onCheckrateSpinBoxValueChanged()
 {
-    int newInterval = ui->checkrate_slider->value();
+    int newInterval = ui->checkrateSpinBox->value();
     windowCheckTimer->setInterval(newInterval);
     saveSettings();
 }
@@ -339,7 +344,7 @@ void BigPictureTV::applySettings()
     ui->gamemode_audio_lineedit->setText(settings.value("gamemode_audio").toString());
     ui->desktop_audio_lineedit->setText(settings.value("desktop_audio").toString());
     ui->disable_audio_checkbox->setChecked(settings.value("disable_audio_switch").toBool());
-    ui->checkrate_slider->setValue(settings.value("checkrate").toInt(1000));
+    ui->checkrateSpinBox->setValue(settings.value("checkrate").toInt(1000));
     ui->close_discord_checkbox->setChecked(settings.value("discord_action").toBool());
     ui->performance_powerplan_checkbox->setChecked(settings.value("powerplan_action").toBool());
     ui->gamemode_monitor_combobox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
@@ -356,7 +361,7 @@ void BigPictureTV::saveSettings()
     settings["gamemode_audio"] = ui->gamemode_audio_lineedit->text();
     settings["desktop_audio"] = ui->desktop_audio_lineedit->text();
     settings["disable_audio_switch"] = ui->disable_audio_checkbox->isChecked();
-    settings["checkrate"] = ui->checkrate_slider->value();
+    settings["checkrate"] = ui->checkrateSpinBox->value();
     settings["discord_action"] = ui->close_discord_checkbox->isChecked();
     settings["powerplan_action"] = ui->performance_powerplan_checkbox->isChecked();
     settings["gamemode_monitor"] = ui->gamemode_monitor_combobox->currentIndex();
