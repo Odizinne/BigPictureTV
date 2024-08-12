@@ -88,6 +88,9 @@ jobs:
         with:
           name: BigPictureTV_msvc_64
 
+      - name: List files in current directory
+        run: ls -la
+  
       - name: Bump version and create release
         id: bump_release
         run: |
