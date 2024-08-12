@@ -20,6 +20,7 @@ This is a reimplementation of [BigPictureTV-Python](https://github.com/Odizinne/
 ## Requirements
 
 **Runtime:**
+- [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 - [AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets) for audio output switching.
  
 ## Download
@@ -32,7 +33,7 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
 ### Error: The program can't start ...
 
-Download and install [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+Refer to [Requirements](#requirements) section.
 
 ### Window check rate
 
