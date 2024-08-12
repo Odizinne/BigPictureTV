@@ -18,36 +18,23 @@ void runDisplayswitch(const QString &command)
 {
     QProcess process;
     process.start("displayswitch.exe", QStringList() << command);
+    process.waitForFinished();  // Wait for the process to finish
 
-    QString appDataBasePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+    QString appDataBasePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
     if (appDataBasePath.isEmpty()) {
-        qWarning() << "Failed to get AppData path";
+        return;
+    }
+    QString statusFilePath = appDataBasePath + "/displayswitch.txt";
+    QString commandToStore = command.startsWith('/') ? command.mid(1) : command;
+    QFile file(statusFilePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return;
     }
 
-    // Create the "displayswitch_history" directory under AppData
-    QString historyDirPath = appDataBasePath + "/displayswitch_history";
-    QDir dir(historyDirPath);
-    if (!dir.exists()) {
-        if (!dir.mkpath(".")) {
-            qWarning() << "Failed to create directory:" << historyDirPath;
-            return;
-        }
-    }
-
-    // Write the command to the "displayswitch.txt" file
-    QFile file(dir.filePath("displayswitch.txt"));
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << command.mid(1);  // Write the command without the leading '/'
-        file.close();
-    } else {
-        qWarning() << "Could not open file for writing:" << file.errorString();
-    }
-
-    if (process.waitForFinished()) {
-        return;
-    }
+    QTextStream out(&file);
+    out << commandToStore;
+    file.close();
 }
 
 std::string getTheme() {
