@@ -4,10 +4,7 @@
 #include <unordered_map>
 #include <sstream>
 #include <algorithm>
-#include <QDebug>
-#include <locale>
-#include <codecvt>
-#include <iostream>
+#include <vector>
 
 // Define the map
 const std::unordered_map<std::string, std::string> BIG_PICTURE_WINDOW_TITLES = {
@@ -45,48 +42,31 @@ const std::unordered_map<std::string, std::string> BIG_PICTURE_WINDOW_TITLES = {
 // Function to get the Big Picture window title based on Steam language
 std::string getBigPictureWindowTitle() {
     std::string language = getSteamLanguage();
-    qDebug() << "Steam language:" << QString::fromStdString(language);
 
     auto it = BIG_PICTURE_WINDOW_TITLES.find(language);
     if (it != BIG_PICTURE_WINDOW_TITLES.end()) {
-        qDebug() << "Big Picture title for language:" << QString::fromStdString(it->second);
         return it->second;
     }
-    qDebug() << "Default Big Picture title (English):" << QString::fromStdString(BIG_PICTURE_WINDOW_TITLES.at("english"));
     return BIG_PICTURE_WINDOW_TITLES.at("english");
 }
 
 // Function to check if Big Picture is running
 bool isBigPictureRunning() {
     std::string bigPictureTitle = getBigPictureWindowTitle();
-    qDebug() << "Searching for window with title:" << QString::fromStdString(bigPictureTitle);
-
     std::vector<std::string> bigPictureWords = extractWords(bigPictureTitle);
 
     // Convert all Big Picture words to lowercase
     std::transform(bigPictureWords.begin(), bigPictureWords.end(), bigPictureWords.begin(),
                    [](const std::string& word) { return toLower(word); });
 
-    qDebug() << "Big Picture title words:";
-    for (const auto& word : bigPictureWords) {
-        qDebug() << QString::fromStdString(word);
-    }
-
     std::vector<std::wstring> currentWindowTitles = getAllWindowTitles();
     for (const auto& windowTitle : currentWindowTitles) {
         std::string windowTitleStr = convertWStringToString(windowTitle);
-        qDebug() << "Current window title:" << QString::fromStdString(windowTitleStr);
-
         std::vector<std::string> windowWords = extractWords(windowTitleStr);
 
         // Convert all window words to lowercase
         std::transform(windowWords.begin(), windowWords.end(), windowWords.begin(),
                        [](const std::string& word) { return toLower(word); });
-
-        qDebug() << "Window title words:";
-        for (const auto& word : windowWords) {
-            qDebug() << QString::fromStdString(word);
-        }
 
         bool allWordsFound = std::all_of(bigPictureWords.begin(), bigPictureWords.end(),
                                          [&windowWords](const std::string& word) {
@@ -94,19 +74,15 @@ bool isBigPictureRunning() {
                                          });
 
         if (allWordsFound) {
-            qDebug() << "Matching window found!";
             return true;
         }
     }
-    qDebug() << "No matching window found.";
     return false;
 }
 
-// Function to get the Steam language from registry
+// Function to get the Steam language from the registry
 std::string getSteamLanguage() {
-    std::string language = getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
-    qDebug() << "Retrieved Steam language from registry:" << QString::fromStdString(language);
-    return language;
+    return getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
 }
 
 // Function to get registry value
@@ -119,13 +95,8 @@ std::string getRegistryValue(const std::wstring& keyPath, const std::wstring& va
     if (RegOpenKeyEx(HKEY_CURRENT_USER, keyPath.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
         if (RegQueryValueEx(hKey, valueName.c_str(), NULL, NULL, (LPBYTE)value, &valueLength) == ERROR_SUCCESS) {
             result = toLower(convertWStringToString(value));
-            qDebug() << "Registry value:" << QString::fromStdString(result);
-        } else {
-            qDebug() << "Failed to query registry value:" << QString::fromStdWString(valueName);
         }
         RegCloseKey(hKey);
-    } else {
-        qDebug() << "Failed to open registry key:" << QString::fromStdWString(keyPath);
     }
 
     return result;
@@ -140,7 +111,6 @@ std::string cleanString(const std::string& str) {
 
     while (pos < str.size()) {
         if (str.compare(pos, NON_BREAKING_SPACE.size(), NON_BREAKING_SPACE) == 0) {
-            std::cout << "Replacing non-breaking space at position " << pos << std::endl;
             cleanedStr += ' '; // Replace with regular space
             pos += NON_BREAKING_SPACE.size(); // Move past the character
         } else {
@@ -151,7 +121,6 @@ std::string cleanString(const std::string& str) {
 
     return cleanedStr;
 }
-
 
 std::string cleanString(const std::wstring& wstr) {
     return cleanString(convertWStringToString(wstr));
@@ -223,11 +192,6 @@ std::vector<std::wstring> getAllWindowTitles() {
 
     // Enumerate all top-level windows
     EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&g_windowTitles));
-
-    qDebug() << "Retrieved window titles:";
-    for (const auto& title : g_windowTitles) {
-        qDebug() << QString::fromStdWString(title);
-    }
 
     return g_windowTitles;
 }

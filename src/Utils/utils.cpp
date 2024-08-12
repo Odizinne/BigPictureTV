@@ -1,5 +1,9 @@
 #include "utils.h"
 #include <QProcess>
+#include <QDir>
+#include <QFile>
+#include <QStandardPaths>
+#include <QTextStream>
 #include <QDebug>
 #include <windows.h>
 #include <iostream>
@@ -15,25 +19,34 @@ void runDisplayswitch(const QString &command)
     QProcess process;
     process.start("displayswitch.exe", QStringList() << command);
 
-    if (!process.waitForStarted()) {
-        qWarning() << "Failed to start process:" << process.errorString();
+    QString appDataBasePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+    if (appDataBasePath.isEmpty()) {
+        qWarning() << "Failed to get AppData path";
         return;
     }
 
-    if (!process.waitForFinished()) {
-        qWarning() << "Process did not finish:" << process.errorString();
+    // Create the "displayswitch_history" directory under AppData
+    QString historyDirPath = appDataBasePath + "/displayswitch_history";
+    QDir dir(historyDirPath);
+    if (!dir.exists()) {
+        if (!dir.mkpath(".")) {
+            qWarning() << "Failed to create directory:" << historyDirPath;
+            return;
+        }
+    }
+
+    // Write the command to the "displayswitch.txt" file
+    QFile file(dir.filePath("displayswitch.txt"));
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << command.mid(1);  // Write the command without the leading '/'
+        file.close();
+    } else {
+        qWarning() << "Could not open file for writing:" << file.errorString();
+    }
+
+    if (process.waitForFinished()) {
         return;
-    }
-
-    QString output = process.readAllStandardOutput();
-    QString error = process.readAllStandardError();
-
-    if (!output.isEmpty()) {
-        qDebug() << "Process Output:" << output;
-    }
-
-    if (!error.isEmpty()) {
-        qWarning() << "Process Error:" << error;
     }
 }
 
@@ -74,32 +87,25 @@ QIcon getIconForTheme() {
 }
 
 bool switchPowerPlan(const std::wstring& planGuid) {
-    std::wstring command = L"powercfg /s " + planGuid;
-    STARTUPINFOW si = { sizeof(si) };
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&pi, sizeof(pi));
+    // Convert std::wstring to QString
+    QString planGuidQString = QString::fromStdWString(planGuid);
 
-    BOOL success = CreateProcessW(
-        NULL,
-        &command[0],
-        NULL,
-        NULL,
-        FALSE,
-        0,
-        NULL,
-        NULL,
-        &si,
-        &pi
-        );
+    // Construct the command string
+    QString command = QString("powercfg /s %1").arg(planGuidQString);
 
-    if (success) {
-        WaitForSingleObject(pi.hProcess, INFINITE);
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
+    QProcess process;
+    process.start(command);
+    if (!process.waitForFinished()) {
+        // Process execution failed
+        return false;
+    }
 
+    // Check the exit code if needed
+    int exitCode = process.exitCode();
+    if (exitCode == 0) {
         return true;
     } else {
-        // Process creation failed
+        // Command execution failed or returned an error
         return false;
     }
 }
@@ -120,25 +126,18 @@ bool isDiscordInstalled() {
 }
 
 void closeDiscord() {
-    HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (hSnapshot == INVALID_HANDLE_VALUE) {
-        return;
-    }
+    // Define the command to kill Discord.exe
+    QStringList arguments;
+    arguments << "/IM" << "Discord.exe" << "/F";  // /IM specifies the image name, /F forces termination
 
-    PROCESSENTRY32 pe = { sizeof(pe) };
-    if (Process32First(hSnapshot, &pe)) {
-        do {
-            if (_wcsicmp(pe.szExeFile, DISCORD_PROCESS_NAME.c_str()) == 0) {
-                HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pe.th32ProcessID);
-                if (hProcess) {
-                    TerminateProcess(hProcess, 0);
-                    CloseHandle(hProcess);
-                }
-            }
-        } while (Process32Next(hSnapshot, &pe));
-    }
+    QProcess process;
+    process.start("taskkill.exe", arguments);
 
-    CloseHandle(hSnapshot);
+    if (!process.waitForFinished()) {
+        std::wcerr << L"Failed to execute taskkill command to kill Discord" << std::endl;
+    } else {
+        std::wcout << L"Taskkill command executed successfully" << std::endl;
+    }
 }
 
 void startDiscord() {
@@ -152,11 +151,10 @@ void startDiscord() {
     QStringList arguments;
     arguments << "--processStart" << "Discord.exe" << "--process-start-args" << "--start-minimized";
 
-    QProcess process;
-    process.setProgram(discordPathQString);
-    process.setArguments(arguments);
+    qint64 processId;
+    bool success = QProcess::startDetached(discordPathQString, arguments, QString(), &processId);
 
-    if (!process.startDetached()) {
+    if (!success) {
         std::wcerr << L"Failed to start Discord with arguments" << std::endl;
     }
 }
