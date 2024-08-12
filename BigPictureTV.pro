@@ -38,6 +38,8 @@ FORMS += \
 RESOURCES += src/Resources/resources.qrc
 RC_FILE = src/Resources/appicon.rc
 
+LIBS += -lole32 -luser32 -ladvapi32 -lshell32
+
 # Default rules for deployment
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
