@@ -7,31 +7,36 @@ CONFIG += c++17
 # Optional: Uncomment to disable deprecated APIs before Qt 6.0.0
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
+INCLUDEPATH += \
+    src/AudioManager \
+    src/BigPictureTV \
+    src/ColorUtils \
+    src/ShortcutManager \
+    src/SteamWindowManager \
+    src/Utils
+
 SOURCES += \
-    src/audiomanager.cpp \
-    src/colorutils.cpp \
+    src/AudioManager/audiomanager.cpp \
+    src/ColorUtils/colorutils.cpp \
     src/main.cpp \
-    src/bigpicturetv.cpp \
-    src/shortcutmanager.cpp \
-    src/steamwindowmanager.cpp \
-    src/utils.cpp
+    src/BigPictureTV/bigpicturetv.cpp \
+    src/ShortcutManager/shortcutmanager.cpp \
+    src/SteamWindowManager/steamwindowmanager.cpp \
+    src/Utils/utils.cpp
 
 HEADERS += \
-    src/audiomanager.h \
-    src/bigpicturetv.h \
-    src/colorutils.h \
-    src/shortcutmanager.h \
-    src/steamwindowmanager.h \
-    src/utils.h
+    src/AudioManager/audiomanager.h \
+    src/BigPictureTV/bigpicturetv.h \
+    src/ColorUtils/colorutils.h \
+    src/ShortcutManager/shortcutmanager.h \
+    src/SteamWindowManager/steamwindowmanager.h \
+    src/Utils/utils.h
 
 FORMS += \
-    src/bigpicturetv.ui
+    src/BigPictureTV/bigpicturetv.ui
 
-# Add the necessary libraries for COM functionality, Shell operations, and other Windows API functions
-LIBS += -lole32 -lshell32 -luser32 -ladvapi32
-
-RESOURCES += src/resources.qrc
-RC_FILE = src/appicon.rc
+RESOURCES += src/Resources/resources.qrc
+RC_FILE = src/Resources/appicon.rc
 
 # Default rules for deployment
 qnx: target.path = /tmp/$${TARGET}/bin
