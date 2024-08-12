@@ -4,7 +4,7 @@
 #include <QIcon>
 
 void runDisplayswitch(const QString &command);
-bool switchPowerPlan(const std::wstring& planGuid);
+void switchPowerPlan(const std::wstring& planGuid);
 bool isDiscordInstalled();
 bool isAudioDeviceCmdletsInstalled();
 void closeDiscord();

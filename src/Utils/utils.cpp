@@ -73,29 +73,30 @@ QIcon getIconForTheme() {
     return QIcon(iconPath);
 }
 
-bool switchPowerPlan(const std::wstring& planGuid) {
+void switchPowerPlan(const std::wstring& planGuid) {
     // Convert std::wstring to QString
     QString planGuidQString = QString::fromStdWString(planGuid);
 
-    // Construct the command string
-    QString command = QString("powercfg /s %1").arg(planGuidQString);
+    // Construct the command and arguments
+    QString command = "powercfg";
+    QStringList arguments;
+    arguments << "/s" << planGuidQString;
 
     QProcess process;
-    process.start(command);
+    process.start(command, arguments);
     if (!process.waitForFinished()) {
-        // Process execution failed
-        return false;
+        // Log or handle error
+        qWarning() << "Failed to execute powercfg command:" << process.errorString();
+        return;
     }
 
-    // Check the exit code if needed
-    int exitCode = process.exitCode();
-    if (exitCode == 0) {
-        return true;
-    } else {
-        // Command execution failed or returned an error
-        return false;
+    // Check the exit code
+    if (process.exitCode() != 0) {
+        // Log or handle error
+        qWarning() << "powercfg command failed with exit code:" << process.exitCode();
     }
 }
+
 
 std::wstring getDiscordPath() {
     wchar_t localAppData[MAX_PATH];
