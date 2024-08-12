@@ -174,11 +174,12 @@ void BigPictureTV::onAudioButtonClicked()
 
     QProcess process;
     process.start("powershell", QStringList() << "-NoProfile" << "-ExecutionPolicy" << "Bypass" << "-Command"
-                                              << "Install-Module AudioDeviceCmdlets -Force -Scope CurrentUser");
+                                              << "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser; "
+                                                 "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser");
 
     if (!process.waitForFinished()) {
         status = "Error";
-        message = "Failed to execute the PowerShell command.\n"
+        message = "Failed to execute the PowerShell commands.\n"
                   "Please check if PowerShell is installed and properly configured.";
     } else {
         QString output = process.readAllStandardOutput();
@@ -187,12 +188,13 @@ void BigPictureTV::onAudioButtonClicked()
 
         if (exitCode == 0) {
             status = "Success";
-            message = "AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.";
+            message = "NuGet package provider and AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.";
         } else {
             status = "Error";
-            message = "Failed to install AudioDeviceCmdlets module.\n"
-                      "Please install it manually by running this command in PowerShell: "
-                      "Install-Module AudioDeviceCmdlets -Force -Scope CurrentUser\n"
+            message = "Failed to install NuGet package provider or AudioDeviceCmdlets module.\n"
+                      "Please install them manually by running these commands in PowerShell:\n"
+                      "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;\n"
+                      "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser\n"
                       "You should then restart the application.\n"
                       "Error details:\n" + errorOutput;
         }
@@ -206,7 +208,6 @@ void BigPictureTV::onAudioButtonClicked()
     }
     getAudioCapabilities();
 }
-
 
 void BigPictureTV::checkWindowTitle()
 {
