@@ -67,7 +67,7 @@ private:
     std::wstring shortcutName = L"BigPictureTV.lnk"; // Default values or set them appropriately
     QString settingsFilePath;
     QJsonObject settings;
-    static const QString settingsFile; // Use QString for Qt compatibility
+    static const QString settingsFile;
     QString status;
     QString message;
 

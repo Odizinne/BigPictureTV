@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 
-// Function declarations
 std::string getBigPictureWindowTitle();
 bool isBigPictureRunning();
 std::string getSteamLanguage();

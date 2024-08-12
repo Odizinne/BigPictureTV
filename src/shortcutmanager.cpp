@@ -39,30 +39,23 @@ void createShortcut(const std::wstring& targetPath)
     IShellLink* pShellLink = NULL;
     IPersistFile* pPersistFile = NULL;
 
-    // Initialize COM library
     CoInitialize(NULL);
-
-    // Create a shell link object
     hResult = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink);
     if (SUCCEEDED(hResult))
     {
-        // Set the path to the shortcut target
         pShellLink->SetPath(targetPath.c_str());
         pShellLink->SetWorkingDirectory(workingDirectory.c_str());
         pShellLink->SetDescription(L"Launch BigPictureTV");
 
-        // Query IPersistFile interface
         hResult = pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile);
         if (SUCCEEDED(hResult))
         {
-            // Save the shortcut to disk
             hResult = pPersistFile->Save(shortcutPath.c_str(), TRUE);
             pPersistFile->Release();
         }
         pShellLink->Release();
     }
 
-    // Uninitialize COM library
     CoUninitialize();
 }
 
