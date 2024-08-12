@@ -3,12 +3,25 @@
 
 #include <string>
 
-void setPaths(const std::wstring& executableName, const std::wstring& shortcutName,
-              std::wstring& targetPath, std::wstring& startupFolder, std::wstring& shortcutPath);
+// Function to set the target executable path and the startup folder path
+void setPaths(std::wstring& targetPath, std::wstring& startupFolder);
+
+// Function to get the Startup folder path
 std::wstring getStartupFolder();
-void createShortcut(const std::wstring& targetPath, const std::wstring& shortcutPath);
-void removeShortcut(const std::wstring& shortcutPath);
-bool isShortcutPresent(const std::wstring& shortcutPath);
-void manageShortcut(const std::wstring& shortcutName, bool state);
+
+// Function to get the full path of the shortcut
+std::wstring getShortcutPath();
+
+// Function to create a shortcut in the Startup folder
+void createShortcut(const std::wstring& targetPath);
+
+// Function to remove the shortcut from the Startup folder
+void removeShortcut();
+
+// Function to check if the shortcut exists in the Startup folder
+bool isShortcutPresent();
+
+// Function to manage the shortcut (create or remove based on the state)
+void manageShortcut(bool state);
 
 #endif // SHORTCUTMANAGER_H

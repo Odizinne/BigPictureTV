@@ -19,7 +19,6 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QMessageBox>
-#include <QDebug>
 #include <iostream>
 
 const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/BigPictureTV/settings.json";
@@ -72,20 +71,19 @@ void BigPictureTV::setupConnections()
     connect(ui->desktop_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemode_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->install_audio_button, &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
+    ui->startup_checkbox->setChecked(isShortcutPresent());
 }
 
 void BigPictureTV::getAudioCapabilities()
 {
     if (!isAudioDeviceCmdletsInstalled())
     {
-        qDebug() << "here:";
         ui->disable_audio_checkbox->setChecked(true);
         ui->disable_audio_checkbox->setEnabled(false);
         toggleAudioSettings(false);
     }
     else
     {
-        qDebug() << "there:";
         ui->disable_audio_checkbox->setEnabled(true);
         ui->install_audio_button->setVisible(false);
         if (!ui->disable_audio_checkbox->isChecked())
@@ -152,13 +150,12 @@ void BigPictureTV::onCheckrateSliderReleased()
     int newInterval = ui->checkrate_slider->value();
     windowCheckTimer->setInterval(newInterval);
     saveSettings();
-    qDebug() << "Checkrate updated to:" << newInterval << "ms";
 }
 
 
 void BigPictureTV::onStartupCheckboxStateChanged()
 {
-    manageShortcut(shortcutName, ui->startup_checkbox->isChecked());
+    manageShortcut(ui->startup_checkbox->isChecked());
 }
 
 void BigPictureTV::onDisableAudioCheckboxStateChanged(int state)
@@ -217,7 +214,6 @@ void BigPictureTV::onAudioButtonClicked()
 
 void BigPictureTV::checkWindowTitle()
 {
-    //qDebug() << "checking";
     bool isRunning = isBigPictureRunning();
     bool disableVideo = ui->disable_monitor_checkbox->isChecked();
     bool disableAudio = ui->disable_audio_checkbox->isChecked();
@@ -349,7 +345,6 @@ void BigPictureTV::loadSettings()
 
 void BigPictureTV::applySettings()
 {
-    qDebug() << "applying settings.";
     ui->gamemode_audio_lineedit->setText(settings.value("gamemode_audio").toString());
     ui->desktop_audio_lineedit->setText(settings.value("desktop_audio").toString());
     ui->disable_audio_checkbox->setChecked(settings.value("disable_audio_switch").toBool());
@@ -367,8 +362,6 @@ void BigPictureTV::applySettings()
 
 void BigPictureTV::saveSettings()
 {
-    qDebug() << "saving settings.";
-
     settings["gamemode_audio"] = ui->gamemode_audio_lineedit->text();
     settings["desktop_audio"] = ui->desktop_audio_lineedit->text();
     settings["disable_audio_switch"] = ui->disable_audio_checkbox->isChecked();

@@ -1,18 +1,19 @@
 #include "shortcutmanager.h"
+#include <filesystem>
 #include <windows.h>
 #include <shlobj.h>
 #include <shobjidl.h> // For IShellLink and IPersistFile
 #include <fstream>    // For file operations
 
-void setPaths(const std::wstring& shortcutName,
-              std::wstring& targetPath, std::wstring& startupFolder, std::wstring& shortcutPath)
+const std::wstring SHORTCUT_NAME = L"BigPictureTV.lnk";
+
+void setPaths(std::wstring& targetPath, std::wstring& startupFolder)
 {
     wchar_t executablePath[MAX_PATH];
     GetModuleFileName(NULL, executablePath, MAX_PATH);
     targetPath = std::wstring(executablePath);
 
     startupFolder = getStartupFolder();
-    shortcutPath = startupFolder + L"\\" + shortcutName;
 }
 
 std::wstring getStartupFolder()
@@ -25,8 +26,16 @@ std::wstring getStartupFolder()
     return L"";
 }
 
-void createShortcut(const std::wstring& targetPath, const std::wstring& shortcutPath)
+std::wstring getShortcutPath()
 {
+    return getStartupFolder() + L"\\" + SHORTCUT_NAME;
+}
+
+void createShortcut(const std::wstring& targetPath)
+{
+    std::wstring shortcutPath = getShortcutPath();
+    std::wstring workingDirectory = targetPath.substr(0, targetPath.find_last_of(L"\\"));
+
     HRESULT hResult;
     IShellLink* pShellLink = NULL;
     IPersistFile* pPersistFile = NULL;
@@ -40,6 +49,7 @@ void createShortcut(const std::wstring& targetPath, const std::wstring& shortcut
     {
         // Set the path to the shortcut target
         pShellLink->SetPath(targetPath.c_str());
+        pShellLink->SetWorkingDirectory(workingDirectory.c_str());
         pShellLink->SetDescription(L"Launch BigPictureTV");
 
         // Query IPersistFile interface
@@ -57,40 +67,40 @@ void createShortcut(const std::wstring& targetPath, const std::wstring& shortcut
     CoUninitialize();
 }
 
-void removeShortcut(const std::wstring& shortcutPath)
+void removeShortcut()
 {
-    if (isShortcutPresent(shortcutPath))
+    std::wstring shortcutPath = getShortcutPath();
+    if (isShortcutPresent())
     {
         _wremove(shortcutPath.c_str());
     }
 }
 
-bool isShortcutPresent(const std::wstring& shortcutPath)
+bool isShortcutPresent()
 {
-    std::ifstream file(shortcutPath.c_str());
-    return file.good();
+    std::wstring shortcutPath = getShortcutPath();
+    return std::filesystem::exists(shortcutPath);
 }
 
-void manageShortcut(const std::wstring& shortcutName, bool state)
+void manageShortcut(bool state)
 {
     std::wstring targetPath;
     std::wstring startupFolder;
-    std::wstring shortcutPath;
 
-    setPaths(shortcutName, targetPath, startupFolder, shortcutPath);
+    setPaths(targetPath, startupFolder);
 
     if (state)
     {
-        if (!isShortcutPresent(shortcutPath))
+        if (!isShortcutPresent())
         {
-            createShortcut(targetPath, shortcutPath);
+            createShortcut(targetPath);
         }
     }
     else
     {
-        if (isShortcutPresent(shortcutPath))
+        if (isShortcutPresent())
         {
-            removeShortcut(shortcutPath);
+            removeShortcut();
         }
     }
 }
