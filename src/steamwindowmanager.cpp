@@ -1,13 +1,10 @@
 #include "steamwindowmanager.h"
 #include <windows.h>
 #include <winreg.h>
-#include <vector>
-#include <string>
 #include <unordered_map>
 #include <sstream>
 #include <algorithm>
 
-// Define the map of window titles by language
 const std::unordered_map<std::string, std::string> BIG_PICTURE_WINDOW_TITLES = {
     {"schinese", "Steam 大屏幕模式"},
     {"tchinese", "Steam Big Picture 模式"},

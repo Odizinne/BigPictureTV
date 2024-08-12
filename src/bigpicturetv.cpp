@@ -5,18 +5,9 @@
 #include "ui_bigpicturetv.h"
 #include "audiomanager.h"
 #include "utils.h"
-
-#include <QDir>
 #include <QStandardPaths>
-#include <QFile>
-#include <QIcon>
 #include <QProcess>
-#include <QJsonDocument>
 #include <QJsonParseError>
-#include <QSystemTrayIcon>
-#include <QMenu>
-#include <QAction>
-#include <QApplication>
 #include <QCloseEvent>
 #include <QMessageBox>
 #include <iostream>

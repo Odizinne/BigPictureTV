@@ -16,7 +16,6 @@
 #include <QApplication>
 #include <QIcon>
 #include <QString>
-#include <QWidget>
 
 namespace Ui {
 class BigPictureTV;

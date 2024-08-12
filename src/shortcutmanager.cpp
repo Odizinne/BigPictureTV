@@ -2,8 +2,7 @@
 #include <filesystem>
 #include <windows.h>
 #include <shlobj.h>
-#include <shobjidl.h> // For IShellLink and IPersistFile
-#include <fstream>    // For file operations
+#include <shobjidl.h>
 
 const std::wstring SHORTCUT_NAME = L"BigPictureTV.lnk";
 

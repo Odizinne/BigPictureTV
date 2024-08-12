@@ -1,7 +1,6 @@
 #include "utils.h"
 #include <QProcess>
 #include <QDebug>
-#include <QIcon>
 #include <windows.h>
 #include <iostream>
 #include <string>

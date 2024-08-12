@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <cctype>
 #include <stdexcept>
-#include <string>
-#include <vector>
 #include <chrono>
 #include <thread>
 #include <QProcess>
