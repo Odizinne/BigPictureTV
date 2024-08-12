@@ -5,7 +5,11 @@
 #include <sstream>
 #include <algorithm>
 #include <QDebug>
+#include <locale>
+#include <codecvt>
+#include <iostream>
 
+// Define the map
 const std::unordered_map<std::string, std::string> BIG_PICTURE_WINDOW_TITLES = {
     {"schinese", "Steam 大屏幕模式"},
     {"tchinese", "Steam Big Picture 模式"},
@@ -38,6 +42,7 @@ const std::unordered_map<std::string, std::string> BIG_PICTURE_WINDOW_TITLES = {
     {"ukrainian", "Steam у режимі Big Picture"}
 };
 
+// Function to get the Big Picture window title based on Steam language
 std::string getBigPictureWindowTitle() {
     std::string language = getSteamLanguage();
     qDebug() << "Steam language:" << QString::fromStdString(language);
@@ -51,6 +56,7 @@ std::string getBigPictureWindowTitle() {
     return BIG_PICTURE_WINDOW_TITLES.at("english");
 }
 
+// Function to check if Big Picture is running
 bool isBigPictureRunning() {
     std::string bigPictureTitle = getBigPictureWindowTitle();
     qDebug() << "Searching for window with title:" << QString::fromStdString(bigPictureTitle);
@@ -96,13 +102,14 @@ bool isBigPictureRunning() {
     return false;
 }
 
-
+// Function to get the Steam language from registry
 std::string getSteamLanguage() {
     std::string language = getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
     qDebug() << "Retrieved Steam language from registry:" << QString::fromStdString(language);
     return language;
 }
 
+// Function to get registry value
 std::string getRegistryValue(const std::wstring& keyPath, const std::wstring& valueName) {
     HKEY hKey;
     WCHAR value[256];
@@ -124,35 +131,60 @@ std::string getRegistryValue(const std::wstring& keyPath, const std::wstring& va
     return result;
 }
 
-std::vector<std::wstring> g_windowTitles; // Global or static variable to store window titles
+const std::string NON_BREAKING_SPACE = "\u00A0";
 
-BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
-    std::vector<std::wstring>* titles = reinterpret_cast<std::vector<std::wstring>*>(lParam);
+// Function to replace non-breaking spaces with regular spaces
+std::string cleanString(const std::string& str) {
+    std::string cleanedStr;
+    size_t pos = 0;
 
-    // Check if the window is visible and not minimized
-    if (IsWindowVisible(hwnd) && !(GetWindowLong(hwnd, GWL_STYLE) & WS_MINIMIZE)) {
-        wchar_t windowTitle[256];
-        if (GetWindowText(hwnd, windowTitle, sizeof(windowTitle) / sizeof(wchar_t)) > 0) {
-            titles->push_back(windowTitle);
+    while (pos < str.size()) {
+        if (str.compare(pos, NON_BREAKING_SPACE.size(), NON_BREAKING_SPACE) == 0) {
+            std::cout << "Replacing non-breaking space at position " << pos << std::endl;
+            cleanedStr += ' '; // Replace with regular space
+            pos += NON_BREAKING_SPACE.size(); // Move past the character
+        } else {
+            cleanedStr += str[pos]; // Keep all other characters
+            pos++;
         }
     }
-    return TRUE;  // Continue enumeration
+
+    return cleanedStr;
 }
 
-std::vector<std::wstring> getAllWindowTitles() {
-    g_windowTitles.clear();
 
-    // Enumerate all top-level windows
-    EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&g_windowTitles));
-
-    qDebug() << "Retrieved window titles:";
-    for (const auto& title : g_windowTitles) {
-        qDebug() << QString::fromStdWString(title);
-    }
-
-    return g_windowTitles;
+std::string cleanString(const std::wstring& wstr) {
+    return cleanString(convertWStringToString(wstr));
 }
 
+// Function to convert wide string to multi-byte string
+std::string convertWStringToString(const std::wstring& wstr) {
+    int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
+    std::string str(size_needed, 0);
+    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), &str[0], size_needed, nullptr, nullptr);
+    return str;
+}
+
+// Function to convert multi-byte string to wide string
+std::wstring convertStringToWString(const std::string& str) {
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
+    std::wstring wstr(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
+    return wstr;
+}
+
+// Function to convert string to lowercase
+std::string toLower(const std::string& str) {
+    std::string lowerStr = str;
+    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+    return lowerStr;
+}
+
+std::string toLower(const std::wstring& wstr) {
+    return toLower(convertWStringToString(wstr));
+}
+
+// Function to extract words from a string
 std::vector<std::string> extractWords(const std::string& str) {
     std::string cleanedStr = cleanString(str);
     std::istringstream stream(cleanedStr);
@@ -168,42 +200,34 @@ std::vector<std::string> extractWords(const std::wstring& wstr) {
     return extractWords(convertWStringToString(wstr));
 }
 
-std::string cleanString(const std::string& str) {
-    std::string cleanedStr;
-    for (char ch : str) {
-        if (ch == (char)0xA0) {  // Replace non-breaking space with regular space
-            cleanedStr += ' ';
-        } else if (std::isalnum(static_cast<unsigned char>(ch)) || std::isspace(static_cast<unsigned char>(ch))) {
-            cleanedStr += ch;
+// Global variable to store window titles
+std::vector<std::wstring> g_windowTitles;
+
+// Callback function to enumerate windows
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam) {
+    std::vector<std::wstring>* titles = reinterpret_cast<std::vector<std::wstring>*>(lParam);
+
+    // Check if the window is visible and not minimized
+    if (IsWindowVisible(hwnd) && !(GetWindowLong(hwnd, GWL_STYLE) & WS_MINIMIZE)) {
+        wchar_t windowTitle[256];
+        if (GetWindowText(hwnd, windowTitle, sizeof(windowTitle) / sizeof(wchar_t)) > 0) {
+            titles->push_back(windowTitle);
         }
     }
-    return cleanedStr;
+    return TRUE; // Continue enumeration
 }
 
-std::string cleanString(const std::wstring& wstr) {
-    return cleanString(convertWStringToString(wstr));
-}
+// Function to get all window titles
+std::vector<std::wstring> getAllWindowTitles() {
+    g_windowTitles.clear(); // Clear previous results
 
-std::string convertWStringToString(const std::wstring& wstr) {
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), nullptr, 0, nullptr, nullptr);
-    std::string str(size_needed, 0);
-    WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), (int)wstr.size(), &str[0], size_needed, nullptr, nullptr);
-    return str;
-}
+    // Enumerate all top-level windows
+    EnumWindows(EnumWindowsProc, reinterpret_cast<LPARAM>(&g_windowTitles));
 
-std::wstring convertStringToWString(const std::string& str) {
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), nullptr, 0);
-    std::wstring wstr(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, str.c_str(), (int)str.size(), &wstr[0], size_needed);
-    return wstr;
-}
+    qDebug() << "Retrieved window titles:";
+    for (const auto& title : g_windowTitles) {
+        qDebug() << QString::fromStdWString(title);
+    }
 
-std::string toLower(const std::string& str) {
-    std::string lowerStr = str;
-    std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
-    return lowerStr;
-}
-
-std::string toLower(const std::wstring& wstr) {
-    return toLower(convertWStringToString(wstr));
+    return g_windowTitles;
 }
