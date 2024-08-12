@@ -47,6 +47,7 @@ private:
     QSystemTrayIcon *trayIcon;
 
     void createTrayIcon();
+    void initDiscordAction();
     QMenu* createMenu();
     bool gamemodeActive;
     bool discordInstalled;

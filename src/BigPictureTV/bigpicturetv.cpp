@@ -59,16 +59,26 @@ void BigPictureTV::setupConnections()
     connect(ui->disable_audio_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
     connect(ui->disable_monitor_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
     connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
-    ui->close_discord_checkbox->setEnabled(isDiscordInstalled());
-    ui->close_discord_label->setEnabled(isDiscordInstalled());
     connect(ui->close_discord_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
     connect(ui->performance_powerplan_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
     connect(ui->desktop_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemode_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->install_audio_button, &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
     ui->startup_checkbox->setChecked(isShortcutPresent());
+    initDiscordAction();
 }
 
+void BigPictureTV::initDiscordAction()
+{
+    if (!isDiscordInstalled())
+    {
+        ui->close_discord_checkbox->setChecked(false);
+        ui->close_discord_checkbox->setEnabled(false);
+        ui->close_discord_label->setEnabled(false);
+        ui->close_discord_checkbox->setToolTip("Discord does not appear to be installed");
+        ui->close_discord_label->setToolTip("Discord does not appear to be installed");
+    }
+}
 void BigPictureTV::getAudioCapabilities()
 {
     if (!isAudioDeviceCmdletsInstalled())
