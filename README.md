@@ -73,9 +73,9 @@ If you'd prefer to skip the screen configuration, simply select `Clone` in BigPi
 
 Actions will be performed when entering gamemode and reverted when going back to desktop.
 
-- Close discord
+- Close discord  
 Close discord application, reopen minimized
-- Enable performance powerplan
+- Enable performance powerplan  
 Revert to balanced in desktop mode
 
 ## I found a bug

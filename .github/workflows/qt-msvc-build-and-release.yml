@@ -21,7 +21,41 @@ jobs:
         with:
           version: '6.7.2'
           add-tools-to-path: true
-          tools: 'tools_qtcreator,qt.tools.qtcreator'
+
+      - name: Install jom
+        id: jom-setup
+        shell: pwsh
+        run: |
+          # Define the URL and output file path
+          $url = "https://download.qt.io/official_releases/jom/jom_1_1_4.zip"
+          $outputPath = "jom_1_1_4.zip"
+
+          # Download the file
+          Invoke-WebRequest -Uri $url -OutFile $outputPath
+
+          # Define the output directory
+          $extractPath = "jom"
+
+          # Create the output directory if it does not exist
+          if (-not (Test-Path $extractPath)) {
+            New-Item -ItemType Directory -Path $extractPath | Out-Null
+          }
+
+          # Extract the ZIP file
+          Expand-Archive -Path $outputPath -DestinationPath $extractPath
+
+          # Define the JOM directory and executable path
+          $jomDir = "$(pwd)\jom"
+          $jomExe = "$jomDir\jom.exe"
+
+          # Check if the JOM executable exists
+          if (Test-Path $jomExe) {
+            Write-Output "JOM Path: $jomDir"
+            Write-Output "::set-output name=jom_path::$jomDir"
+          } else {
+            Write-Error "jom.exe not found in $jomDir"
+            exit 1
+          }
 
       - name: Build with qmake and jom
         shell: pwsh
