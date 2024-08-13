@@ -86,21 +86,21 @@ bool checkDevice(const std::string& deviceName) {
 }
 
 void setAudioDevice(const std::string& deviceName) {
-    std::string output = executeCommand("Get-AudioDevice -l");
-    std::vector<Device> devices = parseDevices(output);
-
     bool deviceFound = false;
     int maxRetries = 10;
     int retryCount = 0;
     std::string result;
 
-    for (const auto& device : devices) {
-        if (containsIgnoreCase(device.name, deviceName)) {
-            if (device.index < 1) {
-                throw std::runtime_error("Invalid device index: " + std::to_string(device.index));
-            }
+    while (retryCount < maxRetries) {
+        std::string output = executeCommand("Get-AudioDevice -l");
+        std::vector<Device> devices = parseDevices(output);
 
-            while (retryCount < maxRetries) {
+        for (const auto& device : devices) {
+            if (containsIgnoreCase(device.name, deviceName)) {
+                if (device.index < 1) {
+                    throw std::runtime_error("Invalid device index: " + std::to_string(device.index));
+                }
+
                 std::string setCommand = "Set-AudioDevice -Index " + std::to_string(device.index);
                 result = executeCommand(setCommand);
 
@@ -108,20 +108,18 @@ void setAudioDevice(const std::string& deviceName) {
                     deviceFound = true;
                     break;
                 }
-
-                ++retryCount;
-                std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            }
-
-            if (deviceFound) {
-                break;
-            } else {
-                throw std::runtime_error("Failed to set the audio device after " + std::to_string(maxRetries) + " attempts.");
             }
         }
+
+        if (deviceFound) {
+            break;
+        }
+
+        ++retryCount;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 
     if (!deviceFound) {
-        throw std::runtime_error("Device with the specified name not found.");
+        throw std::runtime_error("Failed to set the audio device after " + std::to_string(maxRetries) + " attempts.");
     }
 }
