@@ -4,9 +4,9 @@
 #include <QIcon>
 
 void runDisplayswitch(const QString &command);
-std::string getTheme();
+QString getTheme();
 QIcon getIconForTheme();
-void switchPowerPlan(const std::wstring& planGuid);
+void switchPowerPlan(const QString& planGuid);
 bool isDiscordInstalled();
 void closeDiscord();
 void startDiscord();
