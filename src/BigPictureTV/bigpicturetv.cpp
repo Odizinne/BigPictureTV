@@ -53,18 +53,18 @@ BigPictureTV::~BigPictureTV()
 
 void BigPictureTV::setupConnections()
 {
-    connect(ui->startup_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onStartupCheckboxStateChanged);
-    connect(ui->desktop_audio_lineedit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->startupCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onStartupCheckboxStateChanged);
+    connect(ui->desktopAudioLineEdit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemode_audio_lineedit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->disable_audio_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
-    connect(ui->disable_monitor_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
+    connect(ui->disableAudioCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
+    connect(ui->disableMonitorCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
     connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
-    connect(ui->close_discord_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->performance_powerplan_checkbox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->desktop_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->gamemode_monitor_combobox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->install_audio_button, &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
-    ui->startup_checkbox->setChecked(isShortcutPresent());
+    connect(ui->closeDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->performancePowerPlanCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->desktopMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->installAudioButton, &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
+    ui->startupCheckBox->setChecked(isShortcutPresent());
     initDiscordAction();
 }
 
@@ -72,26 +72,26 @@ void BigPictureTV::initDiscordAction()
 {
     if (!isDiscordInstalled())
     {
-        ui->close_discord_checkbox->setChecked(false);
-        ui->close_discord_checkbox->setEnabled(false);
-        ui->close_discord_label->setEnabled(false);
-        ui->close_discord_checkbox->setToolTip("Discord does not appear to be installed");
-        ui->close_discord_label->setToolTip("Discord does not appear to be installed");
+        ui->closeDiscordCheckBox->setChecked(false);
+        ui->closeDiscordCheckBox->setEnabled(false);
+        ui->CloseDiscordLabel->setEnabled(false);
+        ui->closeDiscordCheckBox->setToolTip("Discord does not appear to be installed");
+        ui->CloseDiscordLabel->setToolTip("Discord does not appear to be installed");
     }
 }
 void BigPictureTV::getAudioCapabilities()
 {
     if (!isAudioDeviceCmdletsInstalled())
     {
-        ui->disable_audio_checkbox->setChecked(true);
-        ui->disable_audio_checkbox->setEnabled(false);
+        ui->disableAudioCheckBox->setChecked(true);
+        ui->disableAudioCheckBox->setEnabled(false);
         toggleAudioSettings(false);
     }
     else
     {
-        ui->disable_audio_checkbox->setEnabled(true);
-        ui->install_audio_button->setVisible(false);
-        if (!ui->disable_audio_checkbox->isChecked())
+        ui->disableAudioCheckBox->setEnabled(true);
+        ui->installAudioButton->setVisible(false);
+        if (!ui->disableAudioCheckBox->isChecked())
         {
             toggleAudioSettings(true);
         }
@@ -101,19 +101,19 @@ void BigPictureTV::getAudioCapabilities()
 
 void BigPictureTV::setFrames()
 {
-    setFrameColorBasedOnWindow(this, ui->actions_frame);
+    setFrameColorBasedOnWindow(this, ui->actionsFrame);
     setFrameColorBasedOnWindow(this, ui->audio_frame);
-    setFrameColorBasedOnWindow(this, ui->monitor_frame);
-    setFrameColorBasedOnWindow(this, ui->settings_frame);
+    setFrameColorBasedOnWindow(this, ui->monitorsFrame);
+    setFrameColorBasedOnWindow(this, ui->settingsFrame);
     ui->checkrateSpinBox->setFrame(true);
 }
 
 void BigPictureTV::populateComboboxes()
 {
-    ui->desktop_monitor_combobox->addItem("Internal");
-    ui->desktop_monitor_combobox->addItem("Extend");
-    ui->gamemode_monitor_combobox->addItem("External");
-    ui->gamemode_monitor_combobox->addItem("Clone");
+    ui->desktopMonitorComboBox->addItem("Internal");
+    ui->desktopMonitorComboBox->addItem("Extend");
+    ui->gamemodeMonitorComboBox->addItem("External");
+    ui->gamemodeMonitorComboBox->addItem("Clone");
 }
 
 void BigPictureTV::createTrayIcon()
@@ -161,7 +161,7 @@ void BigPictureTV::onCheckrateSpinBoxValueChanged()
 
 void BigPictureTV::onStartupCheckboxStateChanged()
 {
-    manageShortcut(ui->startup_checkbox->isChecked());
+    manageShortcut(ui->startupCheckBox->isChecked());
 }
 
 void BigPictureTV::onDisableAudioCheckboxStateChanged(int state)
@@ -180,7 +180,7 @@ void BigPictureTV::onDisableMonitorCheckboxStateChanged(int state)
 
 void BigPictureTV::onAudioButtonClicked()
 {
-    ui->install_audio_button->setEnabled(false);
+    ui->installAudioButton->setEnabled(false);
 
     QProcess process;
     process.start("powershell", QStringList() << "-NoProfile" << "-ExecutionPolicy" << "Bypass" << "-Command"
@@ -214,7 +214,7 @@ void BigPictureTV::onAudioButtonClicked()
         QMessageBox::information(this, status, message);
     } else {
         QMessageBox::critical(this, status, message);
-        ui->install_audio_button->setEnabled(true);
+        ui->installAudioButton->setEnabled(true);
     }
     getAudioCapabilities();
 }
@@ -222,8 +222,8 @@ void BigPictureTV::onAudioButtonClicked()
 void BigPictureTV::checkWindowTitle()
 {
     bool isRunning = isBigPictureRunning();
-    bool disableVideo = ui->disable_monitor_checkbox->isChecked();
-    bool disableAudio = ui->disable_audio_checkbox->isChecked();
+    bool disableVideo = ui->disableMonitorCheckBox->isChecked();
+    bool disableAudio = ui->disableAudioCheckBox->isChecked();
 
     if (isRunning && !gamemodeActive)
     {
@@ -245,7 +245,7 @@ void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
 {
     if (disableVideo) return;
 
-    int index = isDesktopMode ? ui->desktop_monitor_combobox->currentIndex() : ui->gamemode_monitor_combobox->currentIndex();
+    int index = isDesktopMode ? ui->desktopMonitorComboBox->currentIndex() : ui->gamemodeMonitorComboBox->currentIndex();
 
     if (isDesktopMode)
     {
@@ -275,7 +275,7 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 {
     if (disableAudio) return;
 
-    std::string audioDevice = isDesktopMode ? ui->desktop_audio_lineedit->text().toStdString() : ui->gamemode_audio_lineedit->text().toStdString();
+    std::string audioDevice = isDesktopMode ? ui->desktopAudioLineEdit->text().toStdString() : ui->gamemode_audio_lineedit->text().toStdString();
 
     try {
         setAudioDevice(audioDevice);
@@ -287,8 +287,8 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 
 void BigPictureTV::handleActions(bool isDesktopMode)
 {
-    bool performDiscordAction = ui->close_discord_checkbox->isChecked();
-    bool setPowerPlan = ui->performance_powerplan_checkbox->isChecked();
+    bool performDiscordAction = ui->closeDiscordCheckBox->isChecked();
+    bool setPowerPlan = ui->performancePowerPlanCheckBox->isChecked();
     if (isDesktopMode)
     {
         if (performDiscordAction)
@@ -317,7 +317,7 @@ void BigPictureTV::handleActions(bool isDesktopMode)
 void BigPictureTV::createDefaultSettings()
 {
     firstRun = true;
-    ui->desktop_audio_lineedit->setText("Headset");
+    ui->desktopAudioLineEdit->setText("Headset");
     ui->gamemode_audio_lineedit->setText("TV");
     saveSettings();
 }
@@ -353,29 +353,29 @@ void BigPictureTV::loadSettings()
 void BigPictureTV::applySettings()
 {
     ui->gamemode_audio_lineedit->setText(settings.value("gamemode_audio").toString());
-    ui->desktop_audio_lineedit->setText(settings.value("desktop_audio").toString());
-    ui->disable_audio_checkbox->setChecked(settings.value("disable_audio_switch").toBool());
+    ui->desktopAudioLineEdit->setText(settings.value("desktop_audio").toString());
+    ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch").toBool());
     ui->checkrateSpinBox->setValue(settings.value("checkrate").toInt(1000));
-    ui->close_discord_checkbox->setChecked(settings.value("discord_action").toBool());
-    ui->performance_powerplan_checkbox->setChecked(settings.value("powerplan_action").toBool());
-    ui->gamemode_monitor_combobox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
-    ui->desktop_monitor_combobox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
-    ui->disable_monitor_checkbox->setChecked(settings.value("disable_monitor_switch").toBool());
-    toggleAudioSettings(!ui->disable_audio_checkbox->isChecked());
-    toggleMonitorSettings(!ui->disable_monitor_checkbox->isChecked());
+    ui->closeDiscordCheckBox->setChecked(settings.value("discord_action").toBool());
+    ui->performancePowerPlanCheckBox->setChecked(settings.value("powerplan_action").toBool());
+    ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
+    ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
+    ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
+    toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
+    toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
 }
 
 void BigPictureTV::saveSettings()
 {
     settings["gamemode_audio"] = ui->gamemode_audio_lineedit->text();
-    settings["desktop_audio"] = ui->desktop_audio_lineedit->text();
-    settings["disable_audio_switch"] = ui->disable_audio_checkbox->isChecked();
+    settings["desktop_audio"] = ui->desktopAudioLineEdit->text();
+    settings["disable_audio_switch"] = ui->disableAudioCheckBox->isChecked();
     settings["checkrate"] = ui->checkrateSpinBox->value();
-    settings["discord_action"] = ui->close_discord_checkbox->isChecked();
-    settings["powerplan_action"] = ui->performance_powerplan_checkbox->isChecked();
-    settings["gamemode_monitor"] = ui->gamemode_monitor_combobox->currentIndex();
-    settings["desktop_monitor"] = ui->desktop_monitor_combobox->currentIndex();
-    settings["disable_monitor_switch"] = ui->disable_monitor_checkbox->isChecked();
+    settings["discord_action"] = ui->closeDiscordCheckBox->isChecked();
+    settings["powerplan_action"] = ui->performancePowerPlanCheckBox->isChecked();
+    settings["gamemode_monitor"] = ui->gamemodeMonitorComboBox->currentIndex();
+    settings["desktop_monitor"] = ui->desktopMonitorComboBox->currentIndex();
+    settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();
 
     QFile file(settingsFile);
     if (file.open(QIODevice::WriteOnly)) {
@@ -389,18 +389,18 @@ void BigPictureTV::saveSettings()
 
 void BigPictureTV::toggleAudioSettings(bool state)
 {
-    ui->audio_output_label->setEnabled(state);
-    ui->gamemode_audio_label->setEnabled(state);
+    ui->audioOutputLabel->setEnabled(state);
+    ui->gamemodeAudioLabel->setEnabled(state);
     ui->gamemode_audio_lineedit->setEnabled(state);
-    ui->desktop_audio_label->setEnabled(state);
-    ui->desktop_audio_lineedit->setEnabled(state);
+    ui->desktopAudioLabel->setEnabled(state);
+    ui->desktopAudioLineEdit->setEnabled(state);
 }
 
 void BigPictureTV::toggleMonitorSettings(bool state)
 {
-    ui->monitor_configuration_label->setEnabled(state);
-    ui->gamemode_monitor_label->setEnabled(state);
-    ui->gamemode_monitor_combobox->setEnabled(state);
-    ui->desktop_monitor_label->setEnabled(state);
-    ui->desktop_monitor_combobox->setEnabled(state);
+    ui->monitorConfigurationLabel->setEnabled(state);
+    ui->gamemodeMonitorLabel->setEnabled(state);
+    ui->gamemodeMonitorComboBox->setEnabled(state);
+    ui->desktopMonitorLabel->setEnabled(state);
+    ui->desktopMonitorComboBox->setEnabled(state);
 }

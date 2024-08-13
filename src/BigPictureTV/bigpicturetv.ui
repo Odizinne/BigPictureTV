@@ -28,7 +28,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2" columnstretch="1,1">
     <item row="2" column="0">
-     <widget class="QLabel" name="audio_output_label">
+     <widget class="QLabel" name="audioOutputLabel">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -46,7 +46,7 @@
      </widget>
     </item>
     <item row="4" column="0" colspan="2">
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="actionsLabel">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -64,7 +64,7 @@
      </widget>
     </item>
     <item row="5" column="0" colspan="2">
-     <widget class="QFrame" name="actions_frame">
+     <widget class="QFrame" name="actionsFrame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -88,7 +88,7 @@
         <number>12</number>
        </property>
        <item row="0" column="1">
-        <widget class="QCheckBox" name="close_discord_checkbox">
+        <widget class="QCheckBox" name="closeDiscordCheckBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -104,7 +104,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="close_discord_label">
+        <widget class="QLabel" name="CloseDiscordLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -117,7 +117,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="performance_powerplan_label">
+        <widget class="QLabel" name="performancePowerPlanLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -130,7 +130,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QCheckBox" name="performance_powerplan_checkbox">
+        <widget class="QCheckBox" name="performancePowerPlanCheckBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -149,7 +149,7 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QFrame" name="monitor_frame">
+     <widget class="QFrame" name="monitorsFrame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -173,7 +173,7 @@
         <number>12</number>
        </property>
        <item row="0" column="2">
-        <widget class="QComboBox" name="gamemode_monitor_combobox">
+        <widget class="QComboBox" name="gamemodeMonitorComboBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -186,7 +186,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QComboBox" name="desktop_monitor_combobox">
+        <widget class="QComboBox" name="desktopMonitorComboBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -196,7 +196,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="desktop_monitor_label">
+        <widget class="QLabel" name="desktopMonitorLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -209,7 +209,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="gamemode_monitor_label">
+        <widget class="QLabel" name="gamemodeMonitorLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -238,7 +238,7 @@
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QLabel" name="monitor_configuration_label">
+     <widget class="QLabel" name="monitorConfigurationLabel">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -277,7 +277,7 @@
         <number>12</number>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="gamemode_audio_label">
+        <widget class="QLabel" name="gamemodeAudioLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -290,7 +290,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="desktop_audio_label">
+        <widget class="QLabel" name="desktopAudioLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -303,7 +303,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="desktop_audio_lineedit">
+        <widget class="QLineEdit" name="desktopAudioLineEdit">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -338,7 +338,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="2">
-     <widget class="QFrame" name="settings_frame">
+     <widget class="QFrame" name="settingsFrame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -362,7 +362,7 @@
         <number>12</number>
        </property>
        <item row="2" column="0">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="disableAudioLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -375,7 +375,7 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="disableMonitorLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -388,7 +388,7 @@
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="checkrate_label">
+        <widget class="QLabel" name="checkrateLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -401,7 +401,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QCheckBox" name="startup_checkbox">
+        <widget class="QCheckBox" name="startupCheckBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -442,7 +442,7 @@
         </widget>
        </item>
        <item row="0" column="0" colspan="3">
-        <widget class="QPushButton" name="install_audio_button">
+        <widget class="QPushButton" name="installAudioButton">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -455,7 +455,7 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QCheckBox" name="disable_monitor_checkbox">
+        <widget class="QCheckBox" name="disableMonitorCheckBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -471,7 +471,7 @@
         </widget>
        </item>
        <item row="2" column="2">
-        <widget class="QCheckBox" name="disable_audio_checkbox">
+        <widget class="QCheckBox" name="disableAudioCheckBox">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -487,7 +487,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="startupLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -516,7 +516,7 @@
      </widget>
     </item>
     <item row="0" column="0" colspan="2">
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="settingsLabel">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -537,10 +537,10 @@
   </widget>
  </widget>
  <tabstops>
-  <tabstop>startup_checkbox</tabstop>
-  <tabstop>disable_audio_checkbox</tabstop>
+  <tabstop>startupCheckBox</tabstop>
+  <tabstop>disableAudioCheckBox</tabstop>
   <tabstop>gamemode_audio_lineedit</tabstop>
-  <tabstop>desktop_audio_lineedit</tabstop>
+  <tabstop>desktopAudioLineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>
