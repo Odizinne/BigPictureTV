@@ -361,8 +361,6 @@ void BigPictureTV::applySettings()
     ui->gamemode_monitor_combobox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
     ui->desktop_monitor_combobox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
     ui->disable_monitor_checkbox->setChecked(settings.value("disable_monitor_switch").toBool());
-
-    // Call toggle functions based on settings
     toggleAudioSettings(!ui->disable_audio_checkbox->isChecked());
     toggleMonitorSettings(!ui->disable_monitor_checkbox->isChecked());
 }

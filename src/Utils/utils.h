@@ -4,13 +4,13 @@
 #include <QIcon>
 
 void runDisplayswitch(const QString &command);
-void switchPowerPlan(const std::wstring& planGuid);
-bool isDiscordInstalled();
-bool isAudioDeviceCmdletsInstalled();
-void closeDiscord();
-void startDiscord();
-bool isWindows10();
 std::string getTheme();
 QIcon getIconForTheme();
+void switchPowerPlan(const std::wstring& planGuid);
+bool isDiscordInstalled();
+void closeDiscord();
+void startDiscord();
+bool isAudioDeviceCmdletsInstalled();
+bool isWindows10();
 
 #endif // UTILS_H
