@@ -64,7 +64,7 @@ private:
 
     Ui::BigPictureTV *ui;
     QTimer *windowCheckTimer;
-    std::wstring shortcutName = L"BigPictureTV.lnk"; // Default values or set them appropriately
+    std::wstring shortcutName = L"BigPictureTV.lnk";
     QString settingsFilePath;
     QJsonObject settings;
     static const QString settingsFile;

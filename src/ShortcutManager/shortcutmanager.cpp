@@ -1,83 +1,96 @@
-#include "shortcutmanager.h"
-#include <filesystem>
+#include <QCoreApplication>
+#include <QDir>
+#include <QFile>
+#include <QDebug>
+#include <QStandardPaths>
+#include <QShortcut>
+#include <QSysInfo>
+#include <QtWidgets/QWidget>
 #include <windows.h>
 #include <shlobj.h>
 #include <shobjidl.h>
 
-const std::wstring SHORTCUT_NAME = L"BigPictureTV.lnk";
-
-void setPaths(std::wstring& targetPath, std::wstring& startupFolder)
+QString getStartupFolder()
 {
-    wchar_t executablePath[MAX_PATH];
+    QString path;
+    WCHAR szPath[MAX_PATH];
+    if (SHGetFolderPath(NULL, CSIDL_STARTUP, NULL, 0, szPath) == S_OK)
+    {
+        path = QString::fromWCharArray(szPath);
+    }
+    return path;
+}
+
+void setPaths(QString& targetPath, QString& startupFolder)
+{
+    TCHAR executablePath[MAX_PATH];
     GetModuleFileName(NULL, executablePath, MAX_PATH);
-    targetPath = std::wstring(executablePath);
+    targetPath = QString::fromWCharArray(executablePath);
 
     startupFolder = getStartupFolder();
 }
 
-std::wstring getStartupFolder()
+QString getShortcutPath()
 {
-    wchar_t path[MAX_PATH];
-    if (SHGetFolderPath(NULL, CSIDL_STARTUP, NULL, 0, path) == S_OK)
+    static QString shortcutName = "BigPictureTV.lnk";
+    return getStartupFolder() + "\\" + shortcutName;
+}
+
+void createShortcut(const QString& targetPath)
+{
+    QString shortcutPath = getShortcutPath();
+    QString workingDirectory = QFileInfo(targetPath).path();
+
+    IShellLink* pShellLink = nullptr;
+    IPersistFile* pPersistFile = nullptr;
+
+    if (FAILED(CoInitialize(nullptr)))
     {
-        return std::wstring(path);
+        qDebug() << "Failed to initialize COM library.";
+        return;
     }
-    return L"";
-}
 
-std::wstring getShortcutPath()
-{
-    return getStartupFolder() + L"\\" + SHORTCUT_NAME;
-}
-
-void createShortcut(const std::wstring& targetPath)
-{
-    std::wstring shortcutPath = getShortcutPath();
-    std::wstring workingDirectory = targetPath.substr(0, targetPath.find_last_of(L"\\"));
-
-    HRESULT hResult;
-    IShellLink* pShellLink = NULL;
-    IPersistFile* pPersistFile = NULL;
-
-    CoInitialize(NULL);
-    hResult = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink);
-    if (SUCCEEDED(hResult))
+    if (SUCCEEDED(CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER, IID_IShellLink, (void**)&pShellLink)))
     {
-        pShellLink->SetPath(targetPath.c_str());
-        pShellLink->SetWorkingDirectory(workingDirectory.c_str());
+        pShellLink->SetPath(targetPath.toStdWString().c_str());
+        pShellLink->SetWorkingDirectory(workingDirectory.toStdWString().c_str());
         pShellLink->SetDescription(L"Launch BigPictureTV");
 
-        hResult = pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile);
-        if (SUCCEEDED(hResult))
+        if (SUCCEEDED(pShellLink->QueryInterface(IID_IPersistFile, (void**)&pPersistFile)))
         {
-            hResult = pPersistFile->Save(shortcutPath.c_str(), TRUE);
+            pPersistFile->Save(shortcutPath.toStdWString().c_str(), TRUE);
             pPersistFile->Release();
         }
+
         pShellLink->Release();
+    }
+    else
+    {
+        qDebug() << "Failed to create ShellLink instance.";
     }
 
     CoUninitialize();
 }
 
-void removeShortcut()
-{
-    std::wstring shortcutPath = getShortcutPath();
-    if (isShortcutPresent())
-    {
-        _wremove(shortcutPath.c_str());
-    }
-}
-
 bool isShortcutPresent()
 {
-    std::wstring shortcutPath = getShortcutPath();
-    return std::filesystem::exists(shortcutPath);
+    QString shortcutPath = getShortcutPath();
+    return QFile::exists(shortcutPath);
+}
+
+void removeShortcut()
+{
+    QString shortcutPath = getShortcutPath();
+    if (isShortcutPresent())
+    {
+        QFile::remove(shortcutPath);
+    }
 }
 
 void manageShortcut(bool state)
 {
-    std::wstring targetPath;
-    std::wstring startupFolder;
+    QString targetPath;
+    QString startupFolder;
 
     setPaths(targetPath, startupFolder);
 
