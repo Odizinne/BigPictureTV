@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/translations">
+        <file>Tr/BigPictureTV_en.qm</file>
+        <file>Tr/BigPictureTV_fr.qm</file>
+    </qresource>
+</RCC>

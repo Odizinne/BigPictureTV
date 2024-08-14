@@ -1,9 +1,13 @@
 #include <QApplication>
 #include <QDebug>
+#include <QLocale>
 #include <QMessageBox>
 #include <QSharedMemory>
+#include <QString>
+#include <QTranslator>
 #include "bigpicturetv.h"
 #include "utils.h"
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -19,6 +23,14 @@ int main(int argc, char *argv[])
     }
 
     QApplication a(argc, argv);
+
+    QLocale locale;
+    QString languageCode = locale.name().section('_', 0, 0);
+
+    QTranslator translator;
+    if (translator.load(":/translations/Tr/BigPictureTV_" + languageCode + ".qm")) {
+        a.installTranslator(&translator);
+    }
     if (isWindows10()) {
         a.setStyle("fusion");
     }

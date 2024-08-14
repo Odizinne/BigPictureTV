@@ -35,7 +35,14 @@ HEADERS += \
 FORMS += \
     src/BigPictureTV/bigpicturetv.ui
 
-RESOURCES += src/Resources/resources.qrc
+TRANSLATIONS += \
+    src/Resources/Tr/BigPictureTV_fr.ts \
+    src/Resources/Tr/BigPictureTV_en.ts
+
+RESOURCES += \
+    src/Resources/resources.qrc \
+    src/Resources/translations.qrc
+
 RC_FILE = src/Resources/appicon.rc
 
 LIBS += -lole32 -luser32 -ladvapi32 -lshell32
@@ -44,3 +51,4 @@ LIBS += -lole32 -luser32 -ladvapi32 -lshell32
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+

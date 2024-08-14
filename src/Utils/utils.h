@@ -1,12 +1,12 @@
 #ifndef UTILS_H
 #define UTILS_H
-#include <QString>
 #include <QIcon>
+#include <QString>
 
 void runDisplayswitch(const QString &command);
 QString getTheme();
 QIcon getIconForTheme();
-void switchPowerPlan(const QString& planGuid);
+void switchPowerPlan(const QString &planGuid);
 bool isDiscordInstalled();
 void closeDiscord();
 void startDiscord();
