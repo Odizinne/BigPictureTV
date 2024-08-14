@@ -29,9 +29,7 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
-    if (isWindows10()) {
-        setFrames();
-    }
+    setFrames();
     createMenubar();
     populateComboboxes();
     loadSettings();

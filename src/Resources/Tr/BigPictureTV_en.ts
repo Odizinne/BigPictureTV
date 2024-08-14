@@ -4,32 +4,32 @@
 <context>
     <name>AboutWindow</name>
     <message>
-        <location filename="../../AboutWindow/aboutwindow.ui" line="98"/>
+        <location filename="../../AboutWindow/aboutwindow.ui" line="104"/>
         <source>Target window title:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../AboutWindow/aboutwindow.ui" line="111"/>
+        <location filename="../../AboutWindow/aboutwindow.ui" line="117"/>
         <source>Detected steam language:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../AboutWindow/aboutwindow.ui" line="124"/>
+        <location filename="../../AboutWindow/aboutwindow.ui" line="130"/>
         <source>Commit ID:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../AboutWindow/aboutwindow.ui" line="137"/>
+        <location filename="../../AboutWindow/aboutwindow.ui" line="143"/>
         <source>Commit date:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../AboutWindow/aboutwindow.ui" line="150"/>
+        <location filename="../../AboutWindow/aboutwindow.ui" line="156"/>
         <source>Repository:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../AboutWindow/aboutwindow.ui" line="163"/>
+        <location filename="../../AboutWindow/aboutwindow.ui" line="169"/>
         <source>Branch:</source>
         <translation></translation>
     </message>
@@ -110,87 +110,92 @@
     </message>
     <message>
         <location filename="../../BigPictureTV/bigpicturetv.ui" line="532"/>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="188"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="195"/>
         <source>Settings</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="102"/>
         <location filename="../../BigPictureTV/bigpicturetv.cpp" line="103"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="104"/>
         <source>Discord does not appear to be installed</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="133"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="134"/>
         <source>Internal</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="134"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="135"/>
         <source>Extend</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="135"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="136"/>
         <source>External</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="136"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="137"/>
         <source>Clone</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="142"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="143"/>
         <source>File</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="144"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="145"/>
         <source>Reset Default Settings</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="145"/>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="191"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="146"/>
+        <source>Open Settings Folder</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="147"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="198"/>
         <source>Exit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="157"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="164"/>
         <source>Help</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="159"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="166"/>
         <source>About</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="268"/>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="286"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="275"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="293"/>
         <source>Error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="269"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="276"/>
         <source>Failed to execute the PowerShell commands.
 Please check if PowerShell is installed and properly configured.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="281"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="288"/>
         <source>Success</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="282"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="289"/>
         <source>AudioDeviceCmdlets module installed successfully.
 You can now use audio settings.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="287"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="294"/>
         <source>Failed to install NuGet package provider or AudioDeviceCmdlets module.
 Please install them manually by running these commands in PowerShell:
 Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;
