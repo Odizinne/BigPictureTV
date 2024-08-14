@@ -319,7 +319,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="gamemode_audio_lineedit">
+        <widget class="QLineEdit" name="gamemodeAudioLineEdit">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -539,7 +539,7 @@
  <tabstops>
   <tabstop>startupCheckBox</tabstop>
   <tabstop>disableAudioCheckBox</tabstop>
-  <tabstop>gamemode_audio_lineedit</tabstop>
+  <tabstop>gamemodeAudioLineEdit</tabstop>
   <tabstop>desktopAudioLineEdit</tabstop>
  </tabstops>
  <resources/>

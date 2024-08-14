@@ -45,6 +45,8 @@ private slots:
 private:
     QSystemTrayIcon *trayIcon;
 
+    void createMenubar();
+    void toggleMenubarVisibility();
     void createTrayIcon();
     void initDiscordAction();
     QMenu *createMenu();
@@ -69,9 +71,13 @@ private:
     static const QString settingsFile;
     QString status;
     QString message;
+    QMenuBar *menuBar;
+    bool menubarVisible;
 
 protected:
     void closeEvent(QCloseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+
 };
 
 #endif // BIGPICTURETV_H

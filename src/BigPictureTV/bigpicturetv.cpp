@@ -1,6 +1,7 @@
 #include "bigpicturetv.h"
 #include <QCloseEvent>
 #include <QJsonParseError>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
@@ -22,12 +23,14 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     , firstRun(false)
     , ui(new Ui::BigPictureTV)
     , windowCheckTimer(new QTimer(this))
+    , menubarVisible(false)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
     if (isWindows10()) {
         setFrames();
     }
+    createMenubar();
     populateComboboxes();
     loadSettings();
     setupConnections();
@@ -55,7 +58,7 @@ void BigPictureTV::setupConnections()
             this,
             &BigPictureTV::onStartupCheckboxStateChanged);
     connect(ui->desktopAudioLineEdit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->gamemode_audio_lineedit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->gamemodeAudioLineEdit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
     connect(ui->disableAudioCheckBox,
             &QCheckBox::stateChanged,
             this,
@@ -132,6 +135,29 @@ void BigPictureTV::populateComboboxes()
     ui->gamemodeMonitorComboBox->addItem(tr("Clone"));
 }
 
+void BigPictureTV::createMenubar()
+{
+    menuBar = new QMenuBar(this);
+    QMenu *fileMenu = new QMenu(tr("File"), this);
+
+    QAction *resetSettingsAction = new QAction(tr("Reset Default Settings"), this);
+    QAction *exitAction = new QAction(tr("Exit"), this);
+
+    connect(resetSettingsAction,
+            &QAction::triggered,
+            this,
+            &BigPictureTV::createDefaultSettings);
+    connect(exitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
+
+    fileMenu->addAction(resetSettingsAction);
+    fileMenu->addSeparator();
+    fileMenu->addAction(exitAction);
+
+    menuBar->addMenu(fileMenu);
+    menuBar->setVisible(false);
+    setMenuBar(menuBar);
+}
+
 void BigPictureTV::createTrayIcon()
 {
     trayIcon = new QSystemTrayIcon(getIconForTheme(), this);
@@ -154,6 +180,25 @@ QMenu *BigPictureTV::createMenu()
     menu->addAction(exitAction);
 
     return menu;
+}
+
+void BigPictureTV::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Alt) {
+        toggleMenubarVisibility();
+        event->accept();  // Mark the event as handled
+    } else {
+        QMainWindow::keyPressEvent(event);  // Pass other events to the base class
+    }
+}
+
+void BigPictureTV::toggleMenubarVisibility()
+{
+    menubarVisible = !menubarVisible;
+    if (menuBar) {
+        menuBar->setVisible(menubarVisible);
+    }
+    this->adjustSize();
 }
 
 void BigPictureTV::closeEvent(QCloseEvent *event)
@@ -285,7 +330,7 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
         return;
 
     std::string audioDevice = isDesktopMode ? ui->desktopAudioLineEdit->text().toStdString()
-                                            : ui->gamemode_audio_lineedit->text().toStdString();
+                                            : ui->gamemodeAudioLineEdit->text().toStdString();
 
     try {
         setAudioDevice(audioDevice);
@@ -310,7 +355,15 @@ void BigPictureTV::createDefaultSettings()
 {
     firstRun = true;
     ui->desktopAudioLineEdit->setText("Headset");
-    ui->gamemode_audio_lineedit->setText("TV");
+    ui->gamemodeAudioLineEdit->setText("TV");
+    ui->desktopMonitorComboBox->setCurrentIndex(0);
+    ui->gamemodeMonitorComboBox->setCurrentIndex(0);
+    ui->closeDiscordCheckBox->setChecked(false);
+    ui->performancePowerPlanCheckBox->setChecked(false);
+    ui->startupCheckBox->setChecked(false);
+    ui->disableAudioCheckBox->setChecked(false);
+    ui->disableMonitorCheckBox->setChecked(false);
+    ui->checkrateSpinBox->setValue(1000);
     saveSettings();
 }
 
@@ -340,7 +393,7 @@ void BigPictureTV::loadSettings()
 
 void BigPictureTV::applySettings()
 {
-    ui->gamemode_audio_lineedit->setText(settings.value("gamemode_audio").toString());
+    ui->gamemodeAudioLineEdit->setText(settings.value("gamemode_audio").toString());
     ui->desktopAudioLineEdit->setText(settings.value("desktop_audio").toString());
     ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch").toBool());
     ui->checkrateSpinBox->setValue(settings.value("checkrate").toInt(1000));
@@ -355,7 +408,7 @@ void BigPictureTV::applySettings()
 
 void BigPictureTV::saveSettings()
 {
-    settings["gamemode_audio"] = ui->gamemode_audio_lineedit->text();
+    settings["gamemode_audio"] = ui->gamemodeAudioLineEdit->text();
     settings["desktop_audio"] = ui->desktopAudioLineEdit->text();
     settings["disable_audio_switch"] = ui->disableAudioCheckBox->isChecked();
     settings["checkrate"] = ui->checkrateSpinBox->value();
@@ -377,7 +430,7 @@ void BigPictureTV::toggleAudioSettings(bool state)
 {
     ui->audioOutputLabel->setEnabled(state);
     ui->gamemodeAudioLabel->setEnabled(state);
-    ui->gamemode_audio_lineedit->setEnabled(state);
+    ui->gamemodeAudioLineEdit->setEnabled(state);
     ui->desktopAudioLabel->setEnabled(state);
     ui->desktopAudioLineEdit->setEnabled(state);
 }

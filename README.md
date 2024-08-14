@@ -31,6 +31,8 @@ Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
 ## Usage Instructions
 
+- If you ever need to reset your settings, press alt key to open the menubar.
+
 ### Window Check Rate
 
 - **Purpose:** Adjusts the interval for checking the presence of the Steam Big Picture window.
