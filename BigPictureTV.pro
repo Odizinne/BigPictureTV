@@ -4,18 +4,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17 \
           silent \
-          lrelease\
-          embed_translations \
 
 # Optional: Uncomment to disable deprecated APIs before Qt 6.0.0
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
-# Fetch Git information
+# Fetch git information for about window
 GIT_COMMIT_ID = $$system(git log -n 1 --pretty=format:"%H")
 GIT_COMMIT_DATE = $$system(git log -n 1 --pretty=format:"%ci")
 GIT_BRANCH = $$system(git branch --show-current)
 
-# Define these values for use in C++ code
 DEFINES += \
     GIT_COMMIT_ID=\"\"\"$$GIT_COMMIT_ID\"\"\" \
     GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\" \
@@ -59,7 +56,7 @@ TRANSLATIONS += \
 
 RESOURCES += \
     src/Resources/resources.qrc \
-    #src/Resources/translations.qrc
+    src/Resources/translations.qrc
 
 RC_FILE = src/Resources/appicon.rc
 
