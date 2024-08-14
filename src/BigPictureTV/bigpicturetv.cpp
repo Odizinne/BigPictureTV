@@ -105,7 +105,8 @@ void BigPictureTV::getAudioCapabilities()
 void BigPictureTV::setCustomFusion()
 {
     setMainWindowBgColorBasedOnWindow(this, 0.9, 0.9);
-    setWidgetBgColorBasedOnWindow(this, ui->actionsFrame, 2, 1.1);
+    setWidgetBgColorBasedOnWindow(this, ui->gamemodeActionsFrame, 2, 1.1);
+    setWidgetBgColorBasedOnWindow(this, ui->desktopActionsFrame, 2, 1.1);
     setWidgetBgColorBasedOnWindow(this, ui->audio_frame, 2, 1.1);
     setWidgetBgColorBasedOnWindow(this, ui->monitorsFrame, 2, 1.1);
     setWidgetBgColorBasedOnWindow(this, ui->settingsFrame, 2, 1.1);

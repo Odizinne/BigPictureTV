@@ -431,7 +431,7 @@
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QLabel" name="actionsLabel">
+     <widget class="QLabel" name="gamemodeActionsLabel">
       <property name="minimumSize">
        <size>
         <width>0</width>
@@ -449,7 +449,7 @@
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QFrame" name="actionsFrame">
+     <widget class="QFrame" name="gamemodeActionsFrame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
@@ -528,14 +528,14 @@
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="desktopActionsLabel">
       <property name="text">
        <string>Desktop actions</string>
       </property>
      </widget>
     </item>
     <item row="5" column="1">
-     <widget class="QFrame" name="gridFrame">
+     <widget class="QFrame" name="desktopActionsFrame">
       <property name="frameShape">
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
