@@ -7,13 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>540</width>
-    <height>198</height>
+    <height>228</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>About</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
    <item row="5" column="1">
     <widget class="QLabel" name="targetWindowTitle">
      <property name="minimumSize">

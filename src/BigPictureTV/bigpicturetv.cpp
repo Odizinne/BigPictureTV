@@ -29,7 +29,8 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
-    setFrames();
+    setCustomFusion();
+
     createMenubar();
     populateComboboxes();
     loadSettings();
@@ -118,13 +119,13 @@ void BigPictureTV::getAudioCapabilities()
     }
 }
 
-void BigPictureTV::setFrames()
+void BigPictureTV::setCustomFusion()
 {
-    setFrameColorBasedOnWindow(this, ui->actionsFrame);
-    setFrameColorBasedOnWindow(this, ui->audio_frame);
-    setFrameColorBasedOnWindow(this, ui->monitorsFrame);
-    setFrameColorBasedOnWindow(this, ui->settingsFrame);
-    ui->checkrateSpinBox->setFrame(true);
+    setMainWindowBgColorBasedOnWindow(this, 0.9, 0.9);
+    setWidgetBgColorBasedOnWindow(this, ui->actionsFrame, 2, 1.1);
+    setWidgetBgColorBasedOnWindow(this, ui->audio_frame, 2, 1.1);
+    setWidgetBgColorBasedOnWindow(this, ui->monitorsFrame, 2, 1.1);
+    setWidgetBgColorBasedOnWindow(this, ui->settingsFrame, 2, 1.1);
 }
 
 void BigPictureTV::populateComboboxes()

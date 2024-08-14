@@ -2,7 +2,9 @@
 #define COLORUTILS_H
 
 #include <QWidget>
+#include "qmainwindow.h"
 
-void setFrameColorBasedOnWindow(QWidget *window, QWidget *frame);
+void setWidgetBgColorBasedOnWindow(QWidget *window, QWidget *frame, double darkMultiplyer, double lightMultiplyer);
+void setMainWindowBgColorBasedOnWindow(QMainWindow *mainWindow, double darkMultiplyer, double lightMultiplyer);
 
 #endif // COLORUTILS_H

@@ -2,6 +2,7 @@
 #include <QBrush>
 #include <QColor>
 #include <QPalette>
+#include "qmainwindow.h"
 
 QColor adjustColor(const QColor &color, double factor)
 {
@@ -20,19 +21,36 @@ bool isDarkMode(const QColor &color)
     return brightness < 127;
 }
 
-void setFrameColorBasedOnWindow(QWidget *window, QWidget *frame)
+void setWidgetBgColorBasedOnWindow(QWidget *window, QWidget *widget, double darkMultiplyer, double lightMultiplyer)
 {
     QColor mainBgColor = window->palette().color(QPalette::Window);
 
-    QColor frameBgColor;
+    QColor widgetBgColor;
     if (isDarkMode(mainBgColor)) {
-        frameBgColor = adjustColor(mainBgColor, 1.5);
+        widgetBgColor = adjustColor(mainBgColor, darkMultiplyer);
     } else {
-        frameBgColor = adjustColor(mainBgColor, 0.95);
+        widgetBgColor = adjustColor(mainBgColor, lightMultiplyer);
     }
 
-    QPalette palette = frame->palette();
-    palette.setBrush(QPalette::Window, QBrush(frameBgColor));
-    frame->setAutoFillBackground(true);
-    frame->setPalette(palette);
+    QPalette palette = widget->palette();
+    palette.setBrush(QPalette::Window, QBrush(widgetBgColor));
+    widget->setAutoFillBackground(true);
+    widget->setPalette(palette);
+}
+
+void setMainWindowBgColorBasedOnWindow(QMainWindow *mainWindow, double darkMultiplyer, double lightMultiplyer)
+{
+    QColor mainBgColor = mainWindow->palette().color(QPalette::Window);
+
+    QColor newBgColor;
+    if (isDarkMode(mainBgColor)) {
+        newBgColor = adjustColor(mainBgColor, darkMultiplyer);
+    } else {
+        newBgColor = adjustColor(mainBgColor, lightMultiplyer);
+    }
+
+    QPalette palette = mainWindow->palette();
+    palette.setBrush(QPalette::Window, QBrush(newBgColor));
+    mainWindow->setAutoFillBackground(true);
+    mainWindow->setPalette(palette);
 }

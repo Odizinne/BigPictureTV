@@ -57,7 +57,7 @@ private:
     bool discordInstalled;
     bool firstRun;
     void getAudioCapabilities();
-    void setFrames();
+    void setCustomFusion();
     void populateComboboxes();
     void toggleAudioSettings(bool state);
     void toggleMonitorSettings(bool state);
