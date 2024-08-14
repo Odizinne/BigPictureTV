@@ -54,41 +54,17 @@ BigPictureTV::~BigPictureTV()
 
 void BigPictureTV::setupConnections()
 {
-    connect(ui->startupCheckBox,
-            &QCheckBox::stateChanged,
-            this,
-            &BigPictureTV::onStartupCheckboxStateChanged);
+    connect(ui->startupCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onStartupCheckboxStateChanged);
     connect(ui->desktopAudioLineEdit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemodeAudioLineEdit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->disableAudioCheckBox,
-            &QCheckBox::stateChanged,
-            this,
-            &BigPictureTV::onDisableAudioCheckboxStateChanged);
-    connect(ui->disableMonitorCheckBox,
-            &QCheckBox::stateChanged,
-            this,
-            &BigPictureTV::onDisableMonitorCheckboxStateChanged);
-    connect(ui->checkrateSpinBox,
-            &QSpinBox::valueChanged,
-            this,
-            &BigPictureTV::onCheckrateSpinBoxValueChanged);
+    connect(ui->disableAudioCheckBox, &QCheckBox::checkStateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
+    connect(ui->disableMonitorCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
+    connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
     connect(ui->closeDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->performancePowerPlanCheckBox,
-            &QCheckBox::stateChanged,
-            this,
-            &BigPictureTV::saveSettings);
-    connect(ui->desktopMonitorComboBox,
-            &QComboBox::currentIndexChanged,
-            this,
-            &BigPictureTV::saveSettings);
-    connect(ui->gamemodeMonitorComboBox,
-            &QComboBox::currentIndexChanged,
-            this,
-            &BigPictureTV::saveSettings);
-    connect(ui->installAudioButton,
-            &QPushButton::clicked,
-            this,
-            &BigPictureTV::onAudioButtonClicked);
+    connect(ui->performancePowerPlanCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->desktopMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->installAudioButton,  &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
     ui->startupCheckBox->setChecked(isShortcutPresent());
     initDiscordAction();
 }
@@ -204,9 +180,9 @@ void BigPictureTV::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Alt) {
         toggleMenubarVisibility();
-        event->accept(); // Mark the event as handled
+        event->accept();
     } else {
-        QMainWindow::keyPressEvent(event); // Pass other events to the base class
+        QMainWindow::keyPressEvent(event);
     }
 }
 
