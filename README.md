@@ -93,8 +93,14 @@ BigPictureTV uses Windows' built-in `displayswitch.exe` for monitor switching.
 Feel free to [open an issue](https://github.com/Odizinne/BigPictureTV/issues/new) in the repository.  
 Be sure to add as many information as possible to help me reproduce it!
 
+## I want to help
+
+I need help for application translation.  
+Currently done:
+- EN
+- FR
+
 ## To-do
 
 - Clean code
 - Optimize workflows further
-- Translation
