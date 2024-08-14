@@ -7,7 +7,6 @@
 #include <QTranslator>
 #include "bigpicturetv.h"
 #include "utils.h"
-#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -26,7 +25,6 @@ int main(int argc, char *argv[])
 
     QLocale locale;
     QString languageCode = locale.name().section('_', 0, 0);
-
     QTranslator translator;
     if (translator.load(":/translations/Tr/BigPictureTV_" + languageCode + ".qm")) {
         a.installTranslator(&translator);
