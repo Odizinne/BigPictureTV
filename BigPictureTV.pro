@@ -4,7 +4,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17 \
           silent \
-          lrelease
+          lrelease\
+          embed_translations \
 
 # Optional: Uncomment to disable deprecated APIs before Qt 6.0.0
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
@@ -58,7 +59,7 @@ TRANSLATIONS += \
 
 RESOURCES += \
     src/Resources/resources.qrc \
-    src/Resources/translations.qrc
+    #src/Resources/translations.qrc
 
 RC_FILE = src/Resources/appicon.rc
 
