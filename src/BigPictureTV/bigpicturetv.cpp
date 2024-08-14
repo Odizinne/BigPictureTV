@@ -1,18 +1,20 @@
 #include "bigpicturetv.h"
+#include <QCloseEvent>
+#include <QJsonParseError>
+#include <QMessageBox>
+#include <QProcess>
+#include <QStandardPaths>
+#include "audiomanager.h"
 #include "colorutils.h"
 #include "shortcutmanager.h"
 #include "steamwindowmanager.h"
 #include "ui_bigpicturetv.h"
-#include "audiomanager.h"
 #include "utils.h"
-#include <QStandardPaths>
-#include <QProcess>
-#include <QJsonParseError>
-#include <QCloseEvent>
-#include <QMessageBox>
 #include <iostream>
 
-const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/BigPictureTV/settings.json";
+const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(
+                                               QStandardPaths::AppDataLocation)
+                                           + "/BigPictureTV/settings.json";
 
 BigPictureTV::BigPictureTV(QWidget *parent)
     : QMainWindow(parent)
@@ -20,27 +22,22 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     , firstRun(false)
     , ui(new Ui::BigPictureTV)
     , windowCheckTimer(new QTimer(this))
-
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
-    if (isWindows10())
-    {
+    if (isWindows10()) {
         setFrames();
-
     }
     populateComboboxes();
     loadSettings();
     setupConnections();
     getAudioCapabilities();
 
-
     windowCheckTimer->setInterval(ui->checkrateSpinBox->value());
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
     createTrayIcon();
-    if (firstRun)
-    {
+    if (firstRun) {
         this->show();
     }
 }
@@ -53,46 +50,65 @@ BigPictureTV::~BigPictureTV()
 
 void BigPictureTV::setupConnections()
 {
-    connect(ui->startupCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onStartupCheckboxStateChanged);
+    connect(ui->startupCheckBox,
+            &QCheckBox::stateChanged,
+            this,
+            &BigPictureTV::onStartupCheckboxStateChanged);
     connect(ui->desktopAudioLineEdit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemode_audio_lineedit, &QLineEdit::textChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->disableAudioCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableAudioCheckboxStateChanged);
-    connect(ui->disableMonitorCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
-    connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
+    connect(ui->disableAudioCheckBox,
+            &QCheckBox::stateChanged,
+            this,
+            &BigPictureTV::onDisableAudioCheckboxStateChanged);
+    connect(ui->disableMonitorCheckBox,
+            &QCheckBox::stateChanged,
+            this,
+            &BigPictureTV::onDisableMonitorCheckboxStateChanged);
+    connect(ui->checkrateSpinBox,
+            &QSpinBox::valueChanged,
+            this,
+            &BigPictureTV::onCheckrateSpinBoxValueChanged);
     connect(ui->closeDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->performancePowerPlanCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->desktopMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->installAudioButton, &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
+    connect(ui->performancePowerPlanCheckBox,
+            &QCheckBox::stateChanged,
+            this,
+            &BigPictureTV::saveSettings);
+    connect(ui->desktopMonitorComboBox,
+            &QComboBox::currentIndexChanged,
+            this,
+            &BigPictureTV::saveSettings);
+    connect(ui->gamemodeMonitorComboBox,
+            &QComboBox::currentIndexChanged,
+            this,
+            &BigPictureTV::saveSettings);
+    connect(ui->installAudioButton,
+            &QPushButton::clicked,
+            this,
+            &BigPictureTV::onAudioButtonClicked);
     ui->startupCheckBox->setChecked(isShortcutPresent());
     initDiscordAction();
 }
 
 void BigPictureTV::initDiscordAction()
 {
-    if (!isDiscordInstalled())
-    {
+    if (!isDiscordInstalled()) {
         ui->closeDiscordCheckBox->setChecked(false);
         ui->closeDiscordCheckBox->setEnabled(false);
         ui->CloseDiscordLabel->setEnabled(false);
-        ui->closeDiscordCheckBox->setToolTip("Discord does not appear to be installed");
-        ui->CloseDiscordLabel->setToolTip("Discord does not appear to be installed");
+        ui->closeDiscordCheckBox->setToolTip(tr("Discord does not appear to be installed"));
+        ui->CloseDiscordLabel->setToolTip(tr("Discord does not appear to be installed"));
     }
 }
 void BigPictureTV::getAudioCapabilities()
 {
-    if (!isAudioDeviceCmdletsInstalled())
-    {
+    if (!isAudioDeviceCmdletsInstalled()) {
         ui->disableAudioCheckBox->setChecked(true);
         ui->disableAudioCheckBox->setEnabled(false);
         toggleAudioSettings(false);
-    }
-    else
-    {
+    } else {
         ui->disableAudioCheckBox->setEnabled(true);
         ui->installAudioButton->setVisible(false);
-        if (!ui->disableAudioCheckBox->isChecked())
-        {
+        if (!ui->disableAudioCheckBox->isChecked()) {
             toggleAudioSettings(true);
         }
         this->adjustSize();
@@ -110,10 +126,10 @@ void BigPictureTV::setFrames()
 
 void BigPictureTV::populateComboboxes()
 {
-    ui->desktopMonitorComboBox->addItem("Internal");
-    ui->desktopMonitorComboBox->addItem("Extend");
-    ui->gamemodeMonitorComboBox->addItem("External");
-    ui->gamemodeMonitorComboBox->addItem("Clone");
+    ui->desktopMonitorComboBox->addItem(tr("Internal"));
+    ui->desktopMonitorComboBox->addItem(tr("Extend"));
+    ui->gamemodeMonitorComboBox->addItem(tr("External"));
+    ui->gamemodeMonitorComboBox->addItem(tr("Clone"));
 }
 
 void BigPictureTV::createTrayIcon()
@@ -124,14 +140,14 @@ void BigPictureTV::createTrayIcon()
     trayIcon->show();
 }
 
-QMenu* BigPictureTV::createMenu()
+QMenu *BigPictureTV::createMenu()
 {
     QMenu *menu = new QMenu(this);
 
-    QAction *settingsAction = new QAction("Settings", this);
+    QAction *settingsAction = new QAction(tr("Settings"), this);
     connect(settingsAction, &QAction::triggered, this, &BigPictureTV::showSettings);
 
-    QAction *exitAction = new QAction("Exit", this);
+    QAction *exitAction = new QAction(tr("Exit"), this);
     connect(exitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
 
     menu->addAction(settingsAction);
@@ -158,7 +174,6 @@ void BigPictureTV::onCheckrateSpinBoxValueChanged()
     saveSettings();
 }
 
-
 void BigPictureTV::onStartupCheckboxStateChanged()
 {
     manageShortcut(ui->startupCheckBox->isChecked());
@@ -183,39 +198,44 @@ void BigPictureTV::onAudioButtonClicked()
     ui->installAudioButton->setEnabled(false);
 
     QProcess process;
-    process.start("powershell", QStringList() << "-NoProfile" << "-ExecutionPolicy" << "Bypass" << "-Command"
-                                              << "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser; "
-                                                 "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser");
+    process.start(
+        "powershell",
+        QStringList() << "-NoProfile" << "-ExecutionPolicy" << "Bypass" << "-Command"
+                      << "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser; "
+                         "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser");
 
     if (!process.waitForFinished()) {
-        status = "Error";
-        message = "Failed to execute the PowerShell commands.\n"
-                  "Please check if PowerShell is installed and properly configured.";
+        QString status = tr("Error");
+        QString message = tr("Failed to execute the PowerShell commands.\n"
+                             "Please check if PowerShell is installed and properly configured.");
+        QMessageBox::critical(this, status, message);
     } else {
         QString output = process.readAllStandardOutput();
         QString errorOutput = process.readAllStandardError();
         int exitCode = process.exitCode();
 
+        QString status;
+        QString message;
+
         if (exitCode == 0) {
-            status = "Success";
-            message = "AudioDeviceCmdlets module installed successfully.\nYou can now use audio settings.";
+            status = tr("Success");
+            message = tr("AudioDeviceCmdlets module installed successfully.\nYou can now use audio "
+                         "settings.");
+            QMessageBox::information(this, status, message);
         } else {
-            status = "Error";
-            message = "Failed to install NuGet package provider or AudioDeviceCmdlets module.\n"
-                      "Please install them manually by running these commands in PowerShell:\n"
-                      "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;\n"
-                      "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser\n"
-                      "You should then restart the application.\n"
-                      "Error details:\n" + errorOutput;
+            status = tr("Error");
+            message = tr("Failed to install NuGet package provider or AudioDeviceCmdlets module.\n"
+                         "Please install them manually by running these commands in PowerShell:\n"
+                         "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;\n"
+                         "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser\n"
+                         "You should then restart the application.\n"
+                         "Error details:\n")
+                      + errorOutput;
+            QMessageBox::critical(this, status, message);
+            ui->installAudioButton->setEnabled(true);
         }
     }
 
-    if (status == "Success") {
-        QMessageBox::information(this, status, message);
-    } else {
-        QMessageBox::critical(this, status, message);
-        ui->installAudioButton->setEnabled(true);
-    }
     getAudioCapabilities();
 }
 
@@ -225,15 +245,12 @@ void BigPictureTV::checkWindowTitle()
     bool disableVideo = ui->disableMonitorCheckBox->isChecked();
     bool disableAudio = ui->disableAudioCheckBox->isChecked();
 
-    if (isRunning && !gamemodeActive)
-    {
+    if (isRunning && !gamemodeActive) {
         gamemodeActive = true;
         handleMonitorChanges(false, disableVideo);
         handleAudioChanges(false, disableAudio);
         handleActions(false);
-    }
-    else if (!isRunning && gamemodeActive)
-    {
+    } else if (!isRunning && gamemodeActive) {
         gamemodeActive = false;
         handleMonitorChanges(true, disableVideo);
         handleAudioChanges(true, disableAudio);
@@ -243,75 +260,50 @@ void BigPictureTV::checkWindowTitle()
 
 void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
 {
-    if (disableVideo) return;
+    if (disableVideo)
+        return;
 
-    int index = isDesktopMode ? ui->desktopMonitorComboBox->currentIndex() : ui->gamemodeMonitorComboBox->currentIndex();
+    int index = isDesktopMode ? ui->desktopMonitorComboBox->currentIndex()
+                              : ui->gamemodeMonitorComboBox->currentIndex();
 
-    if (isDesktopMode)
-    {
-        if (index == 0)
-        {
-            runDisplayswitch("/internal");
-        }
-        else if (index == 1)
-        {
-            runDisplayswitch("/extend");
-        }
+    const char *command = nullptr;
+
+    if (index == 0) {
+        command = isDesktopMode ? "/internal" : "/external";
+    } else if (index == 1) {
+        command = isDesktopMode ? "/extend" : "/clone";
     }
-    else
-    {
-        if (index == 0)
-        {
-            runDisplayswitch("/external");
-        }
-        else if (index == 1)
-        {
-            runDisplayswitch("/clone");
-        }
+
+    if (command) {
+        runDisplayswitch(command);
     }
 }
 
 void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 {
-    if (disableAudio) return;
+    if (disableAudio)
+        return;
 
-    std::string audioDevice = isDesktopMode ? ui->desktopAudioLineEdit->text().toStdString() : ui->gamemode_audio_lineedit->text().toStdString();
+    std::string audioDevice = isDesktopMode ? ui->desktopAudioLineEdit->text().toStdString()
+                                            : ui->gamemode_audio_lineedit->text().toStdString();
 
     try {
         setAudioDevice(audioDevice);
-        std::cout << "Audio device set successfully." << std::endl;
-    } catch (const std::runtime_error& e) {
+    } catch (const std::runtime_error &e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
 }
 
 void BigPictureTV::handleActions(bool isDesktopMode)
 {
-    bool performDiscordAction = ui->closeDiscordCheckBox->isChecked();
-    bool setPowerPlan = ui->performancePowerPlanCheckBox->isChecked();
-    if (isDesktopMode)
-    {
-        if (performDiscordAction)
-        {
-            startDiscord();
-        }
-        if (setPowerPlan)
-        {
-            switchPowerPlan("381b4222-f694-41f0-9685-ff5bb260df2e");
-        }
-    }
-    else
-    {
-        if (performDiscordAction)
-        {
-            closeDiscord();
-        }
-        if (setPowerPlan)
-        {
-            switchPowerPlan("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
-        }
+    if (ui->closeDiscordCheckBox->isChecked()) {
+        isDesktopMode ? startDiscord() : closeDiscord();
     }
 
+    if (ui->performancePowerPlanCheckBox->isChecked()) {
+        switchPowerPlan(isDesktopMode ? "381b4222-f694-41f0-9685-ff5bb260df2e"
+                                      : "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
+    }
 }
 
 void BigPictureTV::createDefaultSettings()
@@ -339,12 +331,8 @@ void BigPictureTV::loadSettings()
             QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
             if (parseError.error == QJsonParseError::NoError) {
                 settings = doc.object();
-            } else {
-                qWarning() << "Error parsing settings file:" << parseError.errorString();
             }
             file.close();
-        } else {
-            qWarning() << "Failed to open settings file for reading.";
         }
     }
     applySettings();
@@ -382,8 +370,6 @@ void BigPictureTV::saveSettings()
         QJsonDocument doc(settings);
         file.write(doc.toJson(QJsonDocument::Indented));
         file.close();
-    } else {
-        qWarning() << "Failed to open settings file for writing.";
     }
 }
 

@@ -1,21 +1,21 @@
 #ifndef BIGPICTURETV_H
 #define BIGPICTURETV_H
 
-#include <QMainWindow>
-#include <QTimer>
+#include <QAction>
+#include <QApplication>
 #include <QCheckBox>
-#include <QFile>
 #include <QDir>
+#include <QFile>
+#include <QIcon>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
-#include <string>
-#include <QSystemTrayIcon>
+#include <QMainWindow>
 #include <QMenu>
-#include <QAction>
-#include <QApplication>
-#include <QIcon>
 #include <QString>
+#include <QSystemTrayIcon>
+#include <QTimer>
+#include <string>
 
 namespace Ui {
 class BigPictureTV;
@@ -33,7 +33,6 @@ public:
     void saveSettings();
     void applySettings();
 
-
 private slots:
     void onStartupCheckboxStateChanged();
     void onDisableAudioCheckboxStateChanged(int state);
@@ -48,7 +47,7 @@ private:
 
     void createTrayIcon();
     void initDiscordAction();
-    QMenu* createMenu();
+    QMenu *createMenu();
     bool gamemodeActive;
     bool discordInstalled;
     bool firstRun;
@@ -74,6 +73,5 @@ private:
 protected:
     void closeEvent(QCloseEvent *event) override;
 };
-
 
 #endif // BIGPICTURETV_H

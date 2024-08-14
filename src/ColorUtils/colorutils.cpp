@@ -1,7 +1,7 @@
 #include "colorutils.h"
-#include <QPalette>
 #include <QBrush>
 #include <QColor>
+#include <QPalette>
 
 QColor adjustColor(const QColor &color, double factor)
 {

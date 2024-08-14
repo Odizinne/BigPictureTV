@@ -1,14 +1,14 @@
 #include "utils.h"
-#include <QProcess>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
+#include <QProcess>
+#include <QSettings>
 #include <QStandardPaths>
 #include <QTextStream>
-#include <QDebug>
-#include <QSettings>
 
-#include <QFileInfo>
 #include <QCoreApplication>
+#include <QFileInfo>
 
 const QString DISCORD_EXECUTABLE_NAME = "Update.exe";
 const QString DISCORD_PROCESS_NAME = "Discord.exe";
@@ -17,7 +17,7 @@ void runDisplayswitch(const QString &command)
 {
     QProcess process;
     process.start("displayswitch.exe", QStringList() << command);
-    process.waitForFinished();  // Wait for the process to finish
+    process.waitForFinished(); // Wait for the process to finish
 
     QString appDataBasePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
@@ -36,23 +36,27 @@ void runDisplayswitch(const QString &command)
     file.close();
 }
 
-QString getTheme() {
+QString getTheme()
+{
     // Determine the theme based on registry value
-    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
-                       QSettings::NativeFormat);
+    QSettings settings(
+        "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+        QSettings::NativeFormat);
     int value = settings.value("AppsUseLightTheme", 1).toInt();
 
     // Return the opposite to match icon (dark icon on light theme)
     return (value == 0) ? "light" : "dark";
 }
 
-QIcon getIconForTheme() {
+QIcon getIconForTheme()
+{
     QString theme = getTheme();
     QString iconPath = QString(":/icons/icon_%1.png").arg(theme);
     return QIcon(iconPath);
 }
 
-void switchPowerPlan(const QString& planGuid) {
+void switchPowerPlan(const QString &planGuid)
+{
     QString command = "powercfg";
     QStringList arguments;
     arguments << "/s" << planGuid;
@@ -69,7 +73,8 @@ void switchPowerPlan(const QString& planGuid) {
     }
 }
 
-QString getDiscordPath() {
+QString getDiscordPath()
+{
     QString localAppData = qgetenv("LOCALAPPDATA");
     if (localAppData.isEmpty()) {
         qWarning() << "Failed to get LOCALAPPDATA environment variable";
@@ -79,14 +84,17 @@ QString getDiscordPath() {
     return localAppData + "/Discord/" + DISCORD_EXECUTABLE_NAME;
 }
 
-bool isDiscordInstalled() {
+bool isDiscordInstalled()
+{
     QString discordPath = getDiscordPath();
     return QFileInfo::exists(discordPath);
 }
 
-void closeDiscord() {
+void closeDiscord()
+{
     QStringList arguments;
-    arguments << "/IM" << DISCORD_PROCESS_NAME << "/F";  // /IM specifies the image name, /F forces termination
+    arguments << "/IM" << DISCORD_PROCESS_NAME
+              << "/F"; // /IM specifies the image name, /F forces termination
 
     QProcess process;
     process.start("taskkill.exe", arguments);
@@ -98,7 +106,8 @@ void closeDiscord() {
     }
 }
 
-void startDiscord() {
+void startDiscord()
+{
     QString discordPath = getDiscordPath();
     if (discordPath.isEmpty()) {
         qWarning() << "Failed to get Discord path";
@@ -106,7 +115,8 @@ void startDiscord() {
     }
 
     QStringList arguments;
-    arguments << "--processStart" << DISCORD_PROCESS_NAME << "--process-start-args" << "--start-minimized";
+    arguments << "--processStart" << DISCORD_PROCESS_NAME << "--process-start-args"
+              << "--start-minimized";
 
     qint64 processId;
     bool success = QProcess::startDetached(discordPath, arguments, QString(), &processId);
@@ -116,7 +126,8 @@ void startDiscord() {
     }
 }
 
-bool isAudioDeviceCmdletsInstalled() {
+bool isAudioDeviceCmdletsInstalled()
+{
     QProcess process;
     process.setProgram("powershell");
     process.setArguments({"-Command", "Get-Module -ListAvailable -Name AudioDeviceCmdlets"});
@@ -141,7 +152,8 @@ bool isAudioDeviceCmdletsInstalled() {
     return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
 }
 
-bool isWindows10() {
+bool isWindows10()
+{
     QSettings settings("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
                        QSettings::NativeFormat);
     QString buildNumberString = settings.value("CurrentBuild").toString();

@@ -1,13 +1,14 @@
 #include "AudioManager.h"
-#include <sstream>
+#include <QProcess>
 #include <algorithm>
 #include <cctype>
-#include <stdexcept>
 #include <chrono>
+#include <sstream>
+#include <stdexcept>
 #include <thread>
-#include <QProcess>
 
-std::string executeCommand(const std::string& command) {
+std::string executeCommand(const std::string &command)
+{
     QProcess process;
     process.setProgram("powershell.exe");
 
@@ -33,7 +34,8 @@ std::string executeCommand(const std::string& command) {
     return output.toStdString();
 }
 
-std::vector<Device> parseDevices(const std::string& output) {
+std::vector<Device> parseDevices(const std::string &output)
+{
     std::vector<Device> devices;
     devices.reserve(20);
     std::istringstream stream(output);
@@ -65,7 +67,8 @@ std::vector<Device> parseDevices(const std::string& output) {
     return devices;
 }
 
-bool containsIgnoreCase(const std::string& str, const std::string& substr) {
+bool containsIgnoreCase(const std::string &str, const std::string &substr)
+{
     std::string strLower = str;
     std::string substrLower = substr;
     std::transform(strLower.begin(), strLower.end(), strLower.begin(), ::tolower);
@@ -73,11 +76,12 @@ bool containsIgnoreCase(const std::string& str, const std::string& substr) {
     return strLower.find(substrLower) != std::string::npos;
 }
 
-bool checkDevice(const std::string& deviceName) {
+bool checkDevice(const std::string &deviceName)
+{
     std::string output = executeCommand("Get-AudioDevice -l");
     std::vector<Device> devices = parseDevices(output);
 
-    for (const auto& device : devices) {
+    for (const auto &device : devices) {
         if (containsIgnoreCase(device.name, deviceName)) {
             return true;
         }
@@ -85,7 +89,8 @@ bool checkDevice(const std::string& deviceName) {
     return false;
 }
 
-void setAudioDevice(const std::string& deviceName) {
+void setAudioDevice(const std::string &deviceName)
+{
     bool deviceFound = false;
     int maxRetries = 10;
     int retryCount = 0;
@@ -95,10 +100,11 @@ void setAudioDevice(const std::string& deviceName) {
         std::string output = executeCommand("Get-AudioDevice -l");
         std::vector<Device> devices = parseDevices(output);
 
-        for (const auto& device : devices) {
+        for (const auto &device : devices) {
             if (containsIgnoreCase(device.name, deviceName)) {
                 if (device.index < 1) {
-                    throw std::runtime_error("Invalid device index: " + std::to_string(device.index));
+                    throw std::runtime_error("Invalid device index: "
+                                             + std::to_string(device.index));
                 }
 
                 std::string setCommand = "Set-AudioDevice -Index " + std::to_string(device.index);
@@ -120,6 +126,7 @@ void setAudioDevice(const std::string& deviceName) {
     }
 
     if (!deviceFound) {
-        throw std::runtime_error("Failed to set the audio device after " + std::to_string(maxRetries) + " attempts.");
+        throw std::runtime_error("Failed to set the audio device after "
+                                 + std::to_string(maxRetries) + " attempts.");
     }
 }
