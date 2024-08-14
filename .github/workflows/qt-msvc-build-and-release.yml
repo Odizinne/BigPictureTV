@@ -63,8 +63,10 @@ jobs:
           mkdir build
           cd build
           qmake ..\BigPictureTV.pro CONFIG+=release
-          D:\a\BigPictureTV\Qt\Tools\QtCreator\bin\jom\jom.exe
-
+          # Use the JOM path variable
+          $jomPath = "${{ steps.jom-setup.outputs.jom_path }}"
+          & "$jomPath\jom.exe"
+          
       - name: Remove source and object files
         shell: pwsh
         run: |
