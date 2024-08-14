@@ -1,5 +1,6 @@
 #include "bigpicturetv.h"
 #include <QCloseEvent>
+#include <QDesktopServices>
 #include <QJsonParseError>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -13,7 +14,6 @@
 #include "ui_bigpicturetv.h"
 #include "utils.h"
 #include <iostream>
-#include <QDesktopServices>
 
 const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(
                                                QStandardPaths::AppDataLocation)
@@ -29,14 +29,14 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
-    setCustomFusion();
-
+    if (isWindows10()) {
+        setCustomFusion();
+    }
     createMenubar();
     populateComboboxes();
     loadSettings();
     setupConnections();
     getAudioCapabilities();
-
     windowCheckTimer->setInterval(ui->checkrateSpinBox->value());
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
@@ -145,10 +145,7 @@ void BigPictureTV::createMenubar()
     QAction *openSettingsFolderAction = new QAction(tr("Open Settings Folder"), this);
     QAction *exitAction = new QAction(tr("Exit"), this);
 
-    connect(resetSettingsAction,
-            &QAction::triggered,
-            this,
-            &BigPictureTV::createDefaultSettings);
+    connect(resetSettingsAction, &QAction::triggered, this, &BigPictureTV::createDefaultSettings);
     connect(openSettingsFolderAction, &QAction::triggered, this, []() {
         QString settingsFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         QDesktopServices::openUrl(QUrl::fromLocalFile(settingsFolder));
@@ -207,9 +204,9 @@ void BigPictureTV::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Alt) {
         toggleMenubarVisibility();
-        event->accept();  // Mark the event as handled
+        event->accept(); // Mark the event as handled
     } else {
-        QMainWindow::keyPressEvent(event);  // Pass other events to the base class
+        QMainWindow::keyPressEvent(event); // Pass other events to the base class
     }
 }
 

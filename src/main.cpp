@@ -6,6 +6,7 @@
 #include <QString>
 #include <QTranslator>
 #include "bigpicturetv.h"
+#include "utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -28,7 +29,9 @@ int main(int argc, char *argv[])
     if (translator.load(":/translations/Tr/BigPictureTV_" + languageCode + ".qm")) {
         a.installTranslator(&translator);
     }
-    a.setStyle("fusion");
+    if (isWindows10()) {
+        a.setStyle("fusion");
+    }
     BigPictureTV w;
     QObject::connect(&a, &QApplication::aboutToQuit, [&sharedMemory]() { sharedMemory.detach(); });
 
