@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
+#include "aboutwindow.h"
 #include "audiomanager.h"
 #include "colorutils.h"
 #include "shortcutmanager.h"
@@ -153,9 +154,23 @@ void BigPictureTV::createMenubar()
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
+    QMenu *helpMenu = new QMenu(tr("Help"), this);
+
+    QAction *aboutAction = new QAction(tr("About"), this);
+
+    connect(aboutAction, &QAction::triggered, this, &BigPictureTV::showAbout);
+
+    helpMenu->addAction(aboutAction);
     menuBar->addMenu(fileMenu);
+    menuBar->addMenu(helpMenu);
     menuBar->setVisible(false);
     setMenuBar(menuBar);
+}
+
+void BigPictureTV::showAbout()
+{
+    AboutWindow aboutWindow(this);
+    aboutWindow.exec(); // Show the AboutWindow as a modal dialog
 }
 
 void BigPictureTV::createTrayIcon()

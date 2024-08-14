@@ -7,15 +7,28 @@ CONFIG += c++17
 # Optional: Uncomment to disable deprecated APIs before Qt 6.0.0
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
+# Fetch Git information
+GIT_COMMIT_ID = $$system(git log -n 1 --pretty=format:"%H")
+GIT_COMMIT_DATE = $$system(git log -n 1 --pretty=format:"%ci")
+GIT_BRANCH = $$system(git branch --show-current)
+
+# Define these values for use in C++ code
+DEFINES += \
+    GIT_COMMIT_ID=\"\"\"$$GIT_COMMIT_ID\"\"\" \
+    GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\" \
+    GIT_BRANCH=\"\"\"$$GIT_BRANCH\"\"\"
+
 INCLUDEPATH += \
     src/AudioManager \
     src/BigPictureTV \
     src/ColorUtils \
     src/ShortcutManager \
     src/SteamWindowManager \
-    src/Utils
+    src/Utils \
+    src/AboutWindow
 
 SOURCES += \
+    src/AboutWindow/aboutwindow.cpp \
     src/AudioManager/audiomanager.cpp \
     src/ColorUtils/colorutils.cpp \
     src/main.cpp \
@@ -25,6 +38,7 @@ SOURCES += \
     src/Utils/utils.cpp
 
 HEADERS += \
+    src/AboutWindow/aboutwindow.h \
     src/AudioManager/audiomanager.h \
     src/BigPictureTV/bigpicturetv.h \
     src/ColorUtils/colorutils.h \
@@ -33,6 +47,7 @@ HEADERS += \
     src/Utils/utils.h
 
 FORMS += \
+    src/AboutWindow/aboutwindow.ui \
     src/BigPictureTV/bigpicturetv.ui
 
 TRANSLATIONS += \

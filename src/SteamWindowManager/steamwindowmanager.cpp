@@ -61,6 +61,7 @@ QString getSteamLanguage()
 {
     return getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
 }
+
 QString cleanString(const QString &str)
 {
     QString cleanedStr = str;

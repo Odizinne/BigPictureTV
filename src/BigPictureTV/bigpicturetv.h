@@ -21,6 +21,8 @@ namespace Ui {
 class BigPictureTV;
 }
 
+class AboutWindow;
+
 class BigPictureTV : public QMainWindow
 {
     Q_OBJECT
@@ -41,6 +43,7 @@ private slots:
     void checkWindowTitle();
     void onCheckrateSpinBoxValueChanged();
     void showSettings();
+    void showAbout();
 
 private:
     QSystemTrayIcon *trayIcon;
