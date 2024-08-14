@@ -61,7 +61,9 @@ void BigPictureTV::setupConnections()
     connect(ui->disableMonitorCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
     connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
     connect(ui->closeDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->performancePowerPlanCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->startDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->gamemodePowerPlanComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->desktopPowerPlanComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->desktopMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->installAudioButton,  &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
@@ -75,8 +77,13 @@ void BigPictureTV::initDiscordAction()
         ui->closeDiscordCheckBox->setChecked(false);
         ui->closeDiscordCheckBox->setEnabled(false);
         ui->CloseDiscordLabel->setEnabled(false);
+        ui->startDiscordCheckBox->setChecked(false);
+        ui->startDiscordCheckBox->setEnabled(false);
+        ui->startDiscordLabel->setEnabled(false);
         ui->closeDiscordCheckBox->setToolTip(tr("Discord does not appear to be installed"));
         ui->CloseDiscordLabel->setToolTip(tr("Discord does not appear to be installed"));
+        ui->startDiscordCheckBox->setToolTip(tr("Discord does not appear to be installed"));
+        ui->startDiscordLabel->setToolTip(tr("Discord does not appear to be installed"));
     }
 }
 void BigPictureTV::getAudioCapabilities()
@@ -110,6 +117,14 @@ void BigPictureTV::populateComboboxes()
     ui->desktopMonitorComboBox->addItem(tr("Extend"));
     ui->gamemodeMonitorComboBox->addItem(tr("External"));
     ui->gamemodeMonitorComboBox->addItem(tr("Clone"));
+    ui->gamemodePowerPlanComboBox->addItem(tr("Disabled"));
+    ui->gamemodePowerPlanComboBox->addItem(tr("Performance"));
+    ui->gamemodePowerPlanComboBox->addItem(tr("Balanced"));
+    ui->gamemodePowerPlanComboBox->addItem(tr("Energy saver"));
+    ui->desktopPowerPlanComboBox->addItem(tr("Disabled"));
+    ui->desktopPowerPlanComboBox->addItem(tr("Performance"));
+    ui->desktopPowerPlanComboBox->addItem(tr("Balanced"));
+    ui->desktopPowerPlanComboBox->addItem(tr("Energy saver"));
 }
 
 void BigPictureTV::createMenubar()
@@ -335,13 +350,21 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 
 void BigPictureTV::handleActions(bool isDesktopMode)
 {
-    if (ui->closeDiscordCheckBox->isChecked()) {
-        isDesktopMode ? startDiscord() : closeDiscord();
+    if (isDesktopMode) {
+        if (ui->startDiscordCheckBox->isChecked()) {
+            startDiscord();
+        }
+        if (ui->desktopPowerPlanComboBox->currentIndex() != 0) {
+            switchPowerPlan(ui->desktopPowerPlanComboBox->currentIndex());
+        }
     }
-
-    if (ui->performancePowerPlanCheckBox->isChecked()) {
-        switchPowerPlan(isDesktopMode ? "381b4222-f694-41f0-9685-ff5bb260df2e"
-                                      : "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
+    if (!isDesktopMode) {
+        if (ui->closeDiscordCheckBox->isChecked()) {
+            closeDiscord();
+        }
+        if (ui->gamemodePowerPlanComboBox->currentIndex() != 0) {
+            switchPowerPlan(ui->gamemodePowerPlanComboBox->currentIndex());
+        }
     }
 }
 
@@ -353,7 +376,9 @@ void BigPictureTV::createDefaultSettings()
     ui->desktopMonitorComboBox->setCurrentIndex(0);
     ui->gamemodeMonitorComboBox->setCurrentIndex(0);
     ui->closeDiscordCheckBox->setChecked(false);
-    ui->performancePowerPlanCheckBox->setChecked(false);
+    ui->startDiscordCheckBox->setChecked(false);
+    ui->gamemodePowerPlanComboBox->setCurrentIndex(0);
+    ui->desktopPowerPlanComboBox->setCurrentIndex(0);
     ui->startupCheckBox->setChecked(false);
     ui->disableAudioCheckBox->setChecked(false);
     ui->disableMonitorCheckBox->setChecked(false);
@@ -391,8 +416,10 @@ void BigPictureTV::applySettings()
     ui->desktopAudioLineEdit->setText(settings.value("desktop_audio").toString());
     ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch").toBool());
     ui->checkrateSpinBox->setValue(settings.value("checkrate").toInt(1000));
-    ui->closeDiscordCheckBox->setChecked(settings.value("discord_action").toBool());
-    ui->performancePowerPlanCheckBox->setChecked(settings.value("powerplan_action").toBool());
+    ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action").toBool(false));
+    ui->startDiscordCheckBox->setChecked(settings.value("start_discord_action").toBool(false));
+    ui->gamemodePowerPlanComboBox->setCurrentIndex(settings.value("gamemode_powerplan").toInt(0));
+    ui->desktopPowerPlanComboBox->setCurrentIndex(settings.value("desktop_powerplan").toInt(0));
     ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
     ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
@@ -406,8 +433,10 @@ void BigPictureTV::saveSettings()
     settings["desktop_audio"] = ui->desktopAudioLineEdit->text();
     settings["disable_audio_switch"] = ui->disableAudioCheckBox->isChecked();
     settings["checkrate"] = ui->checkrateSpinBox->value();
-    settings["discord_action"] = ui->closeDiscordCheckBox->isChecked();
-    settings["powerplan_action"] = ui->performancePowerPlanCheckBox->isChecked();
+    settings["close_discord_action"] = ui->closeDiscordCheckBox->isChecked();
+    settings["start_discord_action"] = ui->startDiscordCheckBox->isChecked();
+    settings["gamemode_powerplan"] = ui->gamemodePowerPlanComboBox->currentIndex();
+    settings["desktop_powerplan"] = ui->desktopPowerPlanComboBox->currentIndex();
     settings["gamemode_monitor"] = ui->gamemodeMonitorComboBox->currentIndex();
     settings["desktop_monitor"] = ui->desktopMonitorComboBox->currentIndex();
     settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();

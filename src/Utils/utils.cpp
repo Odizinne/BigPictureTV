@@ -55,8 +55,27 @@ QIcon getIconForTheme()
     return QIcon(iconPath);
 }
 
-void switchPowerPlan(const QString &planGuid)
+void switchPowerPlan(int planIndex)
 {
+    QString planGuid;
+
+    switch (planIndex) {
+    case 1:
+        // Performance
+        planGuid = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c";
+        break;
+    case 2:
+        // Balanced
+        planGuid = "381b4222-f694-41f0-9685-ff5bb260df2e";
+        break;
+    case 3:
+        // Energy Saving
+        planGuid = "a1841308-3541-4fab-bc81-f71556f20b4a";
+        break;
+    default:
+        return;
+    }
+
     QString command = "powercfg";
     QStringList arguments;
     arguments << "/s" << planGuid;
