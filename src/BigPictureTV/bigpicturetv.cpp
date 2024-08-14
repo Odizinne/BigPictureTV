@@ -13,6 +13,7 @@
 #include "ui_bigpicturetv.h"
 #include "utils.h"
 #include <iostream>
+#include <QDesktopServices>
 
 const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(
                                                QStandardPaths::AppDataLocation)
@@ -142,15 +143,21 @@ void BigPictureTV::createMenubar()
     QMenu *fileMenu = new QMenu(tr("File"), this);
 
     QAction *resetSettingsAction = new QAction(tr("Reset Default Settings"), this);
+    QAction *openSettingsFolderAction = new QAction(tr("Open Settings Folder"), this);
     QAction *exitAction = new QAction(tr("Exit"), this);
 
     connect(resetSettingsAction,
             &QAction::triggered,
             this,
             &BigPictureTV::createDefaultSettings);
+    connect(openSettingsFolderAction, &QAction::triggered, this, []() {
+        QString settingsFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(settingsFolder));
+    });
     connect(exitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
 
     fileMenu->addAction(resetSettingsAction);
+    fileMenu->addAction(openSettingsFolderAction);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAction);
 
