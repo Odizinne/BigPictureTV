@@ -293,14 +293,14 @@ void BigPictureTV::checkWindowTitle()
 
     if (isRunning && !gamemodeActive && !isSunshineStreaming()) {
         gamemodeActive = true;
+        handleActions(false);
         handleMonitorChanges(false, disableVideo);
         handleAudioChanges(false, disableAudio);
-        handleActions(false);
     } else if (!isRunning && gamemodeActive) {
         gamemodeActive = false;
+        handleActions(true);
         handleMonitorChanges(true, disableVideo);
         handleAudioChanges(true, disableAudio);
-        handleActions(true);
     }
 }
 
