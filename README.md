@@ -4,7 +4,6 @@
 [![license](https://img.shields.io/github/license/odizinne/bigpicturetv)]()
 
 This project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
-This is a reimplementation of [BigPictureTV-Python](https://github.com/Odizinne/bigpicturetv-python) for the sake of learning c++.  
 *Looking for the [linux version](https://github.com/Odizinne/BigpictureTV-Linux)?*
 
 **If you appreciate my work and would like to support me:**
