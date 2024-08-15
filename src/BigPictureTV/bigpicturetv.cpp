@@ -28,6 +28,7 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
+    setFont();
     createMenubar();
     populateComboboxes();
     loadSettings();
@@ -151,7 +152,7 @@ void BigPictureTV::createMenubar()
 void BigPictureTV::showAbout()
 {
     AboutWindow aboutWindow(this);
-    aboutWindow.exec(); // Show the AboutWindow as a modal dialog
+    aboutWindow.exec();
 }
 
 void BigPictureTV::createTrayIcon()
@@ -444,4 +445,24 @@ void BigPictureTV::toggleAudioSettings(bool state)
 void BigPictureTV::toggleMonitorSettings(bool state)
 {
     ui->monitorsGroupBox->setEnabled(state);
+}
+
+void BigPictureTV::setFont()
+{
+    QList<QGroupBox*> groupBoxes = {
+        ui->audioGroupBox,
+        ui->monitorsGroupBox,
+        ui->settingsGroupBox,
+        ui->desktopActionsGroupBox,
+        ui->gamemodeActionsGroupBox
+    };
+
+    for (QGroupBox* groupBox : groupBoxes) {
+        groupBox->setStyleSheet("font-weight: bold;");
+
+        const QList<QWidget*> children = groupBox->findChildren<QWidget*>();
+        for (QWidget* child : children) {
+            child->setStyleSheet("font-weight: normal;");
+        }
+    }
 }

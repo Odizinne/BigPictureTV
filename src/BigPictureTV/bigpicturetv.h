@@ -76,6 +76,7 @@ private:
     QString message;
     QMenuBar *menuBar;
     bool menubarVisible;
+    void setFont();
 
 protected:
     void closeEvent(QCloseEvent *event) override;
