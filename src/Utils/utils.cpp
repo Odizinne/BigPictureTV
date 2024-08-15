@@ -15,6 +15,9 @@ const QString DISCORD_PROCESS_NAME = "Discord.exe";
 const QString DISPLAYSWITCH_HISTORY_PATH = QStandardPaths::writableLocation(
                                                QStandardPaths::AppDataLocation)
                                            + "/displayswitch_history";
+const QString SUNSHINE_STATUS_FILE = QStandardPaths::writableLocation(
+                                               QStandardPaths::AppDataLocation)
+                                           + "/sunshine-status/status.txt";
 
 void runDisplayswitch(const QString &command)
 {
@@ -172,4 +175,12 @@ bool isAudioDeviceCmdletsInstalled()
     }
 
     return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
+}
+
+bool isSunshineStreaming()
+{
+    if (QFileInfo::exists(SUNSHINE_STATUS_FILE)) {
+        return true;
+    }
+    return false;
 }

@@ -11,6 +11,6 @@ bool isDiscordInstalled();
 void closeDiscord();
 void startDiscord();
 bool isAudioDeviceCmdletsInstalled();
-bool isWindows10();
+bool isSunshineStreaming();
 
 #endif // UTILS_H

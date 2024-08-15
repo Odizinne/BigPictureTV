@@ -287,7 +287,7 @@ void BigPictureTV::checkWindowTitle()
     bool disableVideo = ui->disableMonitorCheckBox->isChecked();
     bool disableAudio = ui->disableAudioCheckBox->isChecked();
 
-    if (isRunning && !gamemodeActive) {
+    if (isRunning && !gamemodeActive && !isSunshineStreaming()) {
         gamemodeActive = true;
         handleMonitorChanges(false, disableVideo);
         handleAudioChanges(false, disableAudio);
