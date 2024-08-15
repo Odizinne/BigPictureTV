@@ -170,19 +170,3 @@ bool isAudioDeviceCmdletsInstalled()
 
     return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
 }
-
-bool isWindows10()
-{
-    QSettings settings("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion",
-                       QSettings::NativeFormat);
-    QString buildNumberString = settings.value("CurrentBuild").toString();
-    bool ok;
-    int buildNumber = buildNumberString.toInt(&ok);
-
-    if (!ok) {
-        qWarning() << "Failed to parse build number";
-        return false;
-    }
-
-    return (buildNumber >= 10240 && buildNumber < 22000);
-}

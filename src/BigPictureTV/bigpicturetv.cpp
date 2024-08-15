@@ -8,7 +8,6 @@
 #include <QStandardPaths>
 #include "aboutwindow.h"
 #include "audiomanager.h"
-#include "colorutils.h"
 #include "shortcutmanager.h"
 #include "steamwindowmanager.h"
 #include "ui_bigpicturetv.h"
@@ -29,9 +28,6 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
-    if (isWindows10()) {
-        setCustomFusion();
-    }
     createMenubar();
     populateComboboxes();
     loadSettings();
@@ -100,16 +96,6 @@ void BigPictureTV::getAudioCapabilities()
         }
         this->adjustSize();
     }
-}
-
-void BigPictureTV::setCustomFusion()
-{
-    setMainWindowBgColorBasedOnWindow(this, 0.9, 0.9);
-    setWidgetBgColorBasedOnWindow(this, ui->gamemodeActionsFrame, 2, 1.1);
-    setWidgetBgColorBasedOnWindow(this, ui->desktopActionsFrame, 2, 1.1);
-    setWidgetBgColorBasedOnWindow(this, ui->audioFrame, 2, 1.1);
-    setWidgetBgColorBasedOnWindow(this, ui->monitorsFrame, 2, 1.1);
-    setWidgetBgColorBasedOnWindow(this, ui->settingsFrame, 2, 1.1);
 }
 
 void BigPictureTV::populateComboboxes()
@@ -452,18 +438,10 @@ void BigPictureTV::saveSettings()
 
 void BigPictureTV::toggleAudioSettings(bool state)
 {
-    ui->audioOutputLabel->setEnabled(state);
-    ui->gamemodeAudioLabel->setEnabled(state);
-    ui->gamemodeAudioLineEdit->setEnabled(state);
-    ui->desktopAudioLabel->setEnabled(state);
-    ui->desktopAudioLineEdit->setEnabled(state);
+    ui->audioGroupBox->setEnabled(state);
 }
 
 void BigPictureTV::toggleMonitorSettings(bool state)
 {
-    ui->monitorConfigurationLabel->setEnabled(state);
-    ui->gamemodeMonitorLabel->setEnabled(state);
-    ui->gamemodeMonitorComboBox->setEnabled(state);
-    ui->desktopMonitorLabel->setEnabled(state);
-    ui->desktopMonitorComboBox->setEnabled(state);
+    ui->monitorsGroupBox->setEnabled(state);
 }

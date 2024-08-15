@@ -21,7 +21,6 @@ DEFINES += \
 INCLUDEPATH += \
     src/AudioManager \
     src/BigPictureTV \
-    src/ColorUtils \
     src/ShortcutManager \
     src/SteamWindowManager \
     src/Utils \
@@ -30,7 +29,6 @@ INCLUDEPATH += \
 SOURCES += \
     src/AboutWindow/aboutwindow.cpp \
     src/AudioManager/audiomanager.cpp \
-    src/ColorUtils/colorutils.cpp \
     src/main.cpp \
     src/BigPictureTV/bigpicturetv.cpp \
     src/ShortcutManager/shortcutmanager.cpp \
@@ -41,7 +39,6 @@ HEADERS += \
     src/AboutWindow/aboutwindow.h \
     src/AudioManager/audiomanager.h \
     src/BigPictureTV/bigpicturetv.h \
-    src/ColorUtils/colorutils.h \
     src/ShortcutManager/shortcutmanager.h \
     src/SteamWindowManager/steamwindowmanager.h \
     src/Utils/utils.h

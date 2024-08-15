@@ -1,7 +1,6 @@
 #include "aboutwindow.h"
 #include "ui_aboutwindow.h"
 #include "steamwindowmanager.h"
-#include "colorutils.h"
 
 AboutWindow::AboutWindow(QWidget *parent)
     : QDialog(parent)
