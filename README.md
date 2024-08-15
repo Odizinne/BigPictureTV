@@ -106,3 +106,7 @@ Currently done:
 
 - Clean code
 - Optimize workflows further
+
+## Credits
+
+- [nathanbabcock](https://github.com/nathanbabcock/nightlight-cli/tree/main) for night light toggle

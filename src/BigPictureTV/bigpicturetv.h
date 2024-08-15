@@ -16,7 +16,7 @@
 #include <QSystemTrayIcon>
 #include <QTimer>
 #include <string>
-
+#include "NightLightSwitcher.h"
 namespace Ui {
 class BigPictureTV;
 }
@@ -54,8 +54,10 @@ private:
     void initDiscordAction();
     QMenu *createMenu();
     bool gamemodeActive;
+    NightLightSwitcher* nightLightSwitcher;
     bool discordInstalled;
     bool firstRun;
+    bool nightLightState;
     void getAudioCapabilities();
     void setCustomFusion();
     void populateComboboxes();

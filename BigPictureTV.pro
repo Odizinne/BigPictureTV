@@ -21,6 +21,7 @@ DEFINES += \
 INCLUDEPATH += \
     src/AudioManager \
     src/BigPictureTV \
+    src/NightLightSwitcher \
     src/ShortcutManager \
     src/SteamWindowManager \
     src/Utils \
@@ -30,6 +31,7 @@ SOURCES += \
     src/AboutWindow/aboutwindow.cpp \
     src/AudioManager/audiomanager.cpp \
     src/main.cpp \
+    src/NightLightSwitcher/NightLightSwitcher.cpp \
     src/BigPictureTV/bigpicturetv.cpp \
     src/ShortcutManager/shortcutmanager.cpp \
     src/SteamWindowManager/steamwindowmanager.cpp \
@@ -39,6 +41,7 @@ HEADERS += \
     src/AboutWindow/aboutwindow.h \
     src/AudioManager/audiomanager.h \
     src/BigPictureTV/bigpicturetv.h \
+    src/NightLightSwitcher/NightLightSwitcher.h \
     src/ShortcutManager/shortcutmanager.h \
     src/SteamWindowManager/steamwindowmanager.h \
     src/Utils/utils.h

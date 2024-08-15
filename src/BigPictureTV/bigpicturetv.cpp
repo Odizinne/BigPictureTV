@@ -12,6 +12,7 @@
 #include "steamwindowmanager.h"
 #include "ui_bigpicturetv.h"
 #include "utils.h"
+#include "NightLightSwitcher.h"
 #include <iostream>
 
 const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(
@@ -21,7 +22,9 @@ const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(
 BigPictureTV::BigPictureTV(QWidget *parent)
     : QMainWindow(parent)
     , gamemodeActive(false)
+    , nightLightSwitcher(new NightLightSwitcher())
     , firstRun(false)
+    , nightLightState(false)
     , ui(new Ui::BigPictureTV)
     , windowCheckTimer(new QTimer(this))
     , menubarVisible(false)
@@ -46,6 +49,7 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 BigPictureTV::~BigPictureTV()
 {
     saveSettings();
+    delete nightLightSwitcher;
     delete ui;
 }
 
@@ -345,6 +349,18 @@ void BigPictureTV::handleActions(bool isDesktopMode)
         if (ui->desktopPowerPlanComboBox->currentIndex() != 0) {
             switchPowerPlan(ui->desktopPowerPlanComboBox->currentIndex());
         }
+        if (ui->restoreNightLightCheckBox->isChecked()) {
+            qDebug() << "restoring night light";
+
+            if (nightLightSwitcher->supported()) {
+                if (nightLightState) {
+                    qDebug() << "Supported";
+                    nightLightSwitcher->enable();
+                } else {
+                    nightLightSwitcher->disable();
+                }
+            }
+        }
     }
     if (!isDesktopMode) {
         if (ui->closeDiscordCheckBox->isChecked()) {
@@ -352,6 +368,14 @@ void BigPictureTV::handleActions(bool isDesktopMode)
         }
         if (ui->gamemodePowerPlanComboBox->currentIndex() != 0) {
             switchPowerPlan(ui->gamemodePowerPlanComboBox->currentIndex());
+        }
+        if (ui->disableNightLightCheckBox->isChecked()) {
+            qDebug() << "Disabling night light";
+            if (nightLightSwitcher->supported()) {
+                qDebug() << "Supported";
+                nightLightState = nightLightSwitcher->enabled();
+                nightLightSwitcher->disable();
+            }
         }
     }
 }
@@ -371,6 +395,8 @@ void BigPictureTV::createDefaultSettings()
     ui->disableAudioCheckBox->setChecked(false);
     ui->disableMonitorCheckBox->setChecked(false);
     ui->checkrateSpinBox->setValue(1000);
+    ui->restoreNightLightCheckBox->setChecked(false);
+    ui->disableNightLightCheckBox->setChecked(false);
     saveSettings();
 }
 
@@ -411,6 +437,8 @@ void BigPictureTV::applySettings()
     ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
     ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
+    ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight").toBool());
+    ui->restoreNightLightCheckBox->setChecked(settings.value("restore_nightlight").toBool());
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
 }
@@ -428,6 +456,8 @@ void BigPictureTV::saveSettings()
     settings["gamemode_monitor"] = ui->gamemodeMonitorComboBox->currentIndex();
     settings["desktop_monitor"] = ui->desktopMonitorComboBox->currentIndex();
     settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();
+    settings["disable_nightlight"] = ui->disableNightLightCheckBox->isChecked();
+    settings["restore_nightlight"] = ui->restoreNightLightCheckBox->isChecked();
 
     QFile file(settingsFile);
     if (file.open(QIODevice::WriteOnly)) {
