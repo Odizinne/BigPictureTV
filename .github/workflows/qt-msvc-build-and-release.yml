@@ -106,10 +106,22 @@ jobs:
               exit 1
           }
 
+      - name: Rename release folder
+        shell: pwsh
+        run: |
+          $releaseDir = "build/release"
+          $newDir = "BigPictureTV"
+          if (Test-Path $releaseDir) {
+              Rename-Item -Path $releaseDir -NewName $newDir
+          } else {
+              Write-Error "Release folder not found!"
+              exit 1
+          }
+
       - name: Zip binaries folder
         run: |
           $zipFile = "build/BigPictureTV_msvc_64.zip"
-          $folder = "build/release"
+          $folder = "build/BigPictureTV"
           Compress-Archive -Path $folder -DestinationPath $zipFile
         shell: pwsh
           
