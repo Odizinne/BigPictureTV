@@ -89,11 +89,6 @@ BigPictureTV uses Windows' built-in `displayswitch.exe` for monitor switching.
 **Alternative Option:**
 - If you prefer not to configure monitors manually, select `Clone` in BigPictureTV settings.
 
-## I found a bug
-
-Feel free to [open an issue](https://github.com/Odizinne/BigPictureTV/issues/new) in the repository.  
-Be sure to add as many information as possible to help me reproduce it!
-
 ## I want to help
 
 I need help for application translation.  
@@ -105,6 +100,7 @@ Currently done:
 
 - Clean code
 - Optimize workflows further
+- Action UI rework (it looks cluttered)
 
 ## Credits
 
