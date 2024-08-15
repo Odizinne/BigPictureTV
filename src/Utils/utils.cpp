@@ -12,6 +12,9 @@
 
 const QString DISCORD_EXECUTABLE_NAME = "Update.exe";
 const QString DISCORD_PROCESS_NAME = "Discord.exe";
+const QString DISPLAYSWITCH_HISTORY_PATH = QStandardPaths::writableLocation(
+                                               QStandardPaths::AppDataLocation)
+                                           + "/displayswitch_history";
 
 void runDisplayswitch(const QString &command)
 {
@@ -19,14 +22,14 @@ void runDisplayswitch(const QString &command)
     process.start("displayswitch.exe", QStringList() << command);
     process.waitForFinished(); // Wait for the process to finish
 
-    QString appDataBasePath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-
-    if (appDataBasePath.isEmpty()) {
-        return;
-    }
-    QString statusFilePath = appDataBasePath + "/displayswitch.txt";
     QString commandToStore = command.startsWith('/') ? command.mid(1) : command;
-    QFile file(statusFilePath);
+
+    QDir dir(DISPLAYSWITCH_HISTORY_PATH);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    QFile file(DISPLAYSWITCH_HISTORY_PATH + "/displayswitch.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return;
     }
