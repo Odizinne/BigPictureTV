@@ -89,6 +89,12 @@ BigPictureTV uses Windows' built-in `displayswitch.exe` for monitor switching.
 **Alternative Option:**
 - If you prefer not to configure monitors manually, select `Clone` in BigPictureTV settings.
 
+### Actions
+
+- Close discord in gamemode, start discord in desktop mode.
+- Disable night light in gamemode, revert to previous state in desktop mode.
+- Set performance power plan in gamemode, revert to previous state in desktop mode.
+
 ## I want to help
 
 I need help for application translation.  
