@@ -57,6 +57,7 @@ private:
     NightLightSwitcher* nightLightSwitcher;
     bool discordInstalled;
     bool firstRun;
+    QString activePowerPlan;
     bool nightLightState;
     void getAudioCapabilities();
     void setCustomFusion();
@@ -67,6 +68,9 @@ private:
     void handleMonitorChanges(bool isDesktopMode, bool disableVideo);
     void handleAudioChanges(bool isDesktopMode, bool disableAudio);
     void handleActions(bool isDesktopMode);
+    void handleDiscordAction(bool isDesktopMode);
+    void handleNightLightAction(bool isDesktopMode);
+    void handlePowerPlanAction(bool isDesktopMode);
 
     Ui::BigPictureTV *ui;
     QTimer *windowCheckTimer;

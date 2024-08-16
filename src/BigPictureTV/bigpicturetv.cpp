@@ -24,6 +24,7 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     , gamemodeActive(false)
     , nightLightSwitcher(new NightLightSwitcher())
     , firstRun(false)
+    , activePowerPlan("")
     , nightLightState(false)
     , ui(new Ui::BigPictureTV)
     , windowCheckTimer(new QTimer(this))
@@ -62,9 +63,7 @@ void BigPictureTV::setupConnections()
     connect(ui->disableMonitorCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
     connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
     connect(ui->closeDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->startDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->gamemodePowerPlanComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
-    connect(ui->desktopPowerPlanComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->enablePerformancePowerPlan,  &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
     connect(ui->desktopMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->installAudioButton,  &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
@@ -78,13 +77,8 @@ void BigPictureTV::initDiscordAction()
         ui->closeDiscordCheckBox->setChecked(false);
         ui->closeDiscordCheckBox->setEnabled(false);
         ui->CloseDiscordLabel->setEnabled(false);
-        ui->startDiscordCheckBox->setChecked(false);
-        ui->startDiscordCheckBox->setEnabled(false);
-        ui->startDiscordLabel->setEnabled(false);
         ui->closeDiscordCheckBox->setToolTip(tr("Discord does not appear to be installed"));
         ui->CloseDiscordLabel->setToolTip(tr("Discord does not appear to be installed"));
-        ui->startDiscordCheckBox->setToolTip(tr("Discord does not appear to be installed"));
-        ui->startDiscordLabel->setToolTip(tr("Discord does not appear to be installed"));
     }
 }
 void BigPictureTV::getAudioCapabilities()
@@ -109,14 +103,6 @@ void BigPictureTV::populateComboboxes()
     ui->desktopMonitorComboBox->addItem(tr("Extend"));
     ui->gamemodeMonitorComboBox->addItem(tr("External"));
     ui->gamemodeMonitorComboBox->addItem(tr("Clone"));
-    ui->gamemodePowerPlanComboBox->addItem(tr("Disabled"));
-    ui->gamemodePowerPlanComboBox->addItem(tr("Performance"));
-    ui->gamemodePowerPlanComboBox->addItem(tr("Balanced"));
-    ui->gamemodePowerPlanComboBox->addItem(tr("Energy saver"));
-    ui->desktopPowerPlanComboBox->addItem(tr("Disabled"));
-    ui->desktopPowerPlanComboBox->addItem(tr("Performance"));
-    ui->desktopPowerPlanComboBox->addItem(tr("Balanced"));
-    ui->desktopPowerPlanComboBox->addItem(tr("Energy saver"));
 }
 
 void BigPictureTV::createMenubar()
@@ -342,41 +328,49 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 
 void BigPictureTV::handleActions(bool isDesktopMode)
 {
-    if (isDesktopMode) {
-        if (ui->startDiscordCheckBox->isChecked()) {
-            startDiscord();
-        }
-        if (ui->desktopPowerPlanComboBox->currentIndex() != 0) {
-            switchPowerPlan(ui->desktopPowerPlanComboBox->currentIndex());
-        }
-        if (ui->restoreNightLightCheckBox->isChecked()) {
-            qDebug() << "restoring night light";
-
-            if (nightLightSwitcher->supported()) {
-                if (nightLightState) {
-                    qDebug() << "Supported";
-                    nightLightSwitcher->enable();
-                } else {
-                    nightLightSwitcher->disable();
-                }
-            }
-        }
+    if (ui->closeDiscordCheckBox->isChecked()) {
+        handleDiscordAction(isDesktopMode);
     }
-    if (!isDesktopMode) {
-        if (ui->closeDiscordCheckBox->isChecked()) {
-            closeDiscord();
+    if (ui->enablePerformancePowerPlan->isChecked()) {
+        handleNightLightAction(isDesktopMode);
+    }
+    if (ui->disableNightLightCheckBox->isChecked()) {
+        handlePowerPlanAction(isDesktopMode);
+    }
+}
+
+void BigPictureTV::handleDiscordAction(bool isDesktopMode)
+{
+    if (isDesktopMode) {
+        startDiscord();
+    } else {
+        closeDiscord();
+    }
+}
+
+void BigPictureTV::handleNightLightAction(bool isDesktopMode)
+{
+    if (isDesktopMode) {
+        if (nightLightState) {
+            nightLightSwitcher->enable();
         }
-        if (ui->gamemodePowerPlanComboBox->currentIndex() != 0) {
-            switchPowerPlan(ui->gamemodePowerPlanComboBox->currentIndex());
+    } else {
+        nightLightState = nightLightSwitcher->enabled();
+        nightLightSwitcher->disable();
+    }
+}
+
+void BigPictureTV::handlePowerPlanAction(bool isDesktopMode)
+{
+    if (isDesktopMode) {
+        if (!activePowerPlan.isEmpty()) {
+            setPowerPlan(activePowerPlan);
+        } else {
+            setPowerPlan("381b4222-f694-41f0-9685-ff5bb260df2e");
         }
-        if (ui->disableNightLightCheckBox->isChecked()) {
-            qDebug() << "Disabling night light";
-            if (nightLightSwitcher->supported()) {
-                qDebug() << "Supported";
-                nightLightState = nightLightSwitcher->enabled();
-                nightLightSwitcher->disable();
-            }
-        }
+    } else {
+        activePowerPlan = getActivePowerPlan();
+        setPowerPlan("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
     }
 }
 
@@ -388,14 +382,11 @@ void BigPictureTV::createDefaultSettings()
     ui->desktopMonitorComboBox->setCurrentIndex(0);
     ui->gamemodeMonitorComboBox->setCurrentIndex(0);
     ui->closeDiscordCheckBox->setChecked(false);
-    ui->startDiscordCheckBox->setChecked(false);
-    ui->gamemodePowerPlanComboBox->setCurrentIndex(0);
-    ui->desktopPowerPlanComboBox->setCurrentIndex(0);
+    ui->enablePerformancePowerPlan->setChecked(false);
     ui->startupCheckBox->setChecked(false);
     ui->disableAudioCheckBox->setChecked(false);
     ui->disableMonitorCheckBox->setChecked(false);
     ui->checkrateSpinBox->setValue(1000);
-    ui->restoreNightLightCheckBox->setChecked(false);
     ui->disableNightLightCheckBox->setChecked(false);
     saveSettings();
 }
@@ -431,14 +422,11 @@ void BigPictureTV::applySettings()
     ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch").toBool());
     ui->checkrateSpinBox->setValue(settings.value("checkrate").toInt(1000));
     ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action").toBool(false));
-    ui->startDiscordCheckBox->setChecked(settings.value("start_discord_action").toBool(false));
-    ui->gamemodePowerPlanComboBox->setCurrentIndex(settings.value("gamemode_powerplan").toInt(0));
-    ui->desktopPowerPlanComboBox->setCurrentIndex(settings.value("desktop_powerplan").toInt(0));
+    ui->enablePerformancePowerPlan->setChecked(settings.value("gamemode_powerplan").toBool(false));
     ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
     ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
     ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight").toBool());
-    ui->restoreNightLightCheckBox->setChecked(settings.value("restore_nightlight").toBool());
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
 }
@@ -450,14 +438,11 @@ void BigPictureTV::saveSettings()
     settings["disable_audio_switch"] = ui->disableAudioCheckBox->isChecked();
     settings["checkrate"] = ui->checkrateSpinBox->value();
     settings["close_discord_action"] = ui->closeDiscordCheckBox->isChecked();
-    settings["start_discord_action"] = ui->startDiscordCheckBox->isChecked();
-    settings["gamemode_powerplan"] = ui->gamemodePowerPlanComboBox->currentIndex();
-    settings["desktop_powerplan"] = ui->desktopPowerPlanComboBox->currentIndex();
+    settings["gamemode_powerplan"] = ui->enablePerformancePowerPlan->isChecked();
     settings["gamemode_monitor"] = ui->gamemodeMonitorComboBox->currentIndex();
     settings["desktop_monitor"] = ui->desktopMonitorComboBox->currentIndex();
     settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();
     settings["disable_nightlight"] = ui->disableNightLightCheckBox->isChecked();
-    settings["restore_nightlight"] = ui->restoreNightLightCheckBox->isChecked();
 
     QFile file(settingsFile);
     if (file.open(QIODevice::WriteOnly)) {
@@ -483,7 +468,6 @@ void BigPictureTV::setFont()
         ui->audioGroupBox,
         ui->monitorsGroupBox,
         ui->settingsGroupBox,
-        ui->desktopActionsGroupBox,
         ui->gamemodeActionsGroupBox
     };
 

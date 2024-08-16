@@ -6,7 +6,8 @@
 void runDisplayswitch(const QString &command);
 QString getTheme();
 QIcon getIconForTheme();
-void switchPowerPlan(int planIndex);
+QString getActivePowerPlan();
+void setPowerPlan(QString planGuid);
 bool isDiscordInstalled();
 void closeDiscord();
 void startDiscord();
