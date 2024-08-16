@@ -59,6 +59,7 @@ private:
     bool firstRun;
     QString activePowerPlan;
     bool nightLightState;
+    bool discordState;
     void getAudioCapabilities();
     void setCustomFusion();
     void populateComboboxes();

@@ -9,6 +9,7 @@ QIcon getIconForTheme();
 QString getActivePowerPlan();
 void setPowerPlan(QString planGuid);
 bool isDiscordInstalled();
+bool isDiscordRunning();
 void closeDiscord();
 void startDiscord();
 bool isAudioDeviceCmdletsInstalled();

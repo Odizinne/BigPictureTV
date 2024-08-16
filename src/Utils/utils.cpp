@@ -126,11 +126,25 @@ bool isDiscordInstalled()
     return QFileInfo::exists(discordPath);
 }
 
+bool isDiscordRunning()
+{
+    QProcess process;
+    process.start("tasklist.exe", QStringList() << "/FI" << QString("IMAGENAME eq %1").arg(DISCORD_PROCESS_NAME));
+
+    if (!process.waitForFinished()) {
+        qWarning() << "Failed to execute tasklist command";
+        return false;
+    }
+
+    QString output = process.readAllStandardOutput();
+    return output.contains(DISCORD_PROCESS_NAME, Qt::CaseInsensitive);
+}
+
 void closeDiscord()
 {
     QStringList arguments;
     arguments << "/IM" << DISCORD_PROCESS_NAME
-              << "/F"; // /IM specifies the image name, /F forces termination
+              << "/F";
 
     QProcess process;
     process.start("taskkill.exe", arguments);

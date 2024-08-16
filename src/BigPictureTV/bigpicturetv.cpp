@@ -26,6 +26,7 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     , firstRun(false)
     , activePowerPlan("")
     , nightLightState(false)
+    , discordState(false)
     , ui(new Ui::BigPictureTV)
     , windowCheckTimer(new QTimer(this))
     , menubarVisible(false)
@@ -342,8 +343,11 @@ void BigPictureTV::handleActions(bool isDesktopMode)
 void BigPictureTV::handleDiscordAction(bool isDesktopMode)
 {
     if (isDesktopMode) {
-        startDiscord();
+        if (discordState) {
+            startDiscord();
+        }
     } else {
+        discordState = isDiscordRunning();
         closeDiscord();
     }
 }
