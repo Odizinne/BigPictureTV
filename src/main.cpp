@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
         a.installTranslator(&translator);
     }
     a.setStyle("fusion");
+    a.setQuitOnLastWindowClosed(false);
     BigPictureTV w;
     QObject::connect(&a, &QApplication::aboutToQuit, [&sharedMemory]() { sharedMemory.detach(); });
 

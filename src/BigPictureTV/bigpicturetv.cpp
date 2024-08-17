@@ -189,12 +189,6 @@ void BigPictureTV::toggleMenubarVisibility()
     this->adjustSize();
 }
 
-void BigPictureTV::closeEvent(QCloseEvent *event)
-{
-    hide();
-    event->ignore();
-}
-
 void BigPictureTV::showSettings()
 {
     this->show();
