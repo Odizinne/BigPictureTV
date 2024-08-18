@@ -302,7 +302,7 @@ void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
     }
 
     if (command) {
-        runDisplayswitch(command);
+        runEnhancedDisplayswitch(command);
     }
 }
 

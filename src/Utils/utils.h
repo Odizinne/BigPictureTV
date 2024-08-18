@@ -3,7 +3,7 @@
 #include <QIcon>
 #include <QString>
 
-void runDisplayswitch(const QString &command);
+void runEnhancedDisplayswitch(const QString &command);
 QString getTheme();
 QIcon getIconForTheme();
 QString getActivePowerPlan();

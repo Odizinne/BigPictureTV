@@ -6,40 +6,21 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QTextStream>
-
 #include <QCoreApplication>
 #include <QFileInfo>
 
 const QString DISCORD_EXECUTABLE_NAME = "Update.exe";
 const QString DISCORD_PROCESS_NAME = "Discord.exe";
-const QString DISPLAYSWITCH_HISTORY_PATH = QStandardPaths::writableLocation(
-                                               QStandardPaths::AppDataLocation)
-                                           + "/displayswitch_history";
 const QString SUNSHINE_STATUS_FILE = QStandardPaths::writableLocation(
                                                QStandardPaths::AppDataLocation)
                                            + "/sunshine-status/status.txt";
 
-void runDisplayswitch(const QString &command)
+void runEnhancedDisplayswitch(const QString &command)
 {
     QProcess process;
-    process.start("displayswitch.exe", QStringList() << command);
-    process.waitForFinished(); // Wait for the process to finish
-
-    QString commandToStore = command.startsWith('/') ? command.mid(1) : command;
-
-    QDir dir(DISPLAYSWITCH_HISTORY_PATH);
-    if (!dir.exists()) {
-        dir.mkpath(".");
-    }
-
-    QFile file(DISPLAYSWITCH_HISTORY_PATH + "/displayswitch.txt");
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        return;
-    }
-
-    QTextStream out(&file);
-    out << commandToStore;
-    file.close();
+    QString executablePath = "dependencies/EnhancedDisplaySwitch.exe";
+    process.start(executablePath, QStringList() << command);
+    process.waitForFinished();
 }
 
 QString getTheme()
@@ -74,25 +55,6 @@ QString getActivePowerPlan()
 
 void setPowerPlan(QString planGuid)
 {
-    //QString planGuid;
-
-    //switch (planIndex) {
-    //case 1:
-    //    // Performance
-    //    planGuid = "8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c";
-    //    break;
-    //case 2:
-    //    // Balanced
-    //    planGuid = "381b4222-f694-41f0-9685-ff5bb260df2e";
-    //    break;
-    //case 3:
-    //    // Energy Saving
-    //    planGuid = "a1841308-3541-4fab-bc81-f71556f20b4a";
-    //    break;
-    //default:
-    //    return;
-    //}
-
     QString command = "powercfg";
     QStringList arguments;
     arguments << "/s" << planGuid;
