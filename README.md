@@ -6,12 +6,6 @@
 This project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
 *Looking for the [linux version](https://github.com/Odizinne/BigpictureTV-Linux)?*
 
-**If you appreciate my work and would like to support me:**
-
-<a href="https://ko-fi.com/odizinne">
-  <img src="assets/kofi_button_red.png" alt="Ko-fi" width="200" height="auto">
-</a>
-
 ## Overview
 
 ![image](assets/screenshot.png)
