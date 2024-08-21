@@ -6,5 +6,6 @@
 QString getBigPictureWindowTitle();
 QString getSteamLanguage();
 bool isBigPictureRunning();
+bool isCustomWindowRunning(QString windowTitle);
 
 #endif // STEAMWINDOWMANAGER_H

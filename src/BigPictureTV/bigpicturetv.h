@@ -39,6 +39,7 @@ private slots:
     void onStartupCheckboxStateChanged();
     void onDisableAudioCheckboxStateChanged(int state);
     void onDisableMonitorCheckboxStateChanged(int state);
+    void onTargetWindowComboBoxIndexChanged(int index);
     void onAudioButtonClicked();
     void checkWindowTitle();
     void onCheckrateSpinBoxValueChanged();
@@ -65,6 +66,7 @@ private:
     void populateComboboxes();
     void toggleAudioSettings(bool state);
     void toggleMonitorSettings(bool state);
+    void toggleCustomWindowTitle(bool state);
     void setupConnections();
     void handleMonitorChanges(bool isDesktopMode, bool disableVideo);
     void handleAudioChanges(bool isDesktopMode, bool disableAudio);

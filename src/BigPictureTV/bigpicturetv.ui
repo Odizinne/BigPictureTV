@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>452</width>
-    <height>463</height>
+    <height>525</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -195,19 +195,16 @@
        <property name="spacing">
         <number>6</number>
        </property>
-       <item row="2" column="1" colspan="2">
-        <widget class="QCheckBox" name="disableAudioCheckBox">
+       <item row="3" column="0" rowspan="2">
+        <widget class="QLabel" name="disableMonitorLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
            <height>25</height>
           </size>
          </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
          <property name="text">
-          <string/>
+          <string>Disable monitor switching</string>
          </property>
         </widget>
        </item>
@@ -224,8 +221,8 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="disableAudioLabel">
+       <item row="7" column="0">
+        <widget class="QLabel" name="checkrateLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -233,49 +230,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Disable audio switching</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="startupLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Run at startup</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" rowspan="2">
-        <widget class="QLabel" name="disableMonitorLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Disable monitor switching</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" rowspan="2" colspan="2">
-        <widget class="QCheckBox" name="disableMonitorCheckBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
+          <string>Window check rate</string>
          </property>
         </widget>
        </item>
@@ -295,7 +250,7 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="2">
+       <item row="7" column="2">
         <widget class="QSpinBox" name="checkrateSpinBox">
          <property name="minimumSize">
           <size>
@@ -320,8 +275,24 @@
          </property>
         </widget>
        </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="checkrateLabel">
+       <item row="3" column="1" rowspan="2" colspan="2">
+        <widget class="QCheckBox" name="disableMonitorCheckBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="disableAudioLabel">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -329,11 +300,63 @@
           </size>
          </property>
          <property name="text">
-          <string>Window check rate</string>
+          <string>Disable audio switching</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1">
+       <item row="2" column="1" colspan="2">
+        <widget class="QCheckBox" name="disableAudioCheckBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LayoutDirection::RightToLeft</enum>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="startupLabel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Run at startup</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="targetWindowLabel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Target window</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="2">
+        <widget class="QComboBox" name="targetWindowComboBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
         <spacer name="horizontalSpacer">
          <property name="minimumSize">
           <size>
@@ -351,6 +374,29 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="customWindowLabel">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>Custom window title</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1" colspan="2">
+        <widget class="QLineEdit" name="customWindowLineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

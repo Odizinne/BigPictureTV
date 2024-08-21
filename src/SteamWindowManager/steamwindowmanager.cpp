@@ -1,4 +1,5 @@
 #include "steamwindowmanager.h"
+#include "qdebug.h"
 #include <QMap>
 #include <QStringList>
 #include <QVector>
@@ -108,6 +109,27 @@ bool isBigPictureRunning()
 
         if (std::all_of(bigPictureWords.begin(),
                         bigPictureWords.end(),
+                        [&windowWords](const QString &word) {
+                            return windowWords.contains(word);
+                        })) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool isCustomWindowRunning(QString windowTitle)
+{
+    windowTitle = cleanString(windowTitle.toLower());
+    QStringList customWindowTitleWords = windowTitle.split(' ', Qt::SkipEmptyParts);
+
+    QVector<QString> currentWindowTitles = getAllWindowTitles();
+    for (const auto &windowTitle : currentWindowTitles) {
+        QString cleanedTitle = cleanString(windowTitle.toLower());
+        QStringList windowWords = cleanedTitle.split(' ', Qt::SkipEmptyParts);
+
+        if (std::all_of(customWindowTitleWords.begin(),
+                        customWindowTitleWords.end(),
                         [&windowWords](const QString &word) {
                             return windowWords.contains(word);
                         })) {

@@ -68,6 +68,7 @@ void BigPictureTV::setupConnections()
     connect(ui->desktopMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->installAudioButton,  &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
+    connect(ui->targetWindowComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::onTargetWindowComboBoxIndexChanged);
     ui->startupCheckBox->setChecked(isShortcutPresent());
     initDiscordAction();
 }
@@ -104,6 +105,9 @@ void BigPictureTV::populateComboboxes()
     ui->desktopMonitorComboBox->addItem(tr("Extend"));
     ui->gamemodeMonitorComboBox->addItem(tr("External"));
     ui->gamemodeMonitorComboBox->addItem(tr("Clone"));
+
+    ui->targetWindowComboBox->addItem(tr("Big Picture"));
+    ui->targetWindowComboBox->addItem(tr("Custom"));
 }
 
 void BigPictureTV::createMenubar()
@@ -220,6 +224,17 @@ void BigPictureTV::onDisableMonitorCheckboxStateChanged(int state)
     saveSettings();
 }
 
+void BigPictureTV::onTargetWindowComboBoxIndexChanged(int index)
+{
+    if (index == 1) {
+        toggleCustomWindowTitle(true);
+    } else {
+        toggleCustomWindowTitle(false);
+    }
+    this->adjustSize();
+    saveSettings();
+}
+
 void BigPictureTV::onAudioButtonClicked()
 {
     ui->installAudioButton->setEnabled(false);
@@ -268,11 +283,16 @@ void BigPictureTV::onAudioButtonClicked()
 
 void BigPictureTV::checkWindowTitle()
 {
-    bool isRunning = isBigPictureRunning();
+    bool isRunning;
+    if (ui->targetWindowComboBox->currentIndex() == 0) {
+        isRunning = isBigPictureRunning();
+    } else if (ui->targetWindowComboBox->currentIndex() == 1) {
+        isRunning = isCustomWindowRunning(ui->customWindowLineEdit->text());
+    }
     bool disableVideo = ui->disableMonitorCheckBox->isChecked();
     bool disableAudio = ui->disableAudioCheckBox->isChecked();
 
-    if (isRunning && !gamemodeActive && !isSunshineStreaming()) {
+    if (isRunning && !gamemodeActive && !isSunshineStreaming() && !ui->customWindowLineEdit->hasFocus() && !ui->customWindowLineEdit->text().isEmpty()) {
         gamemodeActive = true;
         handleActions(false);
         handleMonitorChanges(false, disableVideo);
@@ -425,8 +445,12 @@ void BigPictureTV::applySettings()
     ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
     ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight").toBool());
+    ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window").toInt(0));
+    ui->customWindowLineEdit->setText(settings.value("custom_window").toString());
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
+    ui->customWindowLabel->setVisible(ui->targetWindowComboBox->currentIndex() == 1);
+    ui->customWindowLineEdit->setVisible(ui->targetWindowComboBox->currentIndex() == 1);
 }
 
 void BigPictureTV::saveSettings()
@@ -441,6 +465,8 @@ void BigPictureTV::saveSettings()
     settings["desktop_monitor"] = ui->desktopMonitorComboBox->currentIndex();
     settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();
     settings["disable_nightlight"] = ui->disableNightLightCheckBox->isChecked();
+    settings["target_window"] = ui->targetWindowComboBox->currentIndex();
+    settings["custom_window"] = ui->customWindowLineEdit->text();
 
     QFile file(settingsFile);
     if (file.open(QIODevice::WriteOnly)) {
@@ -458,6 +484,15 @@ void BigPictureTV::toggleAudioSettings(bool state)
 void BigPictureTV::toggleMonitorSettings(bool state)
 {
     ui->monitorsGroupBox->setEnabled(state);
+}
+
+void BigPictureTV::toggleCustomWindowTitle(bool state)
+{
+    ui->customWindowLineEdit->setEnabled(state);
+    ui->customWindowLabel->setEnabled(state);
+    ui->customWindowLineEdit->setVisible(state);
+    ui->customWindowLabel->setVisible(state);
+    this->adjustSize();
 }
 
 void BigPictureTV::setFont()
