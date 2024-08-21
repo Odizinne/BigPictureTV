@@ -47,32 +47,42 @@
         <translation>BigPictureTV - Paramètres</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="361"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="345"/>
+        <source>Target window</source>
+        <translation>Fenêtre cible</translation>
+    </message>
+    <message>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="387"/>
+        <source>Custom window title</source>
+        <translation>Titre de la fenêtre cible</translation>
+    </message>
+    <message>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="407"/>
         <source>Gamemode actions</source>
         <translation>Au passage en mode jeu</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="385"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="431"/>
         <source>Will revert to previously set power plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="401"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="447"/>
         <source>Will revert to previous night light state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="417"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="463"/>
         <source>Will reopen discord in desktop mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="420"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="466"/>
         <source>Close discord</source>
         <translation>Fermer discord</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="388"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="434"/>
         <source>Enable performance power plan</source>
         <translation>Activer le mode performances élevées</translation>
     </message>
@@ -89,7 +99,7 @@
         <translation>Mode jeu</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="404"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="450"/>
         <source>Disable night light</source>
         <translation>Désactiver le mode nuit</translation>
     </message>
@@ -104,120 +114,130 @@
         <translation>Configuration écrans</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="236"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="303"/>
         <source>Disable audio switching</source>
         <translation>Désactiver la gestion audio</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="262"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="207"/>
         <source>Disable monitor switching</source>
         <translation>Désactiver la gestion des écrans</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="332"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="233"/>
         <source>Window check rate</source>
         <translation>Fréqunce de recherche</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="223"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="220"/>
         <source>Install audio module</source>
         <translation>Installer le module audio</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.ui" line="249"/>
+        <location filename="../../BigPictureTV/bigpicturetv.ui" line="332"/>
         <source>Run at startup</source>
         <translation>Lancer au démarrage</translation>
     </message>
     <message>
         <location filename="../../BigPictureTV/bigpicturetv.ui" line="192"/>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="161"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="165"/>
         <source>Settings</source>
         <translation>Paramètres</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="81"/>
         <location filename="../../BigPictureTV/bigpicturetv.cpp" line="82"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="83"/>
         <source>Discord does not appear to be installed</source>
         <translation>Discord ne semble pas installé</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="103"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="104"/>
         <source>Internal</source>
         <translation>Interne</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="104"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="105"/>
         <source>Extend</source>
         <translation>Étendre</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="105"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="106"/>
         <source>External</source>
         <translation>Externe</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="106"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="107"/>
         <source>Clone</source>
         <translation>Dupliquer</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="112"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="109"/>
+        <source>Big Picture</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="110"/>
+        <source>Custom</source>
+        <translation>Personalisé</translation>
+    </message>
+    <message>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="116"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="114"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="118"/>
         <source>Reset Default Settings</source>
         <translation>Paramètres par defaut</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="115"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="119"/>
         <source>Open Settings Folder</source>
         <translation>Ouvrir le dossier de configuration</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="116"/>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="164"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="120"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="168"/>
         <source>Exit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="130"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="134"/>
         <source>Help</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="132"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="136"/>
         <source>About</source>
         <translation>Infos</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="241"/>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="259"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="250"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="268"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="242"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="251"/>
         <source>Failed to execute the PowerShell commands.
 Please check if PowerShell is installed and properly configured.</source>
         <translation>Impossible d&apos;éxécuter la commande powershell.
 Vérifiez que powershell est bien installé.</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="254"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="263"/>
         <source>Success</source>
         <translation>Succès</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="255"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="264"/>
         <source>AudioDeviceCmdlets module installed successfully.
 You can now use audio settings.</source>
         <translation>AudioDeviceCmdlets a bien été installé.
 Vous pouvez désormais utiliser la gestion audio.</translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="260"/>
+        <location filename="../../BigPictureTV/bigpicturetv.cpp" line="269"/>
         <source>Failed to install NuGet package provider or AudioDeviceCmdlets module.
 Please install them manually by running these commands in PowerShell:
 Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;
