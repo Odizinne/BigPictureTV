@@ -292,7 +292,16 @@ void BigPictureTV::checkWindowTitle()
     bool disableVideo = ui->disableMonitorCheckBox->isChecked();
     bool disableAudio = ui->disableAudioCheckBox->isChecked();
 
-    if (isRunning && !gamemodeActive && !isSunshineStreaming() && !ui->customWindowLineEdit->hasFocus() && !ui->customWindowLineEdit->text().isEmpty()) {
+    bool customNotConfigured;
+    if (ui->targetWindowComboBox->currentIndex() == 1) {
+        if (ui->customWindowLineEdit->text().isEmpty() || ui->customWindowLineEdit->hasFocus()) {
+            customNotConfigured = true;
+        }
+    } else {
+        customNotConfigured = false;
+    }
+
+    if (isRunning && !gamemodeActive && !isSunshineStreaming() && !customNotConfigured) {
         gamemodeActive = true;
         handleActions(false);
         handleMonitorChanges(false, disableVideo);
