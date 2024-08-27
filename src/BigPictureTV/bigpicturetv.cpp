@@ -283,25 +283,26 @@ void BigPictureTV::onAudioButtonClicked()
 
 void BigPictureTV::checkWindowTitle()
 {
+    if (ui->targetWindowComboBox->currentIndex() == 1) {
+        if (ui->customWindowLineEdit->text().isEmpty() || ui->customWindowLineEdit->hasFocus()) {
+            return;
+        }
+    }
+
+    if (isSunshineStreaming()) {
+        return;
+    }
+
+    bool disableVideo = ui->disableMonitorCheckBox->isChecked();
+    bool disableAudio = ui->disableAudioCheckBox->isChecked();
     bool isRunning;
     if (ui->targetWindowComboBox->currentIndex() == 0) {
         isRunning = isBigPictureRunning();
     } else if (ui->targetWindowComboBox->currentIndex() == 1) {
         isRunning = isCustomWindowRunning(ui->customWindowLineEdit->text());
     }
-    bool disableVideo = ui->disableMonitorCheckBox->isChecked();
-    bool disableAudio = ui->disableAudioCheckBox->isChecked();
 
-    bool customNotConfigured;
-    if (ui->targetWindowComboBox->currentIndex() == 1) {
-        if (ui->customWindowLineEdit->text().isEmpty() || ui->customWindowLineEdit->hasFocus()) {
-            customNotConfigured = true;
-        }
-    } else {
-        customNotConfigured = false;
-    }
-
-    if (isRunning && !gamemodeActive && !isSunshineStreaming() && !customNotConfigured) {
+    if (isRunning && !gamemodeActive) {
         gamemodeActive = true;
         handleActions(false);
         handleMonitorChanges(false, disableVideo);
