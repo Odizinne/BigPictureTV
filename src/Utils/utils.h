@@ -2,6 +2,7 @@
 #define UTILS_H
 #include <QIcon>
 #include <QString>
+#include <windows.h>
 
 void runEnhancedDisplayswitch(const QString &command);
 QString getTheme();
@@ -14,5 +15,6 @@ void closeDiscord();
 void startDiscord();
 bool isAudioDeviceCmdletsInstalled();
 bool isSunshineStreaming();
+void sendMediaKey(WORD keyCode);
 
 #endif // UTILS_H

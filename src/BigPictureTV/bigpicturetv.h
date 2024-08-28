@@ -69,6 +69,7 @@ private:
     void handleDiscordAction(bool isDesktopMode);
     void handleNightLightAction(bool isDesktopMode);
     void handlePowerPlanAction(bool isDesktopMode);
+    void handleMediaAction(bool isDesktopMode);
     void setupInfoTab();
 
     Ui::BigPictureTV *ui;

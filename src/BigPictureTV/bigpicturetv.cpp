@@ -60,6 +60,7 @@ void BigPictureTV::setupConnections()
     connect(ui->disableMonitorCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::onDisableMonitorCheckboxStateChanged);
     connect(ui->checkrateSpinBox, &QSpinBox::valueChanged, this, &BigPictureTV::onCheckrateSpinBoxValueChanged);
     connect(ui->closeDiscordCheckBox, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
+    connect(ui->pauseMediaAction, &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
     connect(ui->enablePerformancePowerPlan,  &QCheckBox::stateChanged, this, &BigPictureTV::saveSettings);
     connect(ui->desktopMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
@@ -304,6 +305,9 @@ void BigPictureTV::handleActions(bool isDesktopMode)
     if (ui->disableNightLightCheckBox->isChecked()) {
         handlePowerPlanAction(isDesktopMode);
     }
+    if (ui->pauseMediaAction->isChecked()) {
+        handleMediaAction(isDesktopMode);
+    }
 }
 
 void BigPictureTV::handleDiscordAction(bool isDesktopMode)
@@ -327,6 +331,13 @@ void BigPictureTV::handleNightLightAction(bool isDesktopMode)
     } else {
         nightLightState = nightLightSwitcher->enabled();
         nightLightSwitcher->disable();
+    }
+}
+
+void BigPictureTV::handleMediaAction(bool isDesktopMode)
+{
+    if (!isDesktopMode) {
+        sendMediaKey(VK_MEDIA_STOP);
     }
 }
 
@@ -393,6 +404,7 @@ void BigPictureTV::applySettings()
     ui->checkrateSpinBox->setValue(settings.value("checkrate").toInt(1000));
     ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action").toBool(false));
     ui->enablePerformancePowerPlan->setChecked(settings.value("gamemode_powerplan").toBool(false));
+    ui->pauseMediaAction->setChecked(settings.value("gamemode_pause_media").toBool(false));
     ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
     ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
@@ -412,6 +424,7 @@ void BigPictureTV::saveSettings()
     settings["checkrate"] = ui->checkrateSpinBox->value();
     settings["close_discord_action"] = ui->closeDiscordCheckBox->isChecked();
     settings["gamemode_powerplan"] = ui->enablePerformancePowerPlan->isChecked();
+    settings["gamemode_pause_media"] = ui->pauseMediaAction->isChecked();
     settings["gamemode_monitor"] = ui->gamemodeMonitorComboBox->currentIndex();
     settings["desktop_monitor"] = ui->desktopMonitorComboBox->currentIndex();
     settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();
