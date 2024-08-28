@@ -17,11 +17,10 @@
 #include <QTimer>
 #include <string>
 #include "NightLightSwitcher.h"
+
 namespace Ui {
 class BigPictureTV;
 }
-
-class AboutWindow;
 
 class BigPictureTV : public QMainWindow
 {
@@ -44,13 +43,9 @@ private slots:
     void checkWindowTitle();
     void onCheckrateSpinBoxValueChanged();
     void showSettings();
-    void showAbout();
 
 private:
     QSystemTrayIcon *trayIcon;
-
-    void createMenubar();
-    void toggleMenubarVisibility();
     void createTrayIcon();
     void initDiscordAction();
     QMenu *createMenu();
@@ -74,6 +69,7 @@ private:
     void handleDiscordAction(bool isDesktopMode);
     void handleNightLightAction(bool isDesktopMode);
     void handlePowerPlanAction(bool isDesktopMode);
+    void setupInfoTab();
 
     Ui::BigPictureTV *ui;
     QTimer *windowCheckTimer;
@@ -83,13 +79,6 @@ private:
     static const QString settingsFile;
     QString status;
     QString message;
-    QMenuBar *menuBar;
-    bool menubarVisible;
-    void setFont();
-
-protected:
-    void keyPressEvent(QKeyEvent *event) override;
-
 };
 
 #endif // BIGPICTURETV_H

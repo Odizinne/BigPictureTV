@@ -15,8 +15,7 @@ GIT_BRANCH = $$system(git branch --show-current)
 
 DEFINES += \
     GIT_COMMIT_ID=\"\"\"$$GIT_COMMIT_ID\"\"\" \
-    GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\" \
-    GIT_BRANCH=\"\"\"$$GIT_BRANCH\"\"\"
+    GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\"
 
 INCLUDEPATH += \
     src/AudioManager \
@@ -25,10 +24,8 @@ INCLUDEPATH += \
     src/ShortcutManager \
     src/SteamWindowManager \
     src/Utils \
-    src/AboutWindow
 
 SOURCES += \
-    src/AboutWindow/aboutwindow.cpp \
     src/AudioManager/audiomanager.cpp \
     src/main.cpp \
     src/NightLightSwitcher/NightLightSwitcher.cpp \
@@ -38,7 +35,6 @@ SOURCES += \
     src/Utils/utils.cpp
 
 HEADERS += \
-    src/AboutWindow/aboutwindow.h \
     src/AudioManager/audiomanager.h \
     src/BigPictureTV/bigpicturetv.h \
     src/NightLightSwitcher/NightLightSwitcher.h \
@@ -47,7 +43,6 @@ HEADERS += \
     src/Utils/utils.h
 
 FORMS += \
-    src/AboutWindow/aboutwindow.ui \
     src/BigPictureTV/bigpicturetv.ui
 
 TRANSLATIONS += \

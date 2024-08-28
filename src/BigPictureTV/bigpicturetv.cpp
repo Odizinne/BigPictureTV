@@ -2,11 +2,9 @@
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QJsonParseError>
-#include <QMenuBar>
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
-#include "aboutwindow.h"
 #include "audiomanager.h"
 #include "shortcutmanager.h"
 #include "steamwindowmanager.h"
@@ -29,12 +27,10 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     , discordState(false)
     , ui(new Ui::BigPictureTV)
     , windowCheckTimer(new QTimer(this))
-    , menubarVisible(false)
 {
     ui->setupUi(this);
     setWindowIcon(getIconForTheme());
-    setFont();
-    createMenubar();
+    setupInfoTab();
     populateComboboxes();
     loadSettings();
     setupConnections();
@@ -69,6 +65,12 @@ void BigPictureTV::setupConnections()
     connect(ui->gamemodeMonitorComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::saveSettings);
     connect(ui->installAudioButton,  &QPushButton::clicked, this, &BigPictureTV::onAudioButtonClicked);
     connect(ui->targetWindowComboBox, &QComboBox::currentIndexChanged, this, &BigPictureTV::onTargetWindowComboBoxIndexChanged);
+    connect(ui->resetSettingsButton, &QPushButton::clicked, this, &BigPictureTV::createDefaultSettings);
+    connect(ui->openSettingsButton, &QPushButton::clicked, this, []() {
+        QString settingsFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(settingsFolder));
+    });
+
     ui->startupCheckBox->setChecked(isShortcutPresent());
     initDiscordAction();
 }
@@ -91,11 +93,11 @@ void BigPictureTV::getAudioCapabilities()
         toggleAudioSettings(false);
     } else {
         ui->disableAudioCheckBox->setEnabled(true);
-        ui->installAudioButton->setVisible(false);
+        ui->installAudioButton->setEnabled(false);
+        ui->installAudioButton->setText(tr("Audio module installed"));
         if (!ui->disableAudioCheckBox->isChecked()) {
             toggleAudioSettings(true);
         }
-        this->adjustSize();
     }
 }
 
@@ -108,46 +110,6 @@ void BigPictureTV::populateComboboxes()
 
     ui->targetWindowComboBox->addItem(tr("Big Picture"));
     ui->targetWindowComboBox->addItem(tr("Custom"));
-}
-
-void BigPictureTV::createMenubar()
-{
-    menuBar = new QMenuBar(this);
-    QMenu *fileMenu = new QMenu(tr("File"), this);
-
-    QAction *resetSettingsAction = new QAction(tr("Reset Default Settings"), this);
-    QAction *openSettingsFolderAction = new QAction(tr("Open Settings Folder"), this);
-    QAction *exitAction = new QAction(tr("Exit"), this);
-
-    connect(resetSettingsAction, &QAction::triggered, this, &BigPictureTV::createDefaultSettings);
-    connect(openSettingsFolderAction, &QAction::triggered, this, []() {
-        QString settingsFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-        QDesktopServices::openUrl(QUrl::fromLocalFile(settingsFolder));
-    });
-    connect(exitAction, &QAction::triggered, QApplication::instance(), &QApplication::quit);
-
-    fileMenu->addAction(resetSettingsAction);
-    fileMenu->addAction(openSettingsFolderAction);
-    fileMenu->addSeparator();
-    fileMenu->addAction(exitAction);
-
-    QMenu *helpMenu = new QMenu(tr("Help"), this);
-
-    QAction *aboutAction = new QAction(tr("About"), this);
-
-    connect(aboutAction, &QAction::triggered, this, &BigPictureTV::showAbout);
-
-    helpMenu->addAction(aboutAction);
-    menuBar->addMenu(fileMenu);
-    menuBar->addMenu(helpMenu);
-    menuBar->setVisible(false);
-    setMenuBar(menuBar);
-}
-
-void BigPictureTV::showAbout()
-{
-    AboutWindow aboutWindow(this);
-    aboutWindow.exec();
 }
 
 void BigPictureTV::createTrayIcon()
@@ -172,25 +134,6 @@ QMenu *BigPictureTV::createMenu()
     menu->addAction(exitAction);
 
     return menu;
-}
-
-void BigPictureTV::keyPressEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_Alt) {
-        toggleMenubarVisibility();
-        event->accept();
-    } else {
-        QMainWindow::keyPressEvent(event);
-    }
-}
-
-void BigPictureTV::toggleMenubarVisibility()
-{
-    menubarVisible = !menubarVisible;
-    if (menuBar) {
-        menuBar->setVisible(menubarVisible);
-    }
-    this->adjustSize();
 }
 
 void BigPictureTV::showSettings()
@@ -231,7 +174,6 @@ void BigPictureTV::onTargetWindowComboBoxIndexChanged(int index)
     } else {
         toggleCustomWindowTitle(false);
     }
-    this->adjustSize();
     saveSettings();
 }
 
@@ -459,8 +401,7 @@ void BigPictureTV::applySettings()
     ui->customWindowLineEdit->setText(settings.value("custom_window").toString());
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
-    ui->customWindowLabel->setVisible(ui->targetWindowComboBox->currentIndex() == 1);
-    ui->customWindowLineEdit->setVisible(ui->targetWindowComboBox->currentIndex() == 1);
+    toggleCustomWindowTitle(ui->targetWindowComboBox->currentIndex() == 1);
 }
 
 void BigPictureTV::saveSettings()
@@ -488,38 +429,35 @@ void BigPictureTV::saveSettings()
 
 void BigPictureTV::toggleAudioSettings(bool state)
 {
-    ui->audioGroupBox->setEnabled(state);
+    ui->desktopAudioLineEdit->setEnabled(state);
+    ui->desktopAudioLabel->setEnabled(state);
+    ui->gamemodeAudioLineEdit->setEnabled(state);
+    ui->gamemodeAudioLabel->setEnabled(state);
 }
 
 void BigPictureTV::toggleMonitorSettings(bool state)
 {
-    ui->monitorsGroupBox->setEnabled(state);
+    ui->desktopMonitorComboBox->setEnabled(state);
+    ui->desktopMonitorLabel->setEnabled(state);
+    ui->gamemodeMonitorComboBox->setEnabled(state);
+    ui->gamemodeMonitorLabel->setEnabled(state);
 }
 
 void BigPictureTV::toggleCustomWindowTitle(bool state)
 {
     ui->customWindowLineEdit->setEnabled(state);
     ui->customWindowLabel->setEnabled(state);
-    ui->customWindowLineEdit->setVisible(state);
-    ui->customWindowLabel->setVisible(state);
-    this->adjustSize();
 }
 
-void BigPictureTV::setFont()
+void BigPictureTV::setupInfoTab()
 {
-    QList<QGroupBox*> groupBoxes = {
-        ui->audioGroupBox,
-        ui->monitorsGroupBox,
-        ui->settingsGroupBox,
-        ui->gamemodeActionsGroupBox
-    };
+    ui->detectedSteamLanguage->setText(getSteamLanguage());
 
-    for (QGroupBox* groupBox : groupBoxes) {
-        groupBox->setStyleSheet("font-weight: bold;");
-
-        const QList<QWidget*> children = groupBox->findChildren<QWidget*>();
-        for (QWidget* child : children) {
-            child->setStyleSheet("font-weight: normal;");
-        }
-    }
+    ui->targetWindowTitle->setText(getBigPictureWindowTitle());
+    ui->repository->setText("<a href=\"https://github.com/odizinne/bigpicturetv/\">github.com/Odizinne/BigPictureTV</a>");
+    ui->repository->setTextFormat(Qt::RichText);
+    ui->repository->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    ui->repository->setOpenExternalLinks(true);
+    ui->commitID->setText(GIT_COMMIT_ID);
+    ui->commitDate->setText(GIT_COMMIT_DATE);
 }

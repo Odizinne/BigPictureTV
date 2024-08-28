@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
-    <height>525</height>
+    <width>400</width>
+    <height>217</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +18,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>452</width>
+    <width>400</width>
     <height>0</height>
    </size>
   </property>
@@ -26,496 +26,711 @@
    <string>BigPictureTV - Settings</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0">
+   <layout class="QGridLayout" name="gridLayout_2" columnstretch="0">
     <property name="spacing">
      <number>12</number>
     </property>
-    <item row="1" column="0">
-     <widget class="QGroupBox" name="audioGroupBox">
-      <property name="title">
-       <string>Audio configuration</string>
+    <item row="5" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>1</number>
       </property>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="gamemodeAudioLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Gamemode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="gamemodeAudioLineEdit">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="desktopAudioLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Desktop</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="desktopAudioLineEdit">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QGroupBox" name="monitorsGroupBox">
-      <property name="title">
-       <string>Monitor configuration</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="gamemodeMonitorLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Gamemode</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <spacer name="horizontalSpacer_2">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="2">
-        <widget class="QComboBox" name="gamemodeMonitorComboBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="desktopMonitorLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Desktop</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2">
-        <widget class="QComboBox" name="desktopMonitorComboBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="0" colspan="2">
-     <widget class="QGroupBox" name="settingsGroupBox">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Settings</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item row="3" column="0" rowspan="2">
-        <widget class="QLabel" name="disableMonitorLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Disable monitor switching</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="3">
-        <widget class="QPushButton" name="installAudioButton">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Install audio module</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QLabel" name="checkrateLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Window check rate</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" colspan="2">
-        <widget class="QCheckBox" name="startupCheckBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="2">
-        <widget class="QSpinBox" name="checkrateSpinBox">
-         <property name="minimumSize">
-          <size>
-           <width>90</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="frame">
-          <bool>true</bool>
-         </property>
-         <property name="minimum">
-          <number>100</number>
-         </property>
-         <property name="maximum">
-          <number>1000</number>
-         </property>
-         <property name="singleStep">
-          <number>100</number>
-         </property>
-         <property name="value">
-          <number>1000</number>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" rowspan="2" colspan="2">
-        <widget class="QCheckBox" name="disableMonitorCheckBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="disableAudioLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Disable audio switching</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" colspan="2">
-        <widget class="QCheckBox" name="disableAudioCheckBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="startupLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Run at startup</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="targetWindowLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Target window</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="2">
-        <widget class="QComboBox" name="targetWindowComboBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <spacer name="horizontalSpacer">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Orientation::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="customWindowLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Custom window title</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1" colspan="2">
-        <widget class="QLineEdit" name="customWindowLineEdit">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QGroupBox" name="gamemodeActionsGroupBox">
-      <property name="title">
-       <string>Gamemode actions</string>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-      <property name="checkable">
-       <bool>false</bool>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_6">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item row="2" column="0">
-        <widget class="QLabel" name="gamemodePowerPlanLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Will revert to previously set power plan</string>
-         </property>
-         <property name="text">
-          <string>Enable performance power plan</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="disableNightLightLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Will revert to previous night light state</string>
-         </property>
-         <property name="text">
-          <string>Disable night light</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="CloseDiscordLabel">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="toolTip">
-          <string>Will reopen discord in desktop mode</string>
-         </property>
-         <property name="text">
-          <string>Close discord</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QCheckBox" name="closeDiscordCheckBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="disableNightLightCheckBox">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QCheckBox" name="enablePerformancePowerPlan">
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::RightToLeft</enum>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QWidget" name="generalTab">
+       <attribute name="title">
+        <string>General</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item row="0" column="0" colspan="3">
+         <widget class="QPushButton" name="installAudioButton">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Install audio module</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="startupLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Run at startup</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2">
+         <widget class="QCheckBox" name="startupCheckBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="disableAudioLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Disable audio switching</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" colspan="2">
+         <widget class="QCheckBox" name="disableAudioCheckBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="disableMonitorLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Disable monitor switching</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" colspan="2">
+         <widget class="QCheckBox" name="disableMonitorCheckBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="audioTab">
+       <attribute name="title">
+        <string>Audio / Video</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_7">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="desktopAudioLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Desktop audio</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <spacer name="horizontalSpacer_2">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="gamemodeAudioLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Gamemode audio</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="gamemodeMonitorLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Gamemode video</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="desktopMonitorLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Desktop video</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QComboBox" name="desktopMonitorComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QComboBox" name="gamemodeMonitorComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="sizeAdjustPolicy">
+           <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2">
+         <widget class="QLineEdit" name="desktopAudioLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QLineEdit" name="gamemodeAudioLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="actionsTab">
+       <attribute name="title">
+        <string>Actions</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_9">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item row="2" column="0">
+         <widget class="QLabel" name="gamemodePowerPlanLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Will revert to previously set power plan</string>
+          </property>
+          <property name="text">
+           <string>Enable performance power plan</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="closeDiscordCheckBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="CloseDiscordLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Will reopen discord in desktop mode</string>
+          </property>
+          <property name="text">
+           <string>Close discord</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="disableNightLightLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="toolTip">
+           <string>Will revert to previous night light state</string>
+          </property>
+          <property name="text">
+           <string>Disable night light</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QCheckBox" name="disableNightLightCheckBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="enablePerformancePowerPlan">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LayoutDirection::RightToLeft</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="advancedTab">
+       <attribute name="title">
+        <string>Advanced</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item row="1" column="0">
+         <widget class="QLabel" name="customWindowLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Custom window title</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" colspan="2">
+         <widget class="QLineEdit" name="customWindowLineEdit">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QComboBox" name="targetWindowComboBox">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="targetWindowLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Target window</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="checkrateLabel">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Window check rate</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <spacer name="horizontalSpacer">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="2">
+         <widget class="QSpinBox" name="checkrateSpinBox">
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="minimum">
+           <number>100</number>
+          </property>
+          <property name="maximum">
+           <number>1000</number>
+          </property>
+          <property name="singleStep">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>1000</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" colspan="3">
+         <layout class="QGridLayout" name="gridLayout_3">
+          <property name="spacing">
+           <number>12</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="resetSettingsButton">
+            <property name="text">
+             <string>Reset default settings</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="openSettingsButton">
+            <property name="text">
+             <string>Open settings folder</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="infoTab">
+       <attribute name="title">
+        <string>Infos</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Repository:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="commitDate">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Commit ID:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="detectedSteamLanguage">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="targetWindowTitle">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Detected steam language:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="repository">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">TextLabel</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::TextFormat::RichText</enum>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="commitID">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string notr="true">TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="textInteractionFlags">
+           <set>Qt::TextInteractionFlag::TextSelectableByMouse</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Commit date:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>25</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Target steam window title:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
