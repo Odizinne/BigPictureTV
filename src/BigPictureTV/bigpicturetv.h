@@ -17,6 +17,10 @@
 #include <QTimer>
 #include <string>
 #include "NightLightSwitcher.h"
+#include "steamwindowmanager.h"
+#include "shortcutmanager.h"
+#include "utils.h"
+#include "audiomanager.h"
 
 namespace Ui {
 class BigPictureTV;
@@ -51,6 +55,10 @@ private:
     QMenu *createMenu();
     bool gamemodeActive;
     NightLightSwitcher* nightLightSwitcher;
+    AudioManager* audioManager;
+    SteamWindowManager* steamWindowManager;
+    ShortcutManager* shortcutManager;
+    Utils* utils;
     bool discordInstalled;
     bool firstRun;
     QString activePowerPlan;

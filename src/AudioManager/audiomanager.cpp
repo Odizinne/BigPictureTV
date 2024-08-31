@@ -7,7 +7,11 @@
 #include <stdexcept>
 #include <thread>
 
-std::string executeCommand(const std::string &command)
+AudioManager::AudioManager() {}
+
+AudioManager::~AudioManager() {}
+
+std::string AudioManager::executeCommand(const std::string &command)
 {
     QProcess process;
     process.setProgram("powershell.exe");
@@ -34,7 +38,7 @@ std::string executeCommand(const std::string &command)
     return output.toStdString();
 }
 
-std::vector<Device> parseDevices(const std::string &output)
+std::vector<Device> AudioManager::parseDevices(const std::string &output)
 {
     std::vector<Device> devices;
     devices.reserve(20);
@@ -67,7 +71,7 @@ std::vector<Device> parseDevices(const std::string &output)
     return devices;
 }
 
-bool containsIgnoreCase(const std::string &str, const std::string &substr)
+bool AudioManager::containsIgnoreCase(const std::string &str, const std::string &substr)
 {
     std::string strLower = str;
     std::string substrLower = substr;
@@ -76,7 +80,7 @@ bool containsIgnoreCase(const std::string &str, const std::string &substr)
     return strLower.find(substrLower) != std::string::npos;
 }
 
-bool checkDevice(const std::string &deviceName)
+bool AudioManager::checkDevice(const std::string &deviceName)
 {
     std::string output = executeCommand("Get-AudioDevice -l");
     std::vector<Device> devices = parseDevices(output);
@@ -89,7 +93,7 @@ bool checkDevice(const std::string &deviceName)
     return false;
 }
 
-void setAudioDevice(const std::string &deviceName)
+void AudioManager::setAudioDevice(const std::string &deviceName)
 {
     bool deviceFound = false;
     int maxRetries = 10;

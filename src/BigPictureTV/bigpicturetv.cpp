@@ -1,16 +1,10 @@
 #include "bigpicturetv.h"
-#include <QCloseEvent>
+#include "ui_bigpicturetv.h"
 #include <QDesktopServices>
 #include <QJsonParseError>
 #include <QMessageBox>
 #include <QProcess>
 #include <QStandardPaths>
-#include "audiomanager.h"
-#include "shortcutmanager.h"
-#include "steamwindowmanager.h"
-#include "ui_bigpicturetv.h"
-#include "utils.h"
-#include "NightLightSwitcher.h"
 #include <iostream>
 
 const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(
@@ -21,6 +15,10 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     : QMainWindow(parent)
     , gamemodeActive(false)
     , nightLightSwitcher(new NightLightSwitcher())
+    , audioManager(new AudioManager())
+    , steamWindowManager(new SteamWindowManager())
+    , shortcutManager(new ShortcutManager())
+    , utils(new Utils())
     , firstRun(false)
     , activePowerPlan("")
     , nightLightState(false)
@@ -29,7 +27,7 @@ BigPictureTV::BigPictureTV(QWidget *parent)
     , windowCheckTimer(new QTimer(this))
 {
     ui->setupUi(this);
-    setWindowIcon(getIconForTheme());
+    setWindowIcon(utils->getIconForTheme());
     setupInfoTab();
     populateComboboxes();
     loadSettings();
@@ -47,6 +45,7 @@ BigPictureTV::BigPictureTV(QWidget *parent)
 BigPictureTV::~BigPictureTV()
 {
     saveSettings();
+    delete steamWindowManager;
     delete nightLightSwitcher;
     delete ui;
 }
@@ -72,13 +71,13 @@ void BigPictureTV::setupConnections()
         QDesktopServices::openUrl(QUrl::fromLocalFile(settingsFolder));
     });
 
-    ui->startupCheckBox->setChecked(isShortcutPresent());
+    ui->startupCheckBox->setChecked(shortcutManager->isShortcutPresent());
     initDiscordAction();
 }
 
 void BigPictureTV::initDiscordAction()
 {
-    if (!isDiscordInstalled()) {
+    if (!utils->isDiscordInstalled()) {
         ui->closeDiscordCheckBox->setChecked(false);
         ui->closeDiscordCheckBox->setEnabled(false);
         ui->CloseDiscordLabel->setEnabled(false);
@@ -88,7 +87,7 @@ void BigPictureTV::initDiscordAction()
 }
 void BigPictureTV::getAudioCapabilities()
 {
-    if (!isAudioDeviceCmdletsInstalled()) {
+    if (!utils->isAudioDeviceCmdletsInstalled()) {
         ui->disableAudioCheckBox->setChecked(true);
         ui->disableAudioCheckBox->setEnabled(false);
         toggleAudioSettings(false);
@@ -115,7 +114,7 @@ void BigPictureTV::populateComboboxes()
 
 void BigPictureTV::createTrayIcon()
 {
-    trayIcon = new QSystemTrayIcon(getIconForTheme(), this);
+    trayIcon = new QSystemTrayIcon(utils->getIconForTheme(), this);
     trayIcon->setToolTip("BigPictureTV");
     trayIcon->setContextMenu(createMenu());
     trayIcon->show();
@@ -151,7 +150,7 @@ void BigPictureTV::onCheckrateSpinBoxValueChanged()
 
 void BigPictureTV::onStartupCheckboxStateChanged()
 {
-    manageShortcut(ui->startupCheckBox->isChecked());
+    shortcutManager->manageShortcut(ui->startupCheckBox->isChecked());
 }
 
 void BigPictureTV::onDisableAudioCheckboxStateChanged(int state)
@@ -232,7 +231,7 @@ void BigPictureTV::checkWindowTitle()
         }
     }
 
-    if (isSunshineStreaming()) {
+    if (utils->isSunshineStreaming()) {
         return;
     }
 
@@ -240,9 +239,9 @@ void BigPictureTV::checkWindowTitle()
     bool disableAudio = ui->disableAudioCheckBox->isChecked();
     bool isRunning;
     if (ui->targetWindowComboBox->currentIndex() == 0) {
-        isRunning = isBigPictureRunning();
+        isRunning = steamWindowManager->isBigPictureRunning();
     } else if (ui->targetWindowComboBox->currentIndex() == 1) {
-        isRunning = isCustomWindowRunning(ui->customWindowLineEdit->text());
+        isRunning = steamWindowManager->isCustomWindowRunning(ui->customWindowLineEdit->text());
     }
 
     if (isRunning && !gamemodeActive) {
@@ -275,7 +274,7 @@ void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
     }
 
     if (command) {
-        runEnhancedDisplayswitch(command);
+        utils->runEnhancedDisplayswitch(command);
     }
 }
 
@@ -288,7 +287,7 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
                                             : ui->gamemodeAudioLineEdit->text().toStdString();
 
     try {
-        setAudioDevice(audioDevice);
+        audioManager->setAudioDevice(audioDevice);
     } catch (const std::runtime_error &e) {
         std::cerr << "Error: " << e.what() << std::endl;
     }
@@ -314,11 +313,11 @@ void BigPictureTV::handleDiscordAction(bool isDesktopMode)
 {
     if (isDesktopMode) {
         if (discordState) {
-            startDiscord();
+            utils->startDiscord();
         }
     } else {
-        discordState = isDiscordRunning();
-        closeDiscord();
+        discordState = utils->isDiscordRunning();
+        utils->closeDiscord();
     }
 }
 
@@ -337,7 +336,7 @@ void BigPictureTV::handleNightLightAction(bool isDesktopMode)
 void BigPictureTV::handleMediaAction(bool isDesktopMode)
 {
     if (!isDesktopMode) {
-        sendMediaKey(VK_MEDIA_STOP);
+        utils->sendMediaKey(VK_MEDIA_STOP);
     }
 }
 
@@ -345,13 +344,13 @@ void BigPictureTV::handlePowerPlanAction(bool isDesktopMode)
 {
     if (isDesktopMode) {
         if (!activePowerPlan.isEmpty()) {
-            setPowerPlan(activePowerPlan);
+            utils->setPowerPlan(activePowerPlan);
         } else {
-            setPowerPlan("381b4222-f694-41f0-9685-ff5bb260df2e");
+            utils->setPowerPlan("381b4222-f694-41f0-9685-ff5bb260df2e");
         }
     } else {
-        activePowerPlan = getActivePowerPlan();
-        setPowerPlan("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
+        activePowerPlan = utils->getActivePowerPlan();
+        utils->setPowerPlan("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
     }
 }
 
@@ -464,9 +463,9 @@ void BigPictureTV::toggleCustomWindowTitle(bool state)
 
 void BigPictureTV::setupInfoTab()
 {
-    ui->detectedSteamLanguage->setText(getSteamLanguage());
+    ui->detectedSteamLanguage->setText(steamWindowManager->getSteamLanguage());
 
-    ui->targetWindowTitle->setText(getBigPictureWindowTitle());
+    ui->targetWindowTitle->setText(steamWindowManager->getBigPictureWindowTitle());
     ui->repository->setText("<a href=\"https://github.com/odizinne/bigpicturetv/\">github.com/Odizinne/BigPictureTV</a>");
     ui->repository->setTextFormat(Qt::RichText);
     ui->repository->setTextInteractionFlags(Qt::TextBrowserInteraction);

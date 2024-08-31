@@ -1,3 +1,4 @@
+#include "shortcutmanager.h"
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
@@ -10,7 +11,11 @@
 #include <shobjidl.h>
 #include <windows.h>
 
-QString getStartupFolder()
+ShortcutManager::ShortcutManager() {}
+
+ShortcutManager::~ShortcutManager() {}
+
+QString ShortcutManager::getStartupFolder()
 {
     QString path;
     WCHAR szPath[MAX_PATH];
@@ -20,7 +25,7 @@ QString getStartupFolder()
     return path;
 }
 
-void setPaths(QString &targetPath, QString &startupFolder)
+void ShortcutManager::setPaths(QString &targetPath, QString &startupFolder)
 {
     TCHAR executablePath[MAX_PATH];
     GetModuleFileName(NULL, executablePath, MAX_PATH);
@@ -29,13 +34,13 @@ void setPaths(QString &targetPath, QString &startupFolder)
     startupFolder = getStartupFolder();
 }
 
-QString getShortcutPath()
+QString ShortcutManager::getShortcutPath()
 {
     static QString shortcutName = "BigPictureTV.lnk";
     return getStartupFolder() + "\\" + shortcutName;
 }
 
-void createShortcut(const QString &targetPath)
+void ShortcutManager::createShortcut(const QString &targetPath)
 {
     QString shortcutPath = getShortcutPath();
     QString workingDirectory = QFileInfo(targetPath).path();
@@ -70,13 +75,13 @@ void createShortcut(const QString &targetPath)
     CoUninitialize();
 }
 
-bool isShortcutPresent()
+bool ShortcutManager::isShortcutPresent()
 {
     QString shortcutPath = getShortcutPath();
     return QFile::exists(shortcutPath);
 }
 
-void removeShortcut()
+void ShortcutManager::removeShortcut()
 {
     QString shortcutPath = getShortcutPath();
     if (isShortcutPresent()) {
@@ -84,7 +89,7 @@ void removeShortcut()
     }
 }
 
-void manageShortcut(bool state)
+void ShortcutManager::manageShortcut(bool state)
 {
     QString targetPath;
     QString startupFolder;

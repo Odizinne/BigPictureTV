@@ -1,13 +1,7 @@
-#include "steamwindowmanager.h"
-#include "qdebug.h"
-#include <QMap>
-#include <QStringList>
-#include <QVector>
-#include <windows.h>
-#include <winreg.h>
+#include "SteamWindowManager.h"
+#include <QDebug>
 
-// Define the map
-const QMap<QString, QString> BIG_PICTURE_WINDOW_TITLES
+const QMap<QString, QString> SteamWindowManager::BIG_PICTURE_WINDOW_TITLES
     = {{"schinese", "Steam 大屏幕模式"},
        {"tchinese", "Steam Big Picture 模式"},
        {"japanese", "Steam Big Pictureモード"},
@@ -38,9 +32,13 @@ const QMap<QString, QString> BIG_PICTURE_WINDOW_TITLES
        {"vietnamese", "Chế độ Big Picture trên Steam"},
        {"ukrainian", "Steam у режимі Big Picture"}};
 
-const QChar NON_BREAKING_SPACE = QChar(0x00A0);
+const QChar SteamWindowManager::NON_BREAKING_SPACE = QChar(0x00A0);
 
-QString getRegistryValue(const std::wstring &keyPath, const std::wstring &valueName)
+SteamWindowManager::SteamWindowManager() {}
+
+SteamWindowManager::~SteamWindowManager() {}
+
+QString SteamWindowManager::getRegistryValue(const std::wstring &keyPath, const std::wstring &valueName) const
 {
     HKEY hKey;
     WCHAR value[256];
@@ -48,7 +46,7 @@ QString getRegistryValue(const std::wstring &keyPath, const std::wstring &valueN
     QString result;
 
     if (RegOpenKeyEx(HKEY_CURRENT_USER, keyPath.c_str(), 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
-        if (RegQueryValueEx(hKey, valueName.c_str(), NULL, NULL, (LPBYTE) value, &valueLength)
+        if (RegQueryValueEx(hKey, valueName.c_str(), NULL, NULL, (LPBYTE)value, &valueLength)
             == ERROR_SUCCESS) {
             result = QString::fromWCharArray(value).toLower();
         }
@@ -58,25 +56,24 @@ QString getRegistryValue(const std::wstring &keyPath, const std::wstring &valueN
     return result;
 }
 
-QString getSteamLanguage()
+QString SteamWindowManager::getSteamLanguage() const
 {
     return getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
 }
 
-QString cleanString(const QString &str)
+QString SteamWindowManager::cleanString(const QString &str) const
 {
     QString cleanedStr = str;
     return cleanedStr.replace(NON_BREAKING_SPACE, ' ');
 }
 
-QString getBigPictureWindowTitle()
+QString SteamWindowManager::getBigPictureWindowTitle() const
 {
     QString language = getSteamLanguage().toLower();
-
     return BIG_PICTURE_WINDOW_TITLES.value(language, BIG_PICTURE_WINDOW_TITLES.value("english"));
 }
 
-QVector<QString> getAllWindowTitles()
+QVector<QString> SteamWindowManager::getAllWindowTitles() const
 {
     QVector<QString> windowTitles;
 
@@ -97,7 +94,7 @@ QVector<QString> getAllWindowTitles()
     return windowTitles;
 }
 
-bool isBigPictureRunning()
+bool SteamWindowManager::isBigPictureRunning() const
 {
     QString bigPictureTitle = cleanString(getBigPictureWindowTitle().toLower());
     QStringList bigPictureWords = bigPictureTitle.split(' ', Qt::SkipEmptyParts);
@@ -118,10 +115,10 @@ bool isBigPictureRunning()
     return false;
 }
 
-bool isCustomWindowRunning(QString windowTitle)
+bool SteamWindowManager::isCustomWindowRunning(const QString &windowTitle) const
 {
-    windowTitle = cleanString(windowTitle.toLower());
-    QStringList customWindowTitleWords = windowTitle.split(' ', Qt::SkipEmptyParts);
+    QString cleanedWindowTitle = cleanString(windowTitle.toLower());
+    QStringList customWindowTitleWords = cleanedWindowTitle.split(' ', Qt::SkipEmptyParts);
 
     QVector<QString> currentWindowTitles = getAllWindowTitles();
     for (const auto &windowTitle : currentWindowTitles) {

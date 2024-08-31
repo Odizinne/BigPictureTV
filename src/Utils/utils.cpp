@@ -15,7 +15,11 @@ const QString SUNSHINE_STATUS_FILE = QStandardPaths::writableLocation(
                                                QStandardPaths::AppDataLocation)
                                            + "/sunshine-status/status.txt";
 
-void runEnhancedDisplayswitch(const QString &command)
+Utils::Utils() {}
+
+Utils::~Utils() {}
+
+void Utils::runEnhancedDisplayswitch(const QString &command)
 {
     QProcess process;
     QString executablePath = "dependencies/EnhancedDisplaySwitch.exe";
@@ -23,7 +27,7 @@ void runEnhancedDisplayswitch(const QString &command)
     process.waitForFinished();
 }
 
-QString getTheme()
+QString Utils::getTheme()
 {
     // Determine the theme based on registry value
     QSettings settings(
@@ -35,14 +39,14 @@ QString getTheme()
     return (value == 0) ? "light" : "dark";
 }
 
-QIcon getIconForTheme()
+QIcon Utils::getIconForTheme()
 {
     QString theme = getTheme();
     QString iconPath = QString(":/icons/icon_%1.png").arg(theme);
     return QIcon(iconPath);
 }
 
-QString getActivePowerPlan()
+QString Utils::getActivePowerPlan()
 {
     QString regPath = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Power\\User\\PowerSchemes";
     QString regKey = "ActivePowerScheme";
@@ -53,7 +57,7 @@ QString getActivePowerPlan()
     return activeSchemeGuid;
 }
 
-void setPowerPlan(QString planGuid)
+void Utils::setPowerPlan(QString planGuid)
 {
     QString command = "powercfg";
     QStringList arguments;
@@ -71,7 +75,7 @@ void setPowerPlan(QString planGuid)
     }
 }
 
-QString getDiscordPath()
+QString Utils::getDiscordPath()
 {
     QString localAppData = qgetenv("LOCALAPPDATA");
     if (localAppData.isEmpty()) {
@@ -82,13 +86,13 @@ QString getDiscordPath()
     return localAppData + "/Discord/" + DISCORD_EXECUTABLE_NAME;
 }
 
-bool isDiscordInstalled()
+bool Utils::isDiscordInstalled()
 {
     QString discordPath = getDiscordPath();
     return QFileInfo::exists(discordPath);
 }
 
-bool isDiscordRunning()
+bool Utils::isDiscordRunning()
 {
     QProcess process;
     process.start("tasklist.exe", QStringList() << "/FI" << QString("IMAGENAME eq %1").arg(DISCORD_PROCESS_NAME));
@@ -102,7 +106,7 @@ bool isDiscordRunning()
     return output.contains(DISCORD_PROCESS_NAME, Qt::CaseInsensitive);
 }
 
-void closeDiscord()
+void Utils::closeDiscord()
 {
     QStringList arguments;
     arguments << "/IM" << DISCORD_PROCESS_NAME
@@ -118,7 +122,7 @@ void closeDiscord()
     }
 }
 
-void startDiscord()
+void Utils::startDiscord()
 {
     QString discordPath = getDiscordPath();
     if (discordPath.isEmpty()) {
@@ -138,7 +142,7 @@ void startDiscord()
     }
 }
 
-bool isAudioDeviceCmdletsInstalled()
+bool Utils::isAudioDeviceCmdletsInstalled()
 {
     QProcess process;
     process.setProgram("powershell");
@@ -164,7 +168,7 @@ bool isAudioDeviceCmdletsInstalled()
     return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
 }
 
-bool isSunshineStreaming()
+bool Utils::isSunshineStreaming()
 {
     if (QFileInfo::exists(SUNSHINE_STATUS_FILE)) {
         return true;
@@ -172,7 +176,7 @@ bool isSunshineStreaming()
     return false;
 }
 
-void sendMediaKey(WORD keyCode) {
+void Utils::sendMediaKey(WORD keyCode) {
     INPUT ip = {0};
     ip.type = INPUT_KEYBOARD;
     ip.ki.wVk = keyCode;
