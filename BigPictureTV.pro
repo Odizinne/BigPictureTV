@@ -8,14 +8,16 @@ CONFIG += c++17 \
 # Optional: Uncomment to disable deprecated APIs before Qt 6.0.0
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
 
-# Fetch git information for about window
+# Fetch git information
 GIT_COMMIT_ID = $$system(git log -n 1 --pretty=format:"%H")
 GIT_COMMIT_DATE = $$system(git log -n 1 --pretty=format:"%ci")
 GIT_BRANCH = $$system(git branch --show-current)
 
 DEFINES += \
     GIT_COMMIT_ID=\"\"\"$$GIT_COMMIT_ID\"\"\" \
-    GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\"
+    GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\" \
+    GIT_BRANCH=\"\"\"$$GIT_BRANCH\"\"\" \
+
 
 INCLUDEPATH += \
     src/AudioManager\

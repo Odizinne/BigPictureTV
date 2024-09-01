@@ -20,6 +20,8 @@ BigPictureTV::BigPictureTV(QObject *parent)
     , activePowerPlan("")
     , nightLightState(false)
     , discordState(false)
+    , firstRun(false)
+    , paused(false)
     , windowCheckTimer(new QTimer(this))
 {
     loadSettings();
@@ -27,16 +29,23 @@ BigPictureTV::BigPictureTV(QObject *parent)
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
     createTrayIcon();
+    if (firstRun) {
+        showSettings();
+    }
 }
 
 BigPictureTV::~BigPictureTV()
 {
-
-}
-
-void BigPictureTV::onActionTriggered()
-{
-    QMessageBox::information(nullptr, tr("Tray Icon"), tr("Tray icon action triggered!"));
+    delete utils;
+    delete steamWindowManager;
+    delete audioManager;
+    delete nightLightSwitcher;
+    delete windowCheckTimer;
+    delete trayIcon;
+    delete trayIconMenu;
+    delete configAction;
+    delete quitAction;
+    delete configurator;
 }
 
 void BigPictureTV::createTrayIcon()
@@ -122,11 +131,11 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 
     audioManager->setAudioDevice(audioDevice.toStdString());
 
-    //try {
-    //    audioManager->setAudioDevice(audioDevice.toStdString());
-    //} catch (const std::runtime_error &e) {
-    //    //std::cerr << "Error: " << e.what() << std::endl;
-    //}
+    try {
+        audioManager->setAudioDevice(audioDevice.toStdString());
+    } catch (const std::runtime_error &e) {
+        qDebug() << "Error: " << e.what();
+    }
 }
 
 void BigPictureTV::handleActions(bool isDesktopMode)
@@ -199,7 +208,7 @@ void BigPictureTV::loadSettings()
 
     QFile file(settingsFile);
     if (!file.exists()) {
-        showSettings();
+        firstRun = true;
 
     } else {
         if (file.open(QIODevice::ReadOnly)) {
@@ -215,6 +224,7 @@ void BigPictureTV::loadSettings()
 
 void BigPictureTV::showSettings()
 {
+    windowCheckTimer->stop();
     configurator = new Configurator;
     configurator->setAttribute(Qt::WA_DeleteOnClose);
     connect(configurator, &Configurator::closed, this, &BigPictureTV::onConfiguratorClosed);
@@ -224,4 +234,6 @@ void BigPictureTV::showSettings()
 void BigPictureTV::onConfiguratorClosed()
 {
     loadSettings();
+    windowCheckTimer->setInterval(settings.value("checkrate").toInt());
+    windowCheckTimer->start();
 }

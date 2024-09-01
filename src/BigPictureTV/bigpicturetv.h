@@ -20,7 +20,6 @@ public:
     ~BigPictureTV();
 
 private slots:
-    void onActionTriggered();
     void onConfiguratorClosed();
 
 private:
@@ -33,6 +32,8 @@ private:
     QString activePowerPlan;
     bool nightLightState;
     bool discordState;
+    bool firstRun;
+    bool paused;
 
     QSystemTrayIcon *trayIcon;
     QTimer *windowCheckTimer;
