@@ -50,6 +50,20 @@ private:
     void checkWindowTitle();
     void showSettings();
 
+    QString gamemode_audio_device;
+    QString desktop_audio_device;
+    QString custom_window_title;
+    bool disable_audio_switch;
+    int window_checkrate;
+    bool close_discord_action;
+    bool performance_powerplan_action;
+    bool pause_media_action;
+    int gamemode_monitor_mode;
+    int desktop_monitor_mode;
+    bool disable_monitor_switch;
+    bool disable_nightlight_action;
+    bool target_window_mode;
+
     bool gamemodeActive;
     QJsonObject settings;
     static const QString settingsFile;

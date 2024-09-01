@@ -165,17 +165,20 @@ void Configurator::onAudioButtonClicked()
 
 void Configurator::createDefaultSettings()
 {
+    ui->checkrateSpinBox->setValue(1000);
     ui->desktopAudioLineEdit->setText("Headset");
     ui->gamemodeAudioLineEdit->setText("TV");
     ui->desktopMonitorComboBox->setCurrentIndex(0);
     ui->gamemodeMonitorComboBox->setCurrentIndex(0);
     ui->closeDiscordCheckBox->setChecked(false);
     ui->enablePerformancePowerPlan->setChecked(false);
-    ui->startupCheckBox->setChecked(false);
+    ui->disableNightLightCheckBox->setChecked(false);
+    ui->pauseMediaAction->setChecked(false);
     ui->disableAudioCheckBox->setChecked(false);
     ui->disableMonitorCheckBox->setChecked(false);
-    ui->checkrateSpinBox->setValue(1000);
-    ui->disableNightLightCheckBox->setChecked(false);
+    ui->customWindowLineEdit->setText("");
+    ui->targetWindowComboBox->setCurrentIndex(0);
+
     saveSettings();
 }
 
@@ -205,19 +208,19 @@ void Configurator::loadSettings()
 
 void Configurator::applySettings()
 {
-    ui->gamemodeAudioLineEdit->setText(settings.value("gamemode_audio").toString());
-    ui->desktopAudioLineEdit->setText(settings.value("desktop_audio").toString());
+    ui->gamemodeAudioLineEdit->setText(settings.value("gamemode_audio_device").toString());
+    ui->desktopAudioLineEdit->setText(settings.value("desktop_audio_device").toString());
     ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch").toBool());
-    ui->checkrateSpinBox->setValue(settings.value("checkrate").toInt(1000));
+    ui->checkrateSpinBox->setValue(settings.value("window_checkrate").toInt(1000));
     ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action").toBool(false));
-    ui->enablePerformancePowerPlan->setChecked(settings.value("gamemode_powerplan").toBool(false));
-    ui->pauseMediaAction->setChecked(settings.value("gamemode_pause_media").toBool(false));
-    ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor").toInt(0));
-    ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor").toInt(0));
+    ui->enablePerformancePowerPlan->setChecked(settings.value("performance_powerplan_action").toBool(false));
+    ui->pauseMediaAction->setChecked(settings.value("pause_media_action").toBool(false));
+    ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor_mode").toInt(0));
+    ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor_mode").toInt(0));
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
-    ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight").toBool());
-    ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window").toInt(0));
-    ui->customWindowLineEdit->setText(settings.value("custom_window").toString());
+    ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight_action").toBool());
+    ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode").toInt(0));
+    ui->customWindowLineEdit->setText(settings.value("custom_window_title").toString());
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
     toggleCustomWindowTitle(ui->targetWindowComboBox->currentIndex() == 1);
@@ -225,19 +228,24 @@ void Configurator::applySettings()
 
 void Configurator::saveSettings()
 {
-    settings["gamemode_audio"] = ui->gamemodeAudioLineEdit->text();
-    settings["desktop_audio"] = ui->desktopAudioLineEdit->text();
+    settings["window_checkrate"] = ui->checkrateSpinBox->value();
+    settings["gamemode_audio_device"] = ui->gamemodeAudioLineEdit->text();
+    settings["desktop_audio_device"] = ui->desktopAudioLineEdit->text();
+    settings["gamemode_monitor_mode"] = ui->gamemodeMonitorComboBox->currentIndex();
+    settings["desktop_monitor_mode"] = ui->desktopMonitorComboBox->currentIndex();
     settings["disable_audio_switch"] = ui->disableAudioCheckBox->isChecked();
-    settings["checkrate"] = ui->checkrateSpinBox->value();
-    settings["close_discord_action"] = ui->closeDiscordCheckBox->isChecked();
-    settings["gamemode_powerplan"] = ui->enablePerformancePowerPlan->isChecked();
-    settings["gamemode_pause_media"] = ui->pauseMediaAction->isChecked();
-    settings["gamemode_monitor"] = ui->gamemodeMonitorComboBox->currentIndex();
-    settings["desktop_monitor"] = ui->desktopMonitorComboBox->currentIndex();
     settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();
-    settings["disable_nightlight"] = ui->disableNightLightCheckBox->isChecked();
-    settings["target_window"] = ui->targetWindowComboBox->currentIndex();
-    settings["custom_window"] = ui->customWindowLineEdit->text();
+    settings["close_discord_action"] = ui->closeDiscordCheckBox->isChecked();
+    settings["performance_powerplan_action"] = ui->enablePerformancePowerPlan->isChecked();
+    settings["pause_media_action"] = ui->pauseMediaAction->isChecked();
+    settings["disable_nightlight_action"] = ui->disableNightLightCheckBox->isChecked();
+    settings["target_window_mode"] = ui->targetWindowComboBox->currentIndex();
+    settings["custom_window_title"] = ui->customWindowLineEdit->text();
+
+    QDir settingsDir(QFileInfo(settingsFile).absolutePath());
+    if (!settingsDir.exists()) {
+        settingsDir.mkpath(settingsDir.absolutePath());
+    }
 
     QFile file(settingsFile);
     if (file.open(QIODevice::WriteOnly)) {

@@ -17,13 +17,14 @@ BigPictureTV::BigPictureTV(QObject *parent)
     , steamWindowManager(new SteamWindowManager())
     , audioManager(new AudioManager())
     , nightLightSwitcher(new NightLightSwitcher())
+    , configurator(nullptr)
     , activePowerPlan("")
     , nightLightState(false)
     , discordState(false)
     , windowCheckTimer(new QTimer(this))
 {
     loadSettings();
-    windowCheckTimer->setInterval(settings.value("checkrate").toInt());
+    windowCheckTimer->setInterval(window_checkrate);
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
     createTrayIcon();
@@ -63,8 +64,8 @@ void BigPictureTV::createTrayIcon()
 
 void BigPictureTV::checkWindowTitle()
 {
-    if (settings.value("target_window").toInt() == 1) {
-        if (settings.value("custom_window").toString() != "") {
+    if (target_window_mode == 1) {
+        if (custom_window_title != "") {
             return;
         }
     }
@@ -73,13 +74,13 @@ void BigPictureTV::checkWindowTitle()
         return;
     }
 
-    bool disableVideo = settings.value("disable_monitor").toBool();
-    bool disableAudio = settings.value("disable_audio_switch").toBool();
+    bool disableVideo = disable_monitor_switch;
+    bool disableAudio = disable_audio_switch;
     bool isRunning;
-    if (settings.value("target_window").toInt() == 0) {
+    if (target_window_mode == 0) {
         isRunning = steamWindowManager->isBigPictureRunning();
-    } else if (settings.value("target_window").toInt() == 1) {
-        isRunning = steamWindowManager->isCustomWindowRunning(settings.value("custom_window").toString());
+    } else if (target_window_mode == 1) {
+        isRunning = steamWindowManager->isCustomWindowRunning(custom_window_title);
     }
 
     if (isRunning && !gamemodeActive) {
@@ -100,8 +101,8 @@ void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
     if (disableVideo)
         return;
 
-    int index = isDesktopMode ? settings.value("desktop_monitor").toInt()
-                              : settings.value("gamemode_monitor").toInt();
+    int index = isDesktopMode ? desktop_monitor_mode
+                              : gamemode_monitor_mode;
 
     const char *command = nullptr;
 
@@ -121,8 +122,8 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
     if (disableAudio)
         return;
 
-    QString audioDevice = isDesktopMode ? settings.value("desktop_audio").toString()
-                                            : settings.value("gamemode_audio").toString();
+    QString audioDevice = isDesktopMode ? desktop_audio_device
+                                            : gamemode_audio_device;
 
     audioManager->setAudioDevice(audioDevice.toStdString());
 
@@ -135,16 +136,16 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 
 void BigPictureTV::handleActions(bool isDesktopMode)
 {
-    if (settings.value("close_discord_action").toBool()) {
+    if (close_discord_action) {
         handleDiscordAction(isDesktopMode);
     }
-    if (settings.value("disable_nightlight").toBool()) {
+    if (disable_nightlight_action) {
         handleNightLightAction(isDesktopMode);
     }
-    if (settings.value("gamemode_powerplan").toBool()) {
+    if (performance_powerplan_action) {
         handlePowerPlanAction(isDesktopMode);
     }
-    if (settings.value("gamemode_pause_media").toBool()) {
+    if (pause_media_action) {
         handleMediaAction(isDesktopMode);
     }
 }
@@ -211,6 +212,20 @@ void BigPictureTV::loadSettings()
             QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
             if (parseError.error == QJsonParseError::NoError) {
                 settings = doc.object();
+
+                gamemode_audio_device = settings.value("gamemode_audio_device").toString();
+                desktop_audio_device = settings.value("desktop_audio_device").toString();
+                disable_audio_switch = settings.value("disable_audio_switch").toBool();
+                window_checkrate = settings.value("window_checkrate").toInt(1000);
+                close_discord_action = settings.value("close_discord_action").toBool(false);
+                performance_powerplan_action = settings.value("performance_powerplan_action").toBool(false);
+                pause_media_action = settings.value("pause_media_action").toBool(false);
+                gamemode_monitor_mode = settings.value("gamemode_monitor_mode").toInt(0);
+                desktop_monitor_mode = settings.value("desktop_monitor_mode").toInt(0);
+                disable_monitor_switch = settings.value("disable_monitor_switch").toBool();
+                disable_nightlight_action = settings.value("disable_nightlight_action").toBool();
+                target_window_mode = settings.value("target_window_mode").toInt(0);
+                custom_window_title = settings.value("custom_window_title").toString();
             }
             file.close();
         }
@@ -237,6 +252,6 @@ void BigPictureTV::onConfiguratorClosed()
 {
     configurator = nullptr;
     loadSettings();
-    windowCheckTimer->setInterval(settings.value("checkrate").toInt());
+    windowCheckTimer->setInterval(window_checkrate);
     windowCheckTimer->start();
 }
