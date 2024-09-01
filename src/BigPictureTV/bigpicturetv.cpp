@@ -65,7 +65,7 @@ void BigPictureTV::createTrayIcon()
 void BigPictureTV::checkWindowTitle()
 {
     if (target_window_mode == 1) {
-        if (custom_window_title != "") {
+        if (custom_window_title == "") {
             return;
         }
     }
