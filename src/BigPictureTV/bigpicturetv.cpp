@@ -224,6 +224,13 @@ void BigPictureTV::loadSettings()
 
 void BigPictureTV::showSettings()
 {
+    if (configurator) {
+        configurator->showNormal();
+        configurator->raise();
+        configurator->activateWindow();
+        return;
+    }
+
     windowCheckTimer->stop();
     configurator = new Configurator;
     configurator->setAttribute(Qt::WA_DeleteOnClose);
