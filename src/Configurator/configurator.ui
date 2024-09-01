@@ -33,7 +33,7 @@
     <item row="5" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -765,6 +765,26 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>installAudioButton</tabstop>
+  <tabstop>startupCheckBox</tabstop>
+  <tabstop>disableAudioCheckBox</tabstop>
+  <tabstop>disableMonitorCheckBox</tabstop>
+  <tabstop>gamemodeAudioLineEdit</tabstop>
+  <tabstop>desktopAudioLineEdit</tabstop>
+  <tabstop>gamemodeMonitorComboBox</tabstop>
+  <tabstop>desktopMonitorComboBox</tabstop>
+  <tabstop>closeDiscordCheckBox</tabstop>
+  <tabstop>disableNightLightCheckBox</tabstop>
+  <tabstop>enablePerformancePowerPlan</tabstop>
+  <tabstop>pauseMediaAction</tabstop>
+  <tabstop>targetWindowComboBox</tabstop>
+  <tabstop>customWindowLineEdit</tabstop>
+  <tabstop>checkrateSpinBox</tabstop>
+  <tabstop>resetSettingsButton</tabstop>
+  <tabstop>openSettingsButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
