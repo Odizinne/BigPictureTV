@@ -18,8 +18,9 @@ DEFINES += \
     GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\"
 
 INCLUDEPATH += \
-    src/AudioManager \
+    src/AudioManager\
     src/BigPictureTV \
+    src/Configurator \
     src/NightLightSwitcher \
     src/ShortcutManager \
     src/SteamWindowManager \
@@ -27,23 +28,25 @@ INCLUDEPATH += \
 
 SOURCES += \
     src/AudioManager/audiomanager.cpp \
+    src/BigPictureTV/BigPictureTV.cpp \
     src/main.cpp \
     src/NightLightSwitcher/NightLightSwitcher.cpp \
-    src/BigPictureTV/bigpicturetv.cpp \
+    src/Configurator/configurator.cpp \
     src/ShortcutManager/shortcutmanager.cpp \
     src/SteamWindowManager/steamwindowmanager.cpp \
     src/Utils/utils.cpp
 
 HEADERS += \
     src/AudioManager/audiomanager.h \
-    src/BigPictureTV/bigpicturetv.h \
+    src/BigPictureTV/BigPictureTV.h \
+    src/Configurator/configurator.h \
     src/NightLightSwitcher/NightLightSwitcher.h \
     src/ShortcutManager/shortcutmanager.h \
     src/SteamWindowManager/steamwindowmanager.h \
     src/Utils/utils.h
 
 FORMS += \
-    src/BigPictureTV/bigpicturetv.ui
+    src/Configurator/configurator.ui
 
 TRANSLATIONS += \
     src/Resources/Tr/BigPictureTV_fr.ts \
