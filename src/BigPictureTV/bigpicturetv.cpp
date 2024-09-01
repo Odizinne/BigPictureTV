@@ -235,6 +235,7 @@ void BigPictureTV::showSettings()
 
 void BigPictureTV::onConfiguratorClosed()
 {
+    configurator = nullptr;
     loadSettings();
     windowCheckTimer->setInterval(settings.value("checkrate").toInt());
     windowCheckTimer->start();
