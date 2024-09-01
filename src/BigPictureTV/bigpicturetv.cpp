@@ -20,8 +20,6 @@ BigPictureTV::BigPictureTV(QObject *parent)
     , activePowerPlan("")
     , nightLightState(false)
     , discordState(false)
-    , firstRun(false)
-    , paused(false)
     , windowCheckTimer(new QTimer(this))
 {
     loadSettings();
@@ -29,9 +27,6 @@ BigPictureTV::BigPictureTV(QObject *parent)
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
     createTrayIcon();
-    if (firstRun) {
-        showSettings();
-    }
 }
 
 BigPictureTV::~BigPictureTV()
@@ -208,7 +203,7 @@ void BigPictureTV::loadSettings()
 
     QFile file(settingsFile);
     if (!file.exists()) {
-        firstRun = true;
+        showSettings();
 
     } else {
         if (file.open(QIODevice::ReadOnly)) {
