@@ -1,4 +1,4 @@
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,9 +14,10 @@ GIT_COMMIT_DATE = $$system(git log -n 1 --pretty=format:"%ci")
 GIT_BRANCH = $$system(git branch --show-current)
 
 DEFINES += \
-    GIT_COMMIT_ID=\"\"\"$$GIT_COMMIT_ID\"\"\" \
-    GIT_COMMIT_DATE=\"\"\"$$GIT_COMMIT_DATE\"\"\" \
-    GIT_BRANCH=\"\"\"$$GIT_BRANCH\"\"\" \
+    GIT_COMMIT_ID=\\"\"\"$$GIT_COMMIT_ID\\"\"\" \
+    GIT_COMMIT_DATE=\\"\"\"$$GIT_COMMIT_DATE\\"\"\" \
+    GIT_BRANCH=\\"\"\"$$GIT_BRANCH\\"\"\"
+
 
 
 INCLUDEPATH += \

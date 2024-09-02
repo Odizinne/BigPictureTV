@@ -30,7 +30,7 @@ bool NightLightSwitcher::enabled() {
     BYTE data[1024];
     DWORD dataSize = sizeof(data);
     if (RegQueryValueEx(hKey, L"Data", NULL, NULL, data, &dataSize) != ERROR_SUCCESS) {
-        std::wcerr << L"Failed to query registry value." << std::endl;
+        qDebug() << "Failed to query registry value.";
         return false;
     }
 
@@ -57,7 +57,7 @@ void NightLightSwitcher::toggle() {
     BYTE data[1024];
     DWORD dataSize = sizeof(data);
     if (RegQueryValueEx(hKey, L"Data", NULL, NULL, data, &dataSize) != ERROR_SUCCESS) {
-        std::wcerr << L"Failed to query registry value." << std::endl;
+        qDebug() << "Failed to query registry value.";
         return;
     }
 
@@ -90,11 +90,9 @@ void NightLightSwitcher::toggle() {
     }
 
     // Set the modified data back to the registry
-    DWORD newDataSize = newData.size();
+    DWORD newDataSize = static_cast<DWORD>(newData.size());
     if (RegSetValueEx(hKey, L"Data", 0, REG_BINARY, newData.data(), newDataSize) != ERROR_SUCCESS) {
-        std::wcerr << L"Failed to update registry value." << std::endl;
-    } else {
-        qDebug() << "Registry value updated successfully.";
+        qDebug() << "Failed to update registry value.";
     }
 }
 

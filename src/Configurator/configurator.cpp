@@ -1,6 +1,6 @@
 #include "configurator.h"
-#include "qdir.h"
 #include "ui_configurator.h"
+#include <QDir>
 #include <QDesktopServices>
 #include <QJsonParseError>
 #include <QMessageBox>
@@ -134,7 +134,6 @@ void Configurator::onAudioButtonClicked()
                              "Please check if PowerShell is installed and properly configured.");
         QMessageBox::critical(this, status, message);
     } else {
-        QString output = process.readAllStandardOutput();
         QString errorOutput = process.readAllStandardError();
         int exitCode = process.exitCode();
 
