@@ -53,7 +53,6 @@ private:
     void applySettings();
 
     Ui::Configurator *ui;
-    std::wstring shortcutName = L"BigPictureTV.lnk";
     QString settingsFilePath;
     QJsonObject settings;
     static const QString settingsFile;
