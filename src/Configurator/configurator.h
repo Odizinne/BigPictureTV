@@ -9,7 +9,6 @@
 #include <QJsonValue>
 #include <QMainWindow>
 #include <QString>
-#include <string>
 #include "shortcutmanager.h"
 #include "utils.h"
 #include "steamwindowmanager.h"
@@ -40,6 +39,7 @@ private:
     ShortcutManager* shortcutManager;
     SteamWindowManager* steamWindowManager;
     bool discordInstalled;
+    void toggleAllActions();
     void getAudioCapabilities();
     void populateComboboxes();
     void toggleAudioSettings(bool state);

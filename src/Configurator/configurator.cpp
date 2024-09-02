@@ -44,6 +44,7 @@ void Configurator::setupConnections()
     connect(ui->installAudioButton,  &QPushButton::clicked, this, &Configurator::onAudioButtonClicked);
     connect(ui->targetWindowComboBox, &QComboBox::currentIndexChanged, this, &Configurator::onTargetWindowComboBoxIndexChanged);
     connect(ui->resetSettingsButton, &QPushButton::clicked, this, &Configurator::createDefaultSettings);
+    connect(ui->toggleActionCheckBox, &QCheckBox::stateChanged, this, &Configurator::toggleAllActions);
     connect(ui->openSettingsButton, &QPushButton::clicked, this, []() {
         QString settingsFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
         QDesktopServices::openUrl(QUrl::fromLocalFile(settingsFolder));
@@ -210,19 +211,25 @@ void Configurator::applySettings()
     ui->gamemodeAudioLineEdit->setText(settings.value("gamemode_audio_device").toString());
     ui->desktopAudioLineEdit->setText(settings.value("desktop_audio_device").toString());
     ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch").toBool());
-    ui->checkrateSpinBox->setValue(settings.value("window_checkrate").toInt(1000));
-    ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action").toBool(false));
-    ui->enablePerformancePowerPlan->setChecked(settings.value("performance_powerplan_action").toBool(false));
-    ui->pauseMediaAction->setChecked(settings.value("pause_media_action").toBool(false));
-    ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor_mode").toInt(0));
-    ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor_mode").toInt(0));
+    ui->checkrateSpinBox->setValue(settings.value("window_checkrate").toInt());
+    ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action").toBool());
+    ui->enablePerformancePowerPlan->setChecked(settings.value("performance_powerplan_action").toBool());
+    ui->pauseMediaAction->setChecked(settings.value("pause_media_action").toBool());
+    ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor_mode").toInt());
+    ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor_mode").toInt());
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
     ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight_action").toBool());
-    ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode").toInt(0));
+    ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode").toInt());
     ui->customWindowLineEdit->setText(settings.value("custom_window_title").toString());
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
     toggleCustomWindowTitle(ui->targetWindowComboBox->currentIndex() == 1);
+
+    if (ui->closeDiscordCheckBox->isChecked() && ui->disableNightLightCheckBox->isChecked()
+        && ui->pauseMediaAction->isChecked() && ui->enablePerformancePowerPlan->isChecked()) {
+        ui->toggleActionCheckBox->setChecked(true);
+    }
+
 }
 
 void Configurator::saveSettings()
@@ -279,12 +286,20 @@ void Configurator::toggleCustomWindowTitle(bool state)
 void Configurator::setupInfoTab()
 {
     ui->detectedSteamLanguage->setText(steamWindowManager->getSteamLanguage());
-
     ui->targetWindowTitle->setText(steamWindowManager->getBigPictureWindowTitle());
-    ui->repository->setText("<a href=\"https://github.com/odizinne/bigpicturetv/\">github.com/Odizinne/BigPictureTV</a>");
+    ui->repository->setText("<a href=\"https://github.com/odizinne/bigpicturetv/\">Odizinne/BigPictureTV</a>");
     ui->repository->setTextFormat(Qt::RichText);
     ui->repository->setTextInteractionFlags(Qt::TextBrowserInteraction);
     ui->repository->setOpenExternalLinks(true);
     ui->commitID->setText(GIT_COMMIT_ID);
     ui->commitDate->setText(GIT_COMMIT_DATE);
+}
+
+void Configurator::toggleAllActions()
+{
+    bool state = ui->toggleActionCheckBox->isChecked();
+    ui->closeDiscordCheckBox->setChecked(state);
+    ui->disableNightLightCheckBox->setChecked(state);
+    ui->pauseMediaAction->setChecked(state);
+    ui->enablePerformancePowerPlan->setChecked(state);
 }
