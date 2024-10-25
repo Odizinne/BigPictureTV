@@ -6,10 +6,10 @@
 #include <QCheckBox>
 #include <QMainWindow>
 #include <QString>
+#include <QSettings>
 #include "shortcutmanager.h"
 #include "utils.h"
 #include "steamwindowmanager.h"
-#include <QSettings>
 
 namespace Ui {
 class Configurator;
@@ -25,9 +25,9 @@ public:
 
 
 private slots:
-    void onStartupCheckboxStateChanged();
-    void onDisableAudioCheckboxStateChanged(int state);
-    void onDisableMonitorCheckboxStateChanged(int state);
+    void onStartupCheckboxStateChanged(Qt::CheckState state);
+    void onDisableAudioCheckboxStateChanged(Qt::CheckState state);
+    void onDisableMonitorCheckboxStateChanged(Qt::CheckState state);
     void onTargetWindowComboBoxIndexChanged(int index);
     void onAudioButtonClicked();
 

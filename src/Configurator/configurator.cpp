@@ -2,10 +2,8 @@
 #include "ui_configurator.h"
 #include <QDir>
 #include <QDesktopServices>
-#include <QJsonParseError>
 #include <QMessageBox>
 #include <QProcess>
-#include <QStandardPaths>
 
 Configurator::Configurator(QWidget *parent)
     : QMainWindow(parent)
@@ -36,17 +34,13 @@ Configurator::~Configurator()
 
 void Configurator::setupConnections()
 {
-    connect(ui->startupCheckBox, &QCheckBox::stateChanged, this, &Configurator::onStartupCheckboxStateChanged);
+    connect(ui->startupCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::onStartupCheckboxStateChanged);
     connect(ui->disableAudioCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::onDisableAudioCheckboxStateChanged);
-    connect(ui->disableMonitorCheckBox, &QCheckBox::stateChanged, this, &Configurator::onDisableMonitorCheckboxStateChanged);
+    connect(ui->disableMonitorCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::onDisableMonitorCheckboxStateChanged);
     connect(ui->installAudioButton,  &QPushButton::clicked, this, &Configurator::onAudioButtonClicked);
     connect(ui->targetWindowComboBox, &QComboBox::currentIndexChanged, this, &Configurator::onTargetWindowComboBoxIndexChanged);
     connect(ui->resetSettingsButton, &QPushButton::clicked, this, &Configurator::createDefaultSettings);
-    connect(ui->toggleActionCheckBox, &QCheckBox::stateChanged, this, &Configurator::toggleAllActions);
-    connect(ui->openSettingsButton, &QPushButton::clicked, this, []() {
-        QString settingsFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-        QDesktopServices::openUrl(QUrl::fromLocalFile(settingsFolder));
-    });
+    connect(ui->toggleActionCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::toggleAllActions);
 
     ui->startupCheckBox->setChecked(shortcutManager->isShortcutPresent());
     initDiscordAction();
@@ -85,23 +79,23 @@ void Configurator::populateComboboxes()
     ui->desktopMonitorComboBox->addItem(tr("Extend"));
     ui->gamemodeMonitorComboBox->addItem(tr("External"));
     ui->gamemodeMonitorComboBox->addItem(tr("Clone"));
-
     ui->targetWindowComboBox->addItem(tr("Big Picture"));
     ui->targetWindowComboBox->addItem(tr("Custom"));
 }
 
-void Configurator::onStartupCheckboxStateChanged()
+void Configurator::onStartupCheckboxStateChanged(Qt::CheckState state)
 {
-    shortcutManager->manageShortcut(ui->startupCheckBox->isChecked());
+    bool isChecked = (state == Qt::Checked);
+    shortcutManager->manageShortcut(isChecked);
 }
 
-void Configurator::onDisableAudioCheckboxStateChanged(int state)
+void Configurator::onDisableAudioCheckboxStateChanged(Qt::CheckState state)
 {
     bool isChecked = (state == Qt::Checked);
     toggleAudioSettings(!isChecked);
 }
 
-void Configurator::onDisableMonitorCheckboxStateChanged(int state)
+void Configurator::onDisableMonitorCheckboxStateChanged(Qt::CheckState state)
 {
     bool isChecked = (state == Qt::Checked);
     toggleMonitorSettings(!isChecked);

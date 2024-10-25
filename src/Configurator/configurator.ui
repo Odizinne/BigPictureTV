@@ -33,7 +33,7 @@
     <item row="5" column="0">
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -601,19 +601,6 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="openSettingsButton">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Open settings folder</string>
-            </property>
-           </widget>
-          </item>
          </layout>
         </item>
        </layout>
@@ -842,7 +829,6 @@
   <tabstop>customWindowLineEdit</tabstop>
   <tabstop>checkrateSpinBox</tabstop>
   <tabstop>resetSettingsButton</tabstop>
-  <tabstop>openSettingsButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
