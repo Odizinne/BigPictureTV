@@ -7,16 +7,14 @@
 #include <QProcess>
 #include <QStandardPaths>
 
-const QString Configurator::settingsFile = QStandardPaths::writableLocation(
-                                               QStandardPaths::AppDataLocation)
-                                           + "/BigPictureTV/settings.json";
-
 Configurator::Configurator(QWidget *parent)
     : QMainWindow(parent)
     , utils(new Utils())
     , shortcutManager(new ShortcutManager())
     , steamWindowManager(new SteamWindowManager())
     , ui(new Ui::Configurator)
+    , settings("Odizinne", "BigPictureTV")
+
 {
     ui->setupUi(this);
     setupInfoTab();
@@ -184,43 +182,20 @@ void Configurator::createDefaultSettings()
 
 void Configurator::loadSettings()
 {
-    QDir settingsDir(QFileInfo(settingsFile).absolutePath());
-    if (!settingsDir.exists()) {
-        settingsDir.mkpath(settingsDir.absolutePath());
-    }
+    ui->checkrateSpinBox->setValue(settings.value("window_checkrate", 1000).toInt());
+    ui->desktopAudioLineEdit->setText(settings.value("desktop_audio_device", "Headset").toString());
+    ui->gamemodeAudioLineEdit->setText(settings.value("gamemode_audio_device", "TV").toString());
+    ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor_mode", 0).toInt());
+    ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor_mode", 0).toInt());
+    ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action", false).toBool());
+    ui->enablePerformancePowerPlan->setChecked(settings.value("performance_powerplan_action", false).toBool());
+    ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight_action", false).toBool());
+    ui->pauseMediaAction->setChecked(settings.value("pause_media_action", false).toBool());
+    ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch", false).toBool());
+    ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch", false).toBool());
+    ui->customWindowLineEdit->setText(settings.value("custom_window_title", "").toString());
+    ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode", 0).toInt());
 
-    QFile file(settingsFile);
-    if (!file.exists()) {
-        createDefaultSettings();
-
-    } else {
-        if (file.open(QIODevice::ReadOnly)) {
-            QJsonParseError parseError;
-            QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
-            if (parseError.error == QJsonParseError::NoError) {
-                settings = doc.object();
-            }
-            file.close();
-        }
-    }
-    applySettings();
-}
-
-void Configurator::applySettings()
-{
-    ui->gamemodeAudioLineEdit->setText(settings.value("gamemode_audio_device").toString());
-    ui->desktopAudioLineEdit->setText(settings.value("desktop_audio_device").toString());
-    ui->disableAudioCheckBox->setChecked(settings.value("disable_audio_switch").toBool());
-    ui->checkrateSpinBox->setValue(settings.value("window_checkrate").toInt());
-    ui->closeDiscordCheckBox->setChecked(settings.value("close_discord_action").toBool());
-    ui->enablePerformancePowerPlan->setChecked(settings.value("performance_powerplan_action").toBool());
-    ui->pauseMediaAction->setChecked(settings.value("pause_media_action").toBool());
-    ui->gamemodeMonitorComboBox->setCurrentIndex(settings.value("gamemode_monitor_mode").toInt());
-    ui->desktopMonitorComboBox->setCurrentIndex(settings.value("desktop_monitor_mode").toInt());
-    ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch").toBool());
-    ui->disableNightLightCheckBox->setChecked(settings.value("disable_nightlight_action").toBool());
-    ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode").toInt());
-    ui->customWindowLineEdit->setText(settings.value("custom_window_title").toString());
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
     toggleCustomWindowTitle(ui->targetWindowComboBox->currentIndex() == 1);
@@ -229,36 +204,23 @@ void Configurator::applySettings()
         && ui->pauseMediaAction->isChecked() && ui->enablePerformancePowerPlan->isChecked()) {
         ui->toggleActionCheckBox->setChecked(true);
     }
-
 }
 
 void Configurator::saveSettings()
 {
-    settings["window_checkrate"] = ui->checkrateSpinBox->value();
-    settings["gamemode_audio_device"] = ui->gamemodeAudioLineEdit->text();
-    settings["desktop_audio_device"] = ui->desktopAudioLineEdit->text();
-    settings["gamemode_monitor_mode"] = ui->gamemodeMonitorComboBox->currentIndex();
-    settings["desktop_monitor_mode"] = ui->desktopMonitorComboBox->currentIndex();
-    settings["disable_audio_switch"] = ui->disableAudioCheckBox->isChecked();
-    settings["disable_monitor_switch"] = ui->disableMonitorCheckBox->isChecked();
-    settings["close_discord_action"] = ui->closeDiscordCheckBox->isChecked();
-    settings["performance_powerplan_action"] = ui->enablePerformancePowerPlan->isChecked();
-    settings["pause_media_action"] = ui->pauseMediaAction->isChecked();
-    settings["disable_nightlight_action"] = ui->disableNightLightCheckBox->isChecked();
-    settings["target_window_mode"] = ui->targetWindowComboBox->currentIndex();
-    settings["custom_window_title"] = ui->customWindowLineEdit->text();
-
-    QDir settingsDir(QFileInfo(settingsFile).absolutePath());
-    if (!settingsDir.exists()) {
-        settingsDir.mkpath(settingsDir.absolutePath());
-    }
-
-    QFile file(settingsFile);
-    if (file.open(QIODevice::WriteOnly)) {
-        QJsonDocument doc(settings);
-        file.write(doc.toJson(QJsonDocument::Indented));
-        file.close();
-    }
+    settings.setValue("window_checkrate", ui->checkrateSpinBox->value());
+    settings.setValue("gamemode_audio_device", ui->gamemodeAudioLineEdit->text());
+    settings.setValue("desktop_audio_device", ui->desktopAudioLineEdit->text());
+    settings.setValue("gamemode_monitor_mode", ui->gamemodeMonitorComboBox->currentIndex());
+    settings.setValue("desktop_monitor_mode", ui->desktopMonitorComboBox->currentIndex());
+    settings.setValue("disable_audio_switch", ui->disableAudioCheckBox->isChecked());
+    settings.setValue("disable_monitor_switch", ui->disableMonitorCheckBox->isChecked());
+    settings.setValue("close_discord_action", ui->closeDiscordCheckBox->isChecked());
+    settings.setValue("performance_powerplan_action", ui->enablePerformancePowerPlan->isChecked());
+    settings.setValue("pause_media_action", ui->pauseMediaAction->isChecked());
+    settings.setValue("disable_nightlight_action", ui->disableNightLightCheckBox->isChecked());
+    settings.setValue("target_window_mode", ui->targetWindowComboBox->currentIndex());
+    settings.setValue("custom_window_title", ui->customWindowLineEdit->text());
 }
 
 void Configurator::toggleAudioSettings(bool state)

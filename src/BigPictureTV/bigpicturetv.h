@@ -63,11 +63,8 @@ private:
     bool disable_monitor_switch;
     bool disable_nightlight_action;
     bool target_window_mode;
-
+    QSettings settings;
     bool gamemodeActive;
-    QJsonObject settings;
-    static const QString settingsFile;
-
 };
 
 #endif // BIGPICTURETV_H

@@ -7,10 +7,6 @@
 #include <QDir>
 #include <QFileInfo>
 
-const QString BigPictureTV::settingsFile = QStandardPaths::writableLocation(
-                                               QStandardPaths::AppDataLocation)
-                                           + "/BigPictureTV/settings.json";
-
 BigPictureTV::BigPictureTV(QObject *parent)
     : QObject(parent)
     , utils(new Utils())
@@ -22,6 +18,7 @@ BigPictureTV::BigPictureTV(QObject *parent)
     , nightLightState(false)
     , discordState(false)
     , windowCheckTimer(new QTimer(this))
+    , settings("Odizinne", "BigPictureTV")
 {
     loadSettings();
     windowCheckTimer->setInterval(window_checkrate);
@@ -195,39 +192,19 @@ void BigPictureTV::handlePowerPlanAction(bool isDesktopMode)
 
 void BigPictureTV::loadSettings()
 {
-    QDir settingsDir(QFileInfo(settingsFile).absolutePath());
-    if (!settingsDir.exists()) {
-        settingsDir.mkpath(settingsDir.absolutePath());
-    }
-
-    QFile file(settingsFile);
-    if (!file.exists()) {
-        showSettings();
-
-    } else {
-        if (file.open(QIODevice::ReadOnly)) {
-            QJsonParseError parseError;
-            QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &parseError);
-            if (parseError.error == QJsonParseError::NoError) {
-                settings = doc.object();
-
-                gamemode_audio_device = settings.value("gamemode_audio_device").toString();
-                desktop_audio_device = settings.value("desktop_audio_device").toString();
-                disable_audio_switch = settings.value("disable_audio_switch").toBool();
-                window_checkrate = settings.value("window_checkrate").toInt();
-                close_discord_action = settings.value("close_discord_action").toBool();
-                performance_powerplan_action = settings.value("performance_powerplan_action").toBool();
-                pause_media_action = settings.value("pause_media_action").toBool();
-                gamemode_monitor_mode = settings.value("gamemode_monitor_mode").toInt();
-                desktop_monitor_mode = settings.value("desktop_monitor_mode").toInt();
-                disable_monitor_switch = settings.value("disable_monitor_switch").toBool();
-                disable_nightlight_action = settings.value("disable_nightlight_action").toBool();
-                target_window_mode = settings.value("target_window_mode").toInt();
-                custom_window_title = settings.value("custom_window_title").toString();
-            }
-            file.close();
-        }
-    }
+    gamemode_audio_device = settings.value("gamemode_audio_device").toString();
+    desktop_audio_device = settings.value("desktop_audio_device").toString();
+    disable_audio_switch = settings.value("disable_audio_switch").toBool();
+    window_checkrate = settings.value("window_checkrate").toInt();
+    close_discord_action = settings.value("close_discord_action").toBool();
+    performance_powerplan_action = settings.value("performance_powerplan_action").toBool();
+    pause_media_action = settings.value("pause_media_action").toBool();
+    gamemode_monitor_mode = settings.value("gamemode_monitor_mode").toInt();
+    desktop_monitor_mode = settings.value("desktop_monitor_mode").toInt();
+    disable_monitor_switch = settings.value("disable_monitor_switch").toBool();
+    disable_nightlight_action = settings.value("disable_nightlight_action").toBool();
+    target_window_mode = settings.value("target_window_mode").toInt();
+    custom_window_title = settings.value("custom_window_title").toString();
 }
 
 void BigPictureTV::showSettings()

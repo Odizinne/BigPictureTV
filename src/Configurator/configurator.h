@@ -4,14 +4,12 @@
 #include <QAction>
 #include <QApplication>
 #include <QCheckBox>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonValue>
 #include <QMainWindow>
 #include <QString>
 #include "shortcutmanager.h"
 #include "utils.h"
 #include "steamwindowmanager.h"
+#include <QSettings>
 
 namespace Ui {
 class Configurator;
@@ -53,9 +51,7 @@ private:
     void applySettings();
 
     Ui::Configurator *ui;
-    QString settingsFilePath;
-    QJsonObject settings;
-    static const QString settingsFile;
+    QSettings settings;
 
 signals:
     void closed();
