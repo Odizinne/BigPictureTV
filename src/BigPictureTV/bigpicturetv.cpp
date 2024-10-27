@@ -19,8 +19,10 @@ BigPictureTV::BigPictureTV(QObject *parent)
     , discordState(false)
     , windowCheckTimer(new QTimer(this))
     , settings("Odizinne", "BigPictureTV")
+    , gamemodeActive(settings.value("gamemode", false).toBool())
 {
     loadSettings();
+    startupReset();
     windowCheckTimer->setInterval(window_checkrate);
     connect(windowCheckTimer, &QTimer::timeout, this, &BigPictureTV::checkWindowTitle);
     windowCheckTimer->start();
@@ -69,8 +71,6 @@ void BigPictureTV::checkWindowTitle()
         return;
     }
 
-    bool disableVideo = disable_monitor_switch;
-    bool disableAudio = disable_audio_switch;
     bool isRunning;
     if (target_window_mode == 0) {
         isRunning = steamWindowManager->isBigPictureRunning();
@@ -81,13 +81,15 @@ void BigPictureTV::checkWindowTitle()
     if (isRunning && !gamemodeActive) {
         gamemodeActive = true;
         handleActions(false);
-        handleMonitorChanges(false, disableVideo);
-        handleAudioChanges(false, disableAudio);
+        handleMonitorChanges(false, disable_monitor_switch);
+        handleAudioChanges(false, disable_audio_switch);
+        settings.setValue("gamemode", gamemodeActive);
     } else if (!isRunning && gamemodeActive) {
         gamemodeActive = false;
         handleActions(true);
-        handleMonitorChanges(true, disableVideo);
-        handleAudioChanges(true, disableAudio);
+        handleMonitorChanges(true, disable_monitor_switch);
+        handleAudioChanges(true, disable_audio_switch);
+        settings.setValue("gamemode", gamemodeActive);
     }
 }
 
@@ -229,4 +231,20 @@ void BigPictureTV::onConfiguratorClosed()
     loadSettings();
     windowCheckTimer->setInterval(window_checkrate);
     windowCheckTimer->start();
+}
+
+void BigPictureTV::startupReset()
+{
+    if (gamemodeActive) {
+        bool isRunning;
+        if (target_window_mode == 0) {
+            isRunning = steamWindowManager->isBigPictureRunning();
+        } else {
+            isRunning = steamWindowManager->isCustomWindowRunning(custom_window_title);
+        }
+        if (!isRunning) {
+            handleMonitorChanges(true, disable_monitor_switch);
+            handleAudioChanges(true, disable_audio_switch);
+        }
+    }
 }

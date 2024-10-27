@@ -49,6 +49,7 @@ private:
     void handleMonitorChanges(bool isDesktopMode, bool disableVideo);
     void checkWindowTitle();
     void showSettings();
+    void startupReset();
 
     QString gamemode_audio_device;
     QString desktop_audio_device;

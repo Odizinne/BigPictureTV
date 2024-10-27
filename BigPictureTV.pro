@@ -5,9 +5,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17 \
           silent \
 
-# Optional: Uncomment to disable deprecated APIs before Qt 6.0.0
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000
-
 # Fetch git information
 GIT_COMMIT_ID = $$system(git log -n 1 --pretty=format:"%H")
 GIT_COMMIT_DATE = $$system(git log -n 1 --pretty=format:"%ci")
@@ -67,9 +64,3 @@ DEPENDENCIES_DIR = $$PWD/dependencies
 DEST_DIR = $$OUT_PWD/release/dependencies
 
 QMAKE_POST_LINK += powershell -Command "New-Item -ItemType Directory -Path '$$DEST_DIR' -Force; Copy-Item -Path '$$DEPENDENCIES_DIR\*' -Destination '$$DEST_DIR' -Recurse -Force"
-
-# Default rules for deployment
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
-!isEmpty(target.path): INSTALLS += target
-
