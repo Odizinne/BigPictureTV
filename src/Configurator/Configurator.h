@@ -45,9 +45,12 @@ private:
     void saveSettings();
     void applySettings();
     void initUI();
+    void fadeIn(QWidget *widget);
+    void fadeOut(QWidget *widget, std::function<void()> onFinished);
 
     Ui::Configurator *ui;
     QSettings settings;
+    int activeFrame;
 
 signals:
     void closed();

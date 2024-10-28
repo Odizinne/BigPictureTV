@@ -9,6 +9,7 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 
+
 const QString DISCORD_EXECUTABLE_NAME = "Update.exe";
 const QString DISCORD_PROCESS_NAME = "Discord.exe";
 const QString SUNSHINE_STATUS_FILE = QStandardPaths::writableLocation(

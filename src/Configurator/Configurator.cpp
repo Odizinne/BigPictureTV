@@ -6,18 +6,24 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QProcess>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
+#include <functional>
 
 Configurator::Configurator(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::Configurator)
     , settings("Odizinne", "BigPictureTV")
+    , activeFrame(1)
 
 {
     ui->setupUi(this);
     this->setWindowIcon(Utils::getIconForTheme());
     populateComboboxes();
     loadSettings();
-    setGeneralTab();
+    ui->avFrame->setVisible(false);
+    ui->actionsFrame->setVisible(false);
+    ui->advancedFrame->setVisible(false);
     Utils::setFrameColorBasedOnWindow(this, ui->frame);
     this->setFixedSize(356, 187);
     setupConnections();
@@ -236,35 +242,94 @@ void Configurator::toggleCustomWindowTitle(bool state)
     ui->customWindowLabel->setEnabled(state);
 }
 
-
-void Configurator::setGeneralTab()
-{
-    ui->generalFrame->setVisible(true);
-    ui->avFrame->setVisible(false);
-    ui->actionsFrame->setVisible(false);
-    ui->advancedFrame->setVisible(false);
+void Configurator::fadeIn(QWidget *widget) {
+    widget->setVisible(true);
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(widget);
+    widget->setGraphicsEffect(effect);
+    QPropertyAnimation *animation = new QPropertyAnimation(effect, "opacity");
+    animation->setDuration(175);
+    animation->setStartValue(0.0);
+    animation->setEndValue(1.0);
+    animation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void Configurator::setAVTab()
-{
-    ui->generalFrame->setVisible(false);
-    ui->avFrame->setVisible(true);
-    ui->actionsFrame->setVisible(false);
-    ui->advancedFrame->setVisible(false);
+void Configurator::fadeOut(QWidget *widget, std::function<void()> onFinished = nullptr) {
+    if (widget->isVisible()) {
+        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(widget);
+        widget->setGraphicsEffect(effect);
+        QPropertyAnimation *animation = new QPropertyAnimation(effect, "opacity");
+        animation->setDuration(175);
+        animation->setStartValue(1.0);
+        animation->setEndValue(0.0);
+
+        connect(animation, &QPropertyAnimation::finished, widget, [widget]() {
+            widget->setVisible(false);
+        });
+
+        if (onFinished) {
+            connect(animation, &QPropertyAnimation::finished, onFinished);
+        }
+
+        animation->start(QAbstractAnimation::DeleteWhenStopped);
+    } else {
+        if (onFinished) {
+            onFinished();
+        }
+    }
 }
 
-void Configurator::setActionsTab()
-{
-    ui->generalFrame->setVisible(false);
-    ui->avFrame->setVisible(false);
-    ui->actionsFrame->setVisible(true);
-    ui->advancedFrame->setVisible(false);
+void Configurator::setGeneralTab() {
+    if (activeFrame == 1) {
+        return;
+    }
+    fadeOut(ui->avFrame, [this]() {
+        fadeOut(ui->actionsFrame, [this]() {
+            fadeOut(ui->advancedFrame, [this]() {
+                fadeIn(ui->generalFrame);
+            });
+        });
+    });
+    activeFrame = 1;
 }
 
-void Configurator::setAdvancedTab()
-{
-    ui->generalFrame->setVisible(false);
-    ui->avFrame->setVisible(false);
-    ui->actionsFrame->setVisible(false);
-    ui->advancedFrame->setVisible(true);
+void Configurator::setAVTab() {
+    if (activeFrame == 2) {
+        return;
+    }
+    fadeOut(ui->generalFrame, [this]() {
+        fadeOut(ui->actionsFrame, [this]() {
+            fadeOut(ui->advancedFrame, [this]() {
+                fadeIn(ui->avFrame);
+            });
+        });
+    });
+    activeFrame = 2;
+}
+
+void Configurator::setActionsTab() {
+    if (activeFrame == 3) {
+        return;
+    }
+    fadeOut(ui->generalFrame, [this]() {
+        fadeOut(ui->avFrame, [this]() {
+            fadeOut(ui->advancedFrame, [this]() {
+                fadeIn(ui->actionsFrame);
+            });
+        });
+    });
+    activeFrame = 3;
+}
+
+void Configurator::setAdvancedTab() {
+    if (activeFrame == 4) {
+        return;
+    }
+    fadeOut(ui->generalFrame, [this]() {
+        fadeOut(ui->avFrame, [this]() {
+            fadeOut(ui->actionsFrame, [this]() {
+                fadeIn(ui->advancedFrame);
+            });
+        });
+    });
+    activeFrame = 4;
 }
