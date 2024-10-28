@@ -15,6 +15,7 @@ Configurator::Configurator(QWidget *parent)
 
 {
     ui->setupUi(this);
+    this->setWindowIcon(utils->getIconForTheme());
     populateComboboxes();
     loadSettings();
     setGeneralTab();
