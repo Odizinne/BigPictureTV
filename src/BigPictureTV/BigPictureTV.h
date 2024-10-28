@@ -5,11 +5,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QJsonObject>
-#include "utils.h"
-#include "steamwindowmanager.h"
-#include "audiomanager.h"
-#include "NightLightSwitcher.h"
-#include "configurator.h"
+#include "Configurator.h"
 
 class BigPictureTV : public QObject
 {
@@ -23,10 +19,6 @@ private slots:
     void onConfiguratorClosed();
 
 private:
-    Utils* utils;
-    SteamWindowManager* steamWindowManager;
-    AudioManager* audioManager;
-    NightLightSwitcher* nightLightSwitcher;
     Configurator* configurator;
 
     QString activePowerPlan;

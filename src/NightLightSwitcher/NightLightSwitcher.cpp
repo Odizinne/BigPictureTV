@@ -6,21 +6,18 @@
 #include <vector>
 #include <Windows.h>
 
-const std::wstring NightLightSwitcher::keyPath = L"Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate";
+const std::wstring keyPath = L"Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate";
 
-NightLightSwitcher::NightLightSwitcher() {
+HKEY hKey = nullptr;
+
+void init() {
     if (RegOpenKeyEx(HKEY_CURRENT_USER, keyPath.c_str(), 0, KEY_READ | KEY_WRITE, &hKey) != ERROR_SUCCESS) {
         hKey = nullptr;
     }
 }
 
-NightLightSwitcher::~NightLightSwitcher() {
-    if (hKey != nullptr) {
-        RegCloseKey(hKey);
-    }
-}
-
-bool NightLightSwitcher::supported() const {
+bool NightLightSwitcher::supported() {
+    init();
     return hKey != nullptr;
 }
 
@@ -70,13 +67,13 @@ void NightLightSwitcher::toggle() {
         newData.resize(41, 0);
         std::copy(data, data + 22, newData.begin());
         std::copy(data + 25, data + 43, newData.begin() + 23);
-        newData[18] = 0x13;
+        newData[18] = 0x13; // Disable
     } else {
         // Allocate 43 bytes and modify the necessary fields
         newData.resize(43, 0);
         std::copy(data, data + 22, newData.begin());
         std::copy(data + 23, data + 41, newData.begin() + 25);
-        newData[18] = 0x15;
+        newData[18] = 0x15; // Enable
         newData[23] = 0x10;
         newData[24] = 0x00;
     }
@@ -96,7 +93,7 @@ void NightLightSwitcher::toggle() {
     }
 }
 
-std::vector<BYTE> NightLightSwitcher::hexToBytes(const std::wstring& hex) {
+std::vector<BYTE> hexToBytes(const std::wstring& hex) {
     std::vector<BYTE> bytes;
     size_t len = hex.size();
     for (size_t i = 0; i < len; i += 2) {
@@ -106,10 +103,11 @@ std::vector<BYTE> NightLightSwitcher::hexToBytes(const std::wstring& hex) {
     return bytes;
 }
 
-std::wstring NightLightSwitcher::bytesToHex(const std::vector<BYTE>& bytes) {
+std::wstring bytesToHex(const std::vector<BYTE>& bytes) {
     std::wstringstream ss;
     for (BYTE byte : bytes) {
         ss << std::hex << std::setw(2) << std::setfill(L'0') << static_cast<int>(byte);
     }
     return ss.str();
 }
+

@@ -1,6 +1,7 @@
-#include "configurator.h"
-#include "ui_configurator.h"
-#include "shortcutmanager.h"
+#include "Configurator.h"
+#include "ui_Configurator.h"
+#include "Utils.h"
+#include "ShortcutManager.h"
 #include <QDir>
 #include <QDesktopServices>
 #include <QMessageBox>
@@ -8,18 +9,16 @@
 
 Configurator::Configurator(QWidget *parent)
     : QMainWindow(parent)
-    , utils(new Utils())
-    , steamWindowManager(new SteamWindowManager())
     , ui(new Ui::Configurator)
     , settings("Odizinne", "BigPictureTV")
 
 {
     ui->setupUi(this);
-    this->setWindowIcon(utils->getIconForTheme());
+    this->setWindowIcon(Utils::getIconForTheme());
     populateComboboxes();
     loadSettings();
     setGeneralTab();
-    utils->setFrameColorBasedOnWindow(this, ui->frame);
+    Utils::setFrameColorBasedOnWindow(this, ui->frame);
     this->setFixedSize(356, 187);
     setupConnections();
     getAudioCapabilities();
@@ -29,8 +28,6 @@ Configurator::~Configurator()
 {
     saveSettings();
     emit closed();
-    delete utils;
-    delete steamWindowManager;
     delete ui;
 }
 
@@ -53,7 +50,7 @@ void Configurator::setupConnections()
 
 void Configurator::initDiscordAction()
 {
-    if (!utils->isDiscordInstalled()) {
+    if (!Utils::isDiscordInstalled()) {
         ui->closeDiscordCheckBox->setChecked(false);
         ui->closeDiscordCheckBox->setEnabled(false);
         ui->CloseDiscordLabel->setEnabled(false);
@@ -64,7 +61,7 @@ void Configurator::initDiscordAction()
 
 void Configurator::getAudioCapabilities()
 {
-    if (!utils->isAudioDeviceCmdletsInstalled()) {
+    if (!Utils::isAudioDeviceCmdletsInstalled()) {
         ui->disableAudioCheckBox->setChecked(true);
         ui->disableAudioCheckBox->setEnabled(false);
         toggleAudioSettings(false);

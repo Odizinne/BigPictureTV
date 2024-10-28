@@ -1,7 +1,9 @@
 #include "SteamWindowManager.h"
 #include <QDebug>
+#include <windows.h>
 
-const QMap<QString, QString> SteamWindowManager::BIG_PICTURE_WINDOW_TITLES
+// Constants
+const QMap<QString, QString> BIG_PICTURE_WINDOW_TITLES
     = {{"schinese", "Steam 大屏幕模式"},
        {"tchinese", "Steam Big Picture 模式"},
        {"japanese", "Steam Big Pictureモード"},
@@ -32,13 +34,9 @@ const QMap<QString, QString> SteamWindowManager::BIG_PICTURE_WINDOW_TITLES
        {"vietnamese", "Chế độ Big Picture trên Steam"},
        {"ukrainian", "Steam у режимі Big Picture"}};
 
-const QChar SteamWindowManager::NON_BREAKING_SPACE = QChar(0x00A0);
+const QChar NON_BREAKING_SPACE = QChar(0x00A0);
 
-SteamWindowManager::SteamWindowManager() {}
-
-SteamWindowManager::~SteamWindowManager() {}
-
-QString SteamWindowManager::getRegistryValue(const std::wstring &keyPath, const std::wstring &valueName) const
+QString getRegistryValue(const std::wstring &keyPath, const std::wstring &valueName)
 {
     HKEY hKey;
     WCHAR value[256];
@@ -56,24 +54,13 @@ QString SteamWindowManager::getRegistryValue(const std::wstring &keyPath, const 
     return result;
 }
 
-QString SteamWindowManager::getSteamLanguage() const
-{
-    return getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
-}
-
-QString SteamWindowManager::cleanString(const QString &str) const
+QString cleanString(const QString &str)
 {
     QString cleanedStr = str;
     return cleanedStr.replace(NON_BREAKING_SPACE, ' ');
 }
 
-QString SteamWindowManager::getBigPictureWindowTitle() const
-{
-    QString language = getSteamLanguage().toLower();
-    return BIG_PICTURE_WINDOW_TITLES.value(language, BIG_PICTURE_WINDOW_TITLES.value("english"));
-}
-
-QVector<QString> SteamWindowManager::getAllWindowTitles() const
+QVector<QString> getAllWindowTitles()
 {
     QVector<QString> windowTitles;
 
@@ -94,7 +81,18 @@ QVector<QString> SteamWindowManager::getAllWindowTitles() const
     return windowTitles;
 }
 
-bool SteamWindowManager::isBigPictureRunning() const
+QString SteamWindowManager::getSteamLanguage()
+{
+    return getRegistryValue(L"Software\\Valve\\Steam\\steamglobal", L"Language");
+}
+
+QString SteamWindowManager::getBigPictureWindowTitle()
+{
+    QString language = getSteamLanguage().toLower();
+    return BIG_PICTURE_WINDOW_TITLES.value(language, BIG_PICTURE_WINDOW_TITLES.value("english"));
+}
+
+bool SteamWindowManager::isBigPictureRunning()
 {
     QString bigPictureTitle = cleanString(getBigPictureWindowTitle().toLower());
     QStringList bigPictureWords = bigPictureTitle.split(' ', Qt::SkipEmptyParts);
@@ -115,7 +113,7 @@ bool SteamWindowManager::isBigPictureRunning() const
     return false;
 }
 
-bool SteamWindowManager::isCustomWindowRunning(const QString &windowTitle) const
+bool SteamWindowManager::isCustomWindowRunning(const QString &windowTitle)
 {
     QString cleanedWindowTitle = cleanString(windowTitle.toLower());
     QStringList customWindowTitleWords = cleanedWindowTitle.split(' ', Qt::SkipEmptyParts);

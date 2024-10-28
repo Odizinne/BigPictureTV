@@ -1,4 +1,8 @@
-#include "bigpicturetv.h"
+#include "BigPictureTV.h"
+#include "AudioManager.h"
+#include "NightLightSwitcher.h"
+#include "SteamwindowManager.h"
+#include "Utils.h"
 #include <QApplication>
 #include <QMessageBox>
 #include <QStandardPaths>
@@ -9,10 +13,6 @@
 
 BigPictureTV::BigPictureTV(QObject *parent)
     : QObject(parent)
-    , utils(new Utils())
-    , steamWindowManager(new SteamWindowManager())
-    , audioManager(new AudioManager())
-    , nightLightSwitcher(new NightLightSwitcher())
     , configurator(nullptr)
     , activePowerPlan("")
     , nightLightState(false)
@@ -31,10 +31,6 @@ BigPictureTV::BigPictureTV(QObject *parent)
 
 BigPictureTV::~BigPictureTV()
 {
-    delete utils;
-    delete steamWindowManager;
-    delete audioManager;
-    delete nightLightSwitcher;
     delete windowCheckTimer;
     delete trayIcon;
     delete trayIconMenu;
@@ -45,7 +41,7 @@ BigPictureTV::~BigPictureTV()
 
 void BigPictureTV::createTrayIcon()
 {
-    trayIcon = new QSystemTrayIcon(utils->getIconForTheme(), this);
+    trayIcon = new QSystemTrayIcon(Utils::getIconForTheme(), this);
     trayIconMenu = new QMenu();
     configAction = new QAction(tr("Settings"), this);
     quitAction = new QAction(tr("Quit"), this);
@@ -69,9 +65,9 @@ void BigPictureTV::checkWindowTitle()
 
     bool isRunning;
     if (target_window_mode == 0) {
-        isRunning = steamWindowManager->isBigPictureRunning();
+        isRunning = SteamWindowManager::isBigPictureRunning();
     } else {
-        isRunning = steamWindowManager->isCustomWindowRunning(custom_window_title);
+        isRunning = SteamWindowManager::isCustomWindowRunning(custom_window_title);
     }
 
     if (isRunning && !gamemodeActive) {
@@ -106,7 +102,7 @@ void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
     }
 
     if (command) {
-        utils->runEnhancedDisplayswitch(command);
+        Utils::runEnhancedDisplayswitch(command);
     }
 }
 
@@ -118,10 +114,10 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
     QString audioDevice = isDesktopMode ? desktop_audio_device
                                             : gamemode_audio_device;
 
-    audioManager->setAudioDevice(audioDevice.toStdString());
+    AudioManager::setAudioDevice(audioDevice.toStdString());
 
     try {
-        audioManager->setAudioDevice(audioDevice.toStdString());
+        AudioManager::setAudioDevice(audioDevice.toStdString());
     } catch (const std::runtime_error &e) {
         qDebug() << "Error: " << e.what();
     }
@@ -147,11 +143,11 @@ void BigPictureTV::handleDiscordAction(bool isDesktopMode)
 {
     if (isDesktopMode) {
         if (discordState) {
-            utils->startDiscord();
+            Utils::startDiscord();
         }
     } else {
-        discordState = utils->isDiscordRunning();
-        utils->closeDiscord();
+        discordState = Utils::isDiscordRunning();
+        Utils::closeDiscord();
     }
 }
 
@@ -159,18 +155,18 @@ void BigPictureTV::handleNightLightAction(bool isDesktopMode)
 {
     if (isDesktopMode) {
         if (nightLightState) {
-            nightLightSwitcher->enable();
+            NightLightSwitcher::enable();
         }
     } else {
-        nightLightState = nightLightSwitcher->enabled();
-        nightLightSwitcher->disable();
+        nightLightState = NightLightSwitcher::enabled();
+        NightLightSwitcher::disable();
     }
 }
 
 void BigPictureTV::handleMediaAction(bool isDesktopMode)
 {
     if (!isDesktopMode) {
-        utils->sendMediaKey(VK_MEDIA_STOP);
+        Utils::sendMediaKey(VK_MEDIA_STOP);
     }
 }
 
@@ -178,13 +174,13 @@ void BigPictureTV::handlePowerPlanAction(bool isDesktopMode)
 {
     if (isDesktopMode) {
         if (!activePowerPlan.isEmpty()) {
-            utils->setPowerPlan(activePowerPlan);
+            Utils::setPowerPlan(activePowerPlan);
         } else {
-            utils->setPowerPlan("381b4222-f694-41f0-9685-ff5bb260df2e");
+            Utils::setPowerPlan("381b4222-f694-41f0-9685-ff5bb260df2e");
         }
     } else {
-        activePowerPlan = utils->getActivePowerPlan();
-        utils->setPowerPlan("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
+        activePowerPlan = Utils::getActivePowerPlan();
+        Utils::setPowerPlan("8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c");
     }
 }
 
@@ -234,9 +230,9 @@ void BigPictureTV::startupReset()
     if (gamemodeActive) {
         bool isRunning;
         if (target_window_mode == 0) {
-            isRunning = steamWindowManager->isBigPictureRunning();
+            isRunning = SteamWindowManager::isBigPictureRunning();
         } else {
-            isRunning = steamWindowManager->isCustomWindowRunning(custom_window_title);
+            isRunning = SteamWindowManager::isCustomWindowRunning(custom_window_title);
         }
         if (!isRunning) {
             handleMonitorChanges(true, disable_monitor_switch);

@@ -1,4 +1,4 @@
-#include "shortcutmanager.h"
+#include "ShortcutManager.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>

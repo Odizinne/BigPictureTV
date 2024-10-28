@@ -7,11 +7,7 @@
 #include <stdexcept>
 #include <thread>
 
-AudioManager::AudioManager() {}
-
-AudioManager::~AudioManager() {}
-
-std::string AudioManager::executeCommand(const std::string &command)
+std::string executeCommand(const std::string &command)
 {
     QProcess process;
     process.setProgram("powershell.exe");
@@ -38,7 +34,7 @@ std::string AudioManager::executeCommand(const std::string &command)
     return output.toStdString();
 }
 
-std::vector<Device> AudioManager::parseDevices(const std::string &output)
+std::vector<Device> parseDevices(const std::string &output)
 {
     std::vector<Device> devices;
     devices.reserve(20);
@@ -71,7 +67,7 @@ std::vector<Device> AudioManager::parseDevices(const std::string &output)
     return devices;
 }
 
-bool AudioManager::containsIgnoreCase(const std::string &str, const std::string &substr)
+bool containsIgnoreCase(const std::string &str, const std::string &substr)
 {
     std::string strLower = str;
     std::string substrLower = substr;
@@ -80,7 +76,7 @@ bool AudioManager::containsIgnoreCase(const std::string &str, const std::string 
     return strLower.find(substrLower) != std::string::npos;
 }
 
-bool AudioManager::checkDevice(const std::string &deviceName)
+bool checkDevice(const std::string &deviceName)
 {
     std::string output = executeCommand("Get-AudioDevice -l");
     std::vector<Device> devices = parseDevices(output);

@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "Utils.h"
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -12,14 +12,10 @@
 const QString DISCORD_EXECUTABLE_NAME = "Update.exe";
 const QString DISCORD_PROCESS_NAME = "Discord.exe";
 const QString SUNSHINE_STATUS_FILE = QStandardPaths::writableLocation(
-                                               QStandardPaths::AppDataLocation)
-                                           + "/sunshine-status/status.txt";
+                                         QStandardPaths::AppDataLocation)
+                                     + "/sunshine-status/status.txt";
 
-Utils::Utils() {}
-
-Utils::~Utils() {}
-
-QColor Utils::adjustColor(const QColor &color, double factor) {
+QColor adjustColor(const QColor &color, double factor) {
     int r = color.red();
     int g = color.green();
     int b = color.blue();
@@ -32,7 +28,7 @@ QColor Utils::adjustColor(const QColor &color, double factor) {
     return QColor(r, g, b, a);
 }
 
-bool Utils::isDarkMode(const QColor &color) {
+bool isDarkMode(const QColor &color) {
     int r = color.red();
     int g = color.green();
     int b = color.blue();
@@ -56,35 +52,29 @@ void Utils::setFrameColorBasedOnWindow(QWidget *window, QFrame *frame) {
     frame->setPalette(palette);
 }
 
-void Utils::runEnhancedDisplayswitch(const QString &command)
-{
+void Utils::runEnhancedDisplayswitch(const QString &command) {
     QProcess process;
     QString executablePath = "dependencies/EnhancedDisplaySwitch.exe";
     process.start(executablePath, QStringList() << command);
     process.waitForFinished();
 }
 
-QString Utils::getTheme()
-{
-    // Determine the theme based on registry value
+QString getTheme() {
     QSettings settings(
         "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
         QSettings::NativeFormat);
     int value = settings.value("AppsUseLightTheme", 1).toInt();
 
-    // Return the opposite to match icon (dark icon on light theme)
     return (value == 0) ? "light" : "dark";
 }
 
-QIcon Utils::getIconForTheme()
-{
+QIcon Utils::getIconForTheme() {
     QString theme = getTheme();
     QString iconPath = QString(":/icons/icon_%1.png").arg(theme);
     return QIcon(iconPath);
 }
 
-QString Utils::getActivePowerPlan()
-{
+QString Utils::getActivePowerPlan() {
     QString regPath = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Power\\User\\PowerSchemes";
     QString regKey = "ActivePowerScheme";
 
@@ -94,8 +84,7 @@ QString Utils::getActivePowerPlan()
     return activeSchemeGuid;
 }
 
-void Utils::setPowerPlan(QString planGuid)
-{
+void Utils::setPowerPlan(QString planGuid) {
     QString command = "powercfg";
     QStringList arguments;
     arguments << "/s" << planGuid;
@@ -112,8 +101,7 @@ void Utils::setPowerPlan(QString planGuid)
     }
 }
 
-QString Utils::getDiscordPath()
-{
+QString getDiscordPath() {
     QString localAppData = qgetenv("LOCALAPPDATA");
     if (localAppData.isEmpty()) {
         qWarning() << "Failed to get LOCALAPPDATA environment variable";
@@ -123,14 +111,12 @@ QString Utils::getDiscordPath()
     return localAppData + "/Discord/" + DISCORD_EXECUTABLE_NAME;
 }
 
-bool Utils::isDiscordInstalled()
-{
+bool Utils::isDiscordInstalled() {
     QString discordPath = getDiscordPath();
     return QFileInfo::exists(discordPath);
 }
 
-bool Utils::isDiscordRunning()
-{
+bool Utils::isDiscordRunning() {
     QProcess process;
     process.start("tasklist.exe", QStringList() << "/FI" << QString("IMAGENAME eq %1").arg(DISCORD_PROCESS_NAME));
 
@@ -143,8 +129,7 @@ bool Utils::isDiscordRunning()
     return output.contains(DISCORD_PROCESS_NAME, Qt::CaseInsensitive);
 }
 
-void Utils::closeDiscord()
-{
+void Utils::closeDiscord() {
     QStringList arguments;
     arguments << "/IM" << DISCORD_PROCESS_NAME
               << "/F";
@@ -159,8 +144,7 @@ void Utils::closeDiscord()
     }
 }
 
-void Utils::startDiscord()
-{
+void Utils::startDiscord() {
     QString discordPath = getDiscordPath();
     if (discordPath.isEmpty()) {
         qWarning() << "Failed to get Discord path";
@@ -179,8 +163,7 @@ void Utils::startDiscord()
     }
 }
 
-bool Utils::isAudioDeviceCmdletsInstalled()
-{
+bool Utils::isAudioDeviceCmdletsInstalled() {
     QProcess process;
     process.setProgram("powershell");
     process.setArguments({"-NoProfile", "-Command", "Get-Module -ListAvailable -Name AudioDeviceCmdlets"});

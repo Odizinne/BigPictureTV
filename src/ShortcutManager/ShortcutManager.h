@@ -3,10 +3,10 @@
 
 #include <QString>
 
-namespace ShortcutManager {
-
-bool isShortcutPresent();
-void manageShortcut(bool state);
+namespace ShortcutManager
+{
+    bool isShortcutPresent();
+    void manageShortcut(bool state);
 }
 
 #endif // SHORTCUTMANAGER_H

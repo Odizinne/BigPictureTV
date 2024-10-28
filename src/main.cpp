@@ -5,7 +5,7 @@
 #include <QSharedMemory>
 #include <QString>
 #include <QTranslator>
-#include "bigpicturetv.h"
+#include "BigPictureTV.h"
 
 int main(int argc, char *argv[])
 {

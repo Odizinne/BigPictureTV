@@ -2,10 +2,7 @@ QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++17                                                 \
-          silent                                                \
-          lrelease                                              \
-          embed_translations                                    \
+CONFIG += c++17 silent lrelease embed_translations
 
 QM_FILES_RESOURCE_PREFIX = /translations
 DEPENDENCIES_DIR = $$PWD/dependencies
@@ -21,26 +18,26 @@ INCLUDEPATH +=                                                  \
     src/Utils                                                   \
 
 SOURCES += \
-    src/AudioManager/audiomanager.cpp                           \
+    src/AudioManager/AudioManager.cpp                           \
     src/BigPictureTV/BigPictureTV.cpp                           \
-    src/main.cpp                                                \
     src/NightLightSwitcher/NightLightSwitcher.cpp               \
-    src/Configurator/configurator.cpp                           \
-    src/ShortcutManager/shortcutmanager.cpp                     \
-    src/SteamWindowManager/steamwindowmanager.cpp               \
+    src/Configurator/Configurator.cpp                           \
+    src/ShortcutManager/ShortcutManager.cpp                     \
+    src/SteamWindowManager/SteamwindowManager.cpp               \
     src/Utils/utils.cpp                                         \
+    src/main.cpp                                                \
 
 HEADERS +=                                                      \
-    src/AudioManager/audiomanager.h                             \
+    src/AudioManager/AudioManager.h                             \
     src/BigPictureTV/BigPictureTV.h                             \
-    src/Configurator/configurator.h                             \
+    src/Configurator/Configurator.h                             \
     src/NightLightSwitcher/NightLightSwitcher.h                 \
-    src/ShortcutManager/shortcutmanager.h                       \
-    src/SteamWindowManager/steamwindowmanager.h                 \
+    src/ShortcutManager/ShortcutManager.h                       \
+    src/SteamWindowManager/SteamwindowManager.h                 \
     src/Utils/utils.h                                           \
 
 FORMS +=                                                        \
-    src/Configurator/configurator.ui                            \
+    src/Configurator/Configurator.ui                            \
 
 TRANSLATIONS +=                                                 \
     src/Resources/Tr/BigPictureTV_fr.ts                         \

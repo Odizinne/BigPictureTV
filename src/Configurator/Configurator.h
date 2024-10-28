@@ -7,8 +7,6 @@
 #include <QMainWindow>
 #include <QString>
 #include <QSettings>
-#include "utils.h"
-#include "steamwindowmanager.h"
 
 namespace Ui {
 class Configurator;
@@ -35,8 +33,6 @@ private slots:
 
 private:
     void initDiscordAction();
-    Utils* utils;
-    SteamWindowManager* steamWindowManager;
     bool discordInstalled;
     void getAudioCapabilities();
     void populateComboboxes();
