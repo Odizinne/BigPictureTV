@@ -20,7 +20,6 @@ public:
     void closeDiscord();
     void startDiscord();
     bool isAudioDeviceCmdletsInstalled();
-    bool isSunshineStreaming();
     void sendMediaKey(WORD keyCode);
     void setFrameColorBasedOnWindow(QWidget *window, QFrame *frame);
 

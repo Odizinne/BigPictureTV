@@ -67,10 +67,6 @@ void BigPictureTV::checkWindowTitle()
         return;
     }
 
-    if (utils->isSunshineStreaming()) {
-        return;
-    }
-
     bool isRunning;
     if (target_window_mode == 0) {
         isRunning = steamWindowManager->isBigPictureRunning();

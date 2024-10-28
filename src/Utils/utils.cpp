@@ -205,14 +205,6 @@ bool Utils::isAudioDeviceCmdletsInstalled()
     return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
 }
 
-bool Utils::isSunshineStreaming()
-{
-    if (QFileInfo::exists(SUNSHINE_STATUS_FILE)) {
-        return true;
-    }
-    return false;
-}
-
 void Utils::sendMediaKey(WORD keyCode) {
     INPUT ip = {0};
     ip.type = INPUT_KEYBOARD;
