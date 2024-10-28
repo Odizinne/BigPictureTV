@@ -7,17 +7,9 @@ CONFIG += c++17                                                 \
           lrelease                                              \
           embed_translations                                    \
 
-GIT_COMMIT_ID = $$system(git log -n 1 --pretty=format:"%H")
-GIT_COMMIT_DATE = $$system(git log -n 1 --pretty=format:"%ci")
-GIT_BRANCH = $$system(git branch --show-current)
 QM_FILES_RESOURCE_PREFIX = /translations
 DEPENDENCIES_DIR = $$PWD/dependencies
 DEST_DIR = $$OUT_PWD/release/dependencies
-
-DEFINES += \
-    GIT_COMMIT_ID=\\"\"\"$$GIT_COMMIT_ID\\"\"\"                 \
-    GIT_COMMIT_DATE=\\"\"\"$$GIT_COMMIT_DATE\\"\"\"             \
-    GIT_BRANCH=\\"\"\"$$GIT_BRANCH\\"\"\"                       \
 
 INCLUDEPATH +=                                                  \
     src/AudioManager                                            \

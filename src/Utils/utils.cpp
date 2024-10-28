@@ -19,6 +19,43 @@ Utils::Utils() {}
 
 Utils::~Utils() {}
 
+QColor Utils::adjustColor(const QColor &color, double factor) {
+    int r = color.red();
+    int g = color.green();
+    int b = color.blue();
+    int a = color.alpha();
+
+    r = std::min(std::max(static_cast<int>(r * factor), 0), 255);
+    g = std::min(std::max(static_cast<int>(g * factor), 0), 255);
+    b = std::min(std::max(static_cast<int>(b * factor), 0), 255);
+
+    return QColor(r, g, b, a);
+}
+
+bool Utils::isDarkMode(const QColor &color) {
+    int r = color.red();
+    int g = color.green();
+    int b = color.blue();
+    double brightness = (r + g + b) / 3.0;
+    return brightness < 127;
+}
+
+void Utils::setFrameColorBasedOnWindow(QWidget *window, QFrame *frame) {
+    QColor main_bg_color = window->palette().color(QPalette::Window);
+    QColor frame_bg_color;
+
+    if (isDarkMode(main_bg_color)) {
+        frame_bg_color = adjustColor(main_bg_color, 1.75);  // Brighten color
+    } else {
+        frame_bg_color = adjustColor(main_bg_color, 0.95);  // Darken color
+    }
+
+    QPalette palette = frame->palette();
+    palette.setBrush(QPalette::Window, QBrush(frame_bg_color));
+    frame->setAutoFillBackground(true);
+    frame->setPalette(palette);
+}
+
 void Utils::runEnhancedDisplayswitch(const QString &command)
 {
     QProcess process;

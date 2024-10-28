@@ -15,9 +15,11 @@ Configurator::Configurator(QWidget *parent)
 
 {
     ui->setupUi(this);
-    setupInfoTab();
     populateComboboxes();
     loadSettings();
+    setGeneralTab();
+    utils->setFrameColorBasedOnWindow(this, ui->frame);
+    this->setFixedSize(356, 187);
     setupConnections();
     getAudioCapabilities();
 }
@@ -39,7 +41,10 @@ void Configurator::setupConnections()
     connect(ui->installAudioButton,  &QPushButton::clicked, this, &Configurator::onAudioButtonClicked);
     connect(ui->targetWindowComboBox, &QComboBox::currentIndexChanged, this, &Configurator::onTargetWindowComboBoxIndexChanged);
     connect(ui->resetSettingsButton, &QPushButton::clicked, this, &Configurator::createDefaultSettings);
-    connect(ui->toggleActionCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::toggleAllActions);
+    connect(ui->generalButton, &QPushButton::clicked, this, &Configurator::setGeneralTab);
+    connect(ui->avButton, &QPushButton::clicked, this, &Configurator::setAVTab);
+    connect(ui->actionsButton, &QPushButton::clicked, this, &Configurator::setActionsTab);
+    connect(ui->advancedButton, &QPushButton::clicked, this, &Configurator::setAdvancedTab);
 
     ui->startupCheckBox->setChecked(ShortcutManager::isShortcutPresent());
     initDiscordAction();
@@ -192,11 +197,6 @@ void Configurator::loadSettings()
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
     toggleCustomWindowTitle(ui->targetWindowComboBox->currentIndex() == 1);
-
-    if (ui->closeDiscordCheckBox->isChecked() && ui->disableNightLightCheckBox->isChecked()
-        && ui->pauseMediaAction->isChecked() && ui->enablePerformancePowerPlan->isChecked()) {
-        ui->toggleActionCheckBox->setChecked(true);
-    }
 }
 
 void Configurator::saveSettings()
@@ -238,23 +238,35 @@ void Configurator::toggleCustomWindowTitle(bool state)
     ui->customWindowLabel->setEnabled(state);
 }
 
-void Configurator::setupInfoTab()
+
+void Configurator::setGeneralTab()
 {
-    ui->detectedSteamLanguage->setText(steamWindowManager->getSteamLanguage());
-    ui->targetWindowTitle->setText(steamWindowManager->getBigPictureWindowTitle());
-    ui->repository->setText("<a href=\"https://github.com/odizinne/bigpicturetv/\">Odizinne/BigPictureTV</a>");
-    ui->repository->setTextFormat(Qt::RichText);
-    ui->repository->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    ui->repository->setOpenExternalLinks(true);
-    ui->commitID->setText(GIT_COMMIT_ID);
-    ui->commitDate->setText(GIT_COMMIT_DATE);
+    ui->generalFrame->setVisible(true);
+    ui->avFrame->setVisible(false);
+    ui->actionsFrame->setVisible(false);
+    ui->advancedFrame->setVisible(false);
 }
 
-void Configurator::toggleAllActions()
+void Configurator::setAVTab()
 {
-    bool state = ui->toggleActionCheckBox->isChecked();
-    ui->closeDiscordCheckBox->setChecked(state);
-    ui->disableNightLightCheckBox->setChecked(state);
-    ui->pauseMediaAction->setChecked(state);
-    ui->enablePerformancePowerPlan->setChecked(state);
+    ui->generalFrame->setVisible(false);
+    ui->avFrame->setVisible(true);
+    ui->actionsFrame->setVisible(false);
+    ui->advancedFrame->setVisible(false);
+}
+
+void Configurator::setActionsTab()
+{
+    ui->generalFrame->setVisible(false);
+    ui->avFrame->setVisible(false);
+    ui->actionsFrame->setVisible(true);
+    ui->advancedFrame->setVisible(false);
+}
+
+void Configurator::setAdvancedTab()
+{
+    ui->generalFrame->setVisible(false);
+    ui->avFrame->setVisible(false);
+    ui->actionsFrame->setVisible(false);
+    ui->advancedFrame->setVisible(true);
 }
