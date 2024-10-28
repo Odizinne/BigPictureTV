@@ -3,22 +3,10 @@
 
 #include <QString>
 
-class ShortcutManager {
-public:
-    ShortcutManager();
-    ~ShortcutManager();
+namespace ShortcutManager {
 
-    bool isShortcutPresent();
-    void manageShortcut(bool state);
-
-private:
-    void setPaths(QString &targetPath, QString &startupFolder);
-    QString getShortcutPath();
-    void createShortcut(const QString &targetPath);
-    void removeShortcut();
-    QString getStartupFolder();
-};
-
-
+bool isShortcutPresent();
+void manageShortcut(bool state);
+}
 
 #endif // SHORTCUTMANAGER_H

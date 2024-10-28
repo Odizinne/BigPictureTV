@@ -7,7 +7,6 @@
 #include <QMainWindow>
 #include <QString>
 #include <QSettings>
-#include "shortcutmanager.h"
 #include "utils.h"
 #include "steamwindowmanager.h"
 
@@ -34,7 +33,6 @@ private slots:
 private:
     void initDiscordAction();
     Utils* utils;
-    ShortcutManager* shortcutManager;
     SteamWindowManager* steamWindowManager;
     bool discordInstalled;
     void toggleAllActions();

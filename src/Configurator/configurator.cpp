@@ -1,5 +1,6 @@
 #include "configurator.h"
 #include "ui_configurator.h"
+#include "shortcutmanager.h"
 #include <QDir>
 #include <QDesktopServices>
 #include <QMessageBox>
@@ -8,7 +9,6 @@
 Configurator::Configurator(QWidget *parent)
     : QMainWindow(parent)
     , utils(new Utils())
-    , shortcutManager(new ShortcutManager())
     , steamWindowManager(new SteamWindowManager())
     , ui(new Ui::Configurator)
     , settings("Odizinne", "BigPictureTV")
@@ -26,7 +26,6 @@ Configurator::~Configurator()
 {
     saveSettings();
     emit closed();
-    delete shortcutManager;
     delete utils;
     delete steamWindowManager;
     delete ui;
@@ -42,7 +41,7 @@ void Configurator::setupConnections()
     connect(ui->resetSettingsButton, &QPushButton::clicked, this, &Configurator::createDefaultSettings);
     connect(ui->toggleActionCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::toggleAllActions);
 
-    ui->startupCheckBox->setChecked(shortcutManager->isShortcutPresent());
+    ui->startupCheckBox->setChecked(ShortcutManager::isShortcutPresent());
     initDiscordAction();
 }
 
@@ -86,7 +85,7 @@ void Configurator::populateComboboxes()
 void Configurator::onStartupCheckboxStateChanged(Qt::CheckState state)
 {
     bool isChecked = (state == Qt::Checked);
-    shortcutManager->manageShortcut(isChecked);
+    ShortcutManager::manageShortcut(isChecked);
 }
 
 void Configurator::onDisableAudioCheckboxStateChanged(Qt::CheckState state)

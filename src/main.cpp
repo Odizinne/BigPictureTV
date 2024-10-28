@@ -24,7 +24,6 @@ int main(int argc, char *argv[])
 
     QLocale locale;
     QString languageCode = locale.name().section('_', 0, 0);
-    languageCode = "fr";
     QTranslator translator;
     if (translator.load(":/translations/BigPictureTV_" + languageCode + ".qm")) {
         a.installTranslator(&translator);
