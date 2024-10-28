@@ -292,7 +292,7 @@ Détails de l&apos;erreur:</translation>
     <message>
         <location filename="../../Configurator/configurator.ui" line="175"/>
         <source>Gamemode video</source>
-        <translation>Écrans monde jeu</translation>
+        <translation>Écrans mode jeu</translation>
     </message>
     <message>
         <location filename="../../Configurator/configurator.ui" line="188"/>
