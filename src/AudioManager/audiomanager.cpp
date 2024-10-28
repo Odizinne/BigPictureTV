@@ -17,7 +17,7 @@ std::string AudioManager::executeCommand(const std::string &command)
     process.setProgram("powershell.exe");
 
     QStringList arguments;
-    arguments << "-Command" << QString::fromStdString(command);
+    arguments << "-NoProfile" << "-Command" << QString::fromStdString(command);
     process.setArguments(arguments);
 
     process.start();

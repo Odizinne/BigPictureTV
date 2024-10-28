@@ -146,7 +146,7 @@ bool Utils::isAudioDeviceCmdletsInstalled()
 {
     QProcess process;
     process.setProgram("powershell");
-    process.setArguments({"-Command", "Get-Module -ListAvailable -Name AudioDeviceCmdlets"});
+    process.setArguments({"-NoProfile", "-Command", "Get-Module -ListAvailable -Name AudioDeviceCmdlets"});
     process.start();
     if (!process.waitForStarted()) {
         qWarning() << "Failed to start process.";
