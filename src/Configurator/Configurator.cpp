@@ -278,58 +278,49 @@ void Configurator::fadeOut(QWidget *widget, std::function<void()> onFinished = n
     }
 }
 
-void Configurator::setGeneralTab() {
-    if (activeFrame == 1) {
+void Configurator::switchTab(int targetFrame, QPushButton* targetButton, QWidget* targetFrameWidget) {
+    if (activeFrame == targetFrame) {
+        targetButton->setChecked(true);
         return;
     }
-    fadeOut(ui->avFrame, [this]() {
-        fadeOut(ui->actionsFrame, [this]() {
-            fadeOut(ui->advancedFrame, [this]() {
-                fadeIn(ui->generalFrame);
-            });
+
+    ui->generalButton->setChecked(false);
+    ui->avButton->setChecked(false);
+    ui->actionsButton->setChecked(false);
+    ui->advancedButton->setChecked(false);
+    targetButton->setChecked(true);
+
+    QWidget* currentFrame = nullptr;
+
+    switch (activeFrame) {
+    case 1: currentFrame = ui->generalFrame; break;
+    case 2: currentFrame = ui->avFrame; break;
+    case 3: currentFrame = ui->actionsFrame; break;
+    case 4: currentFrame = ui->advancedFrame; break;
+    default: break;
+    }
+
+    if (currentFrame) {
+        fadeOut(currentFrame, [this, targetFrameWidget]() {
+            fadeIn(targetFrameWidget);
         });
-    });
-    activeFrame = 1;
+    }
+
+    activeFrame = targetFrame;
+}
+
+void Configurator::setGeneralTab() {
+    switchTab(1, ui->generalButton, ui->generalFrame);
 }
 
 void Configurator::setAVTab() {
-    if (activeFrame == 2) {
-        return;
-    }
-    fadeOut(ui->generalFrame, [this]() {
-        fadeOut(ui->actionsFrame, [this]() {
-            fadeOut(ui->advancedFrame, [this]() {
-                fadeIn(ui->avFrame);
-            });
-        });
-    });
-    activeFrame = 2;
+    switchTab(2, ui->avButton, ui->avFrame);
 }
 
 void Configurator::setActionsTab() {
-    if (activeFrame == 3) {
-        return;
-    }
-    fadeOut(ui->generalFrame, [this]() {
-        fadeOut(ui->avFrame, [this]() {
-            fadeOut(ui->advancedFrame, [this]() {
-                fadeIn(ui->actionsFrame);
-            });
-        });
-    });
-    activeFrame = 3;
+    switchTab(3, ui->actionsButton, ui->actionsFrame);
 }
 
 void Configurator::setAdvancedTab() {
-    if (activeFrame == 4) {
-        return;
-    }
-    fadeOut(ui->generalFrame, [this]() {
-        fadeOut(ui->avFrame, [this]() {
-            fadeOut(ui->actionsFrame, [this]() {
-                fadeIn(ui->advancedFrame);
-            });
-        });
-    });
-    activeFrame = 4;
+    switchTab(4, ui->advancedButton, ui->advancedFrame);
 }

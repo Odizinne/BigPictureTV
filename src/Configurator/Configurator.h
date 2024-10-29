@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QSettings>
+#include <QPushButton>
 
 namespace Ui {
 class Configurator;
@@ -47,6 +48,8 @@ private:
     void initUI();
     void fadeIn(QWidget *widget);
     void fadeOut(QWidget *widget, std::function<void()> onFinished);
+    void showFrame(QWidget* targetFrame, QPushButton* activeButton, int frameIndex);
+    void switchTab(int targetFrame, QPushButton* targetButton, QWidget* targetFrameWidget);
 
     Ui::Configurator *ui;
     QSettings settings;
