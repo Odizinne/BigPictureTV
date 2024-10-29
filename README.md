@@ -4,11 +4,11 @@
 [![license](https://img.shields.io/github/license/odizinne/bigpicturetv)]()
 
 This project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
-*Looking for the [linux version](https://github.com/Odizinne/BigpictureTV-Linux)?*
 
 ## Overview
 
 ![image](.assets/screenshot.png)
+
 ## Requirements
 
 **Runtime:**
@@ -39,8 +39,6 @@ Head to [release](https://github.com/Odizinne/BigPictureTV/releases/latest) sect
 Place the directory wherever you like (`%localappdata%\Programs` is a good one)
 
 ## Usage Instructions
-
-- If you ever need to reset your settings, press alt key to open the menubar.
 
 ### Window Check Rate
 
@@ -97,26 +95,15 @@ BigPictureTV uses Windows' built-in `displayswitch.exe` for monitor switching.
    - Press `Win + P` and switch back to "Internal" or "Extend".
 
 **Alternative Option:**
-- If you prefer not to configure monitors manually, select `Clone` in BigPictureTV settings.
+- If you prefer not to configure monitors manually, select `Clone` in BigPictureTV settings.  
+This is not optimal unless you manually set a FPS limit to your TV refresh rate in games.
 
 ### Actions
 
 - Close discord in gamemode, start discord in desktop mode.
 - Disable night light in gamemode, revert to previous state in desktop mode.
 - Set performance power plan in gamemode, revert to previous state in desktop mode.
-
-## I want to help
-
-I need help for application translation.  
-Currently done:
-- EN
-- FR
-
-## To-do
-
-- Clean code
-- Optimize workflows further
-- Action UI rework (it looks cluttered)
+- Pause media (Spotify, Youtube...) in gamemode, restore them in desktop mode.
 
 ## Credits
 
