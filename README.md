@@ -17,14 +17,20 @@ This project automates switching between a monitor and a TV when launching Steam
  
 ## Download
 
-### Using OdizinnePackageManager
+### Using OdizinnePackageManager (recommended)
 
 - Install OPM
-```
+
+In powershell:
+
+```powershell
 Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/Odizinne/opm/refs/heads/main/opm_install.ps1')
 ```
 
-- Install BigPictureTV 
+- Install BigPictureTV
+
+In powershell:
+
 ```
 opm update
 opm install BigPictureTV
@@ -36,7 +42,8 @@ BigPictureTV will be available in your start menu.
 
 Head to [release](https://github.com/Odizinne/BigPictureTV/releases/latest) section and grab the latest one.
 
-Place the directory wherever you like (`%localappdata%\Programs` is a good one)
+Extract it and place the directory wherever you like.  
+Run `BigPictureTV.exe`.
 
 ## Usage Instructions
 
