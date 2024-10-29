@@ -8,7 +8,7 @@ This project automates switching between a monitor and a TV when launching Steam
 
 ## Overview
 
-![image](assets/screenshot.png)
+![image](.assets/screenshot.png)
 ## Requirements
 
 **Runtime:**

@@ -8,45 +8,45 @@ QM_FILES_RESOURCE_PREFIX = /translations
 DEPENDENCIES_DIR = $$PWD/dependencies
 DEST_DIR = $$OUT_PWD/release/dependencies
 
-INCLUDEPATH +=                                                  \
-    src/AudioManager                                            \
-    src/BigPictureTV                                            \
-    src/Configurator                                            \
-    src/NightLightSwitcher                                      \
-    src/ShortcutManager                                         \
-    src/SteamWindowManager                                      \
-    src/Utils                                                   \
+INCLUDEPATH +=                                              \
+    AudioManager                                            \
+    BigPictureTV                                            \
+    Configurator                                            \
+    NightLightSwitcher                                      \
+    ShortcutManager                                         \
+    SteamWindowManager                                      \
+    Utils                                                   \
 
-SOURCES += \
-    src/AudioManager/AudioManager.cpp                           \
-    src/BigPictureTV/BigPictureTV.cpp                           \
-    src/NightLightSwitcher/NightLightSwitcher.cpp               \
-    src/Configurator/Configurator.cpp                           \
-    src/ShortcutManager/ShortcutManager.cpp                     \
-    src/SteamWindowManager/SteamwindowManager.cpp               \
-    src/Utils/utils.cpp                                         \
-    src/main.cpp                                                \
+SOURCES +=                                                  \
+    AudioManager/AudioManager.cpp                           \
+    BigPictureTV/BigPictureTV.cpp                           \
+    NightLightSwitcher/NightLightSwitcher.cpp               \
+    Configurator/Configurator.cpp                           \
+    ShortcutManager/ShortcutManager.cpp                     \
+    SteamWindowManager/SteamwindowManager.cpp               \
+    Utils/utils.cpp                                         \
+    main.cpp                                                \
 
-HEADERS +=                                                      \
-    src/AudioManager/AudioManager.h                             \
-    src/BigPictureTV/BigPictureTV.h                             \
-    src/Configurator/Configurator.h                             \
-    src/NightLightSwitcher/NightLightSwitcher.h                 \
-    src/ShortcutManager/ShortcutManager.h                       \
-    src/SteamWindowManager/SteamwindowManager.h                 \
-    src/Utils/utils.h                                           \
+HEADERS +=                                                  \
+    AudioManager/AudioManager.h                             \
+    BigPictureTV/BigPictureTV.h                             \
+    Configurator/Configurator.h                             \
+    NightLightSwitcher/NightLightSwitcher.h                 \
+    ShortcutManager/ShortcutManager.h                       \
+    SteamWindowManager/SteamwindowManager.h                 \
+    Utils/utils.h                                           \
 
-FORMS +=                                                        \
-    src/Configurator/Configurator.ui                            \
+FORMS +=                                                    \
+    Configurator/Configurator.ui                            \
 
-TRANSLATIONS +=                                                 \
-    src/Resources/Tr/BigPictureTV_fr.ts                         \
-    src/Resources/Tr/BigPictureTV_en.ts                         \
+TRANSLATIONS +=                                             \
+    Resources/Tr/BigPictureTV_fr.ts                         \
+    Resources/Tr/BigPictureTV_en.ts                         \
 
-RESOURCES +=                                                    \
-    src/Resources/resources.qrc                                 \
+RESOURCES +=                                                \
+    Resources/resources.qrc                                 \
 
-RC_FILE = src/Resources/appicon.rc
+RC_FILE = Resources/appicon.rc
 
 LIBS += -lole32 -luser32 -ladvapi32 -lshell32
 
