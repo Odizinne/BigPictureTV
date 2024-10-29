@@ -29,6 +29,7 @@ private:
     QTimer *windowCheckTimer;
     QMenu *trayIconMenu;
     QAction *quitAction;
+    QAction *pauseAction;
     QAction *configAction;
     void loadSettings();
     void createTrayIcon();
@@ -42,6 +43,7 @@ private:
     void checkWindowTitle();
     void showSettings();
     void startupReset();
+    void changeDetectionState();
 
     QString gamemode_audio_device;
     QString desktop_audio_device;

@@ -43,16 +43,23 @@ void BigPictureTV::createTrayIcon()
 {
     trayIcon = new QSystemTrayIcon(Utils::getIconForTheme(), this);
     trayIconMenu = new QMenu();
+
+    pauseAction = new QAction(tr("Pause detection"), this);
+    pauseAction->setCheckable(true);
+    connect(pauseAction, &QAction::triggered, this, &BigPictureTV::changeDetectionState);
+    trayIconMenu->addAction(pauseAction);
+
+    trayIconMenu->addSeparator();
+
     configAction = new QAction(tr("Settings"), this);
-    quitAction = new QAction(tr("Quit"), this);
-
     connect(configAction, &QAction::triggered, this, &BigPictureTV::showSettings);
-    connect(quitAction, &QAction::triggered, this, &QApplication::quit);
-
     trayIconMenu->addAction(configAction);
-    trayIconMenu->addAction(quitAction);
-    trayIcon->setContextMenu(trayIconMenu);
 
+    quitAction = new QAction(tr("Quit"), this);
+    connect(quitAction, &QAction::triggered, this, &QApplication::quit);
+    trayIconMenu->addAction(quitAction);
+
+    trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setToolTip("BigPictureTV");
     trayIcon->show();
 }
@@ -214,6 +221,7 @@ void BigPictureTV::showSettings()
     configurator = new Configurator;
     configurator->setAttribute(Qt::WA_DeleteOnClose);
     connect(configurator, &Configurator::closed, this, &BigPictureTV::onConfiguratorClosed);
+
     configurator->show();
 }
 
@@ -222,7 +230,10 @@ void BigPictureTV::onConfiguratorClosed()
     configurator = nullptr;
     loadSettings();
     windowCheckTimer->setInterval(window_checkrate);
-    windowCheckTimer->start();
+
+    if (!pauseAction->isChecked()) {
+        windowCheckTimer->start();
+    }
 }
 
 void BigPictureTV::startupReset()
@@ -238,5 +249,12 @@ void BigPictureTV::startupReset()
             handleMonitorChanges(true, disable_monitor_switch);
             handleAudioChanges(true, disable_audio_switch);
         }
+    }
+}
+
+void BigPictureTV::changeDetectionState()
+{
+    if (!configurator) {
+        pauseAction->isChecked() ? windowCheckTimer->stop() : windowCheckTimer->start();
     }
 }
