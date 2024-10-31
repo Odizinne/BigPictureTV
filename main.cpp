@@ -2,36 +2,48 @@
 #include <QDebug>
 #include <QLocale>
 #include <QMessageBox>
-#include <QSharedMemory>
+#include <QLocalServer>
+#include <QLocalSocket>
 #include <QString>
 #include <QTranslator>
 #include "BigPictureTV.h"
 
 int main(int argc, char *argv[])
 {
-    QSharedMemory sharedMemory("BigPictureTVUniqueIdentifier");
+    QApplication a(argc, argv);
 
-    if (sharedMemory.attach()) {
+    QString serverName = "BigPictureTVUniqueIdentifier";
+    QLocalServer localServer;
+    QLocalSocket localSocket;
+
+    localSocket.connectToServer(serverName);
+
+    if (localSocket.waitForConnected(500)) {
+        qDebug() << "Another instance is already running.";
         return 0;
     }
 
-    if (!sharedMemory.create(1)) {
-        qDebug() << "Unable to create shared memory segment.";
+    if (!localServer.listen(serverName)) {
+        qDebug() << "Unable to start the local server:" << localServer.errorString();
         return 1;
     }
-
-    QApplication a(argc, argv);
 
     QLocale locale;
     QString languageCode = locale.name().section('_', 0, 0);
     QTranslator translator;
+
     if (translator.load(":/translations/BigPictureTV_" + languageCode + ".qm")) {
         a.installTranslator(&translator);
     }
+
     a.setStyle("fusion");
     a.setQuitOnLastWindowClosed(false);
+
     BigPictureTV w;
-    QObject::connect(&a, &QApplication::aboutToQuit, [&sharedMemory]() { sharedMemory.detach(); });
+
+    QObject::connect(&a, &QApplication::aboutToQuit, [&localServer]() {
+        localServer.close();
+    });
 
     return a.exec();
 }
