@@ -69,7 +69,7 @@ jobs:
           # Check if the directory exists
           if (Test-Path $buildDir) {
               # Remove .cpp, .h, .obj, and .res files
-              Get-ChildItem -Path $buildDir -Include *.cpp, *.h, *.obj, *.res -Recurse | Remove-Item -Force
+              Get-ChildItem -Path $buildDir -Include *.cpp, *.h, *.obj, *.res, *.qm, *.qrc -Recurse | Remove-Item -Force
           } else {
               Write-Host "Directory not found: $buildDir"
           }
@@ -81,7 +81,7 @@ jobs:
           cd build
 
           # Use the found path to windeployqt
-          $windeployqtPath = "D:\a\BigPictureTV\Qt\6.7.2\msvc2019_64\bin\windeployqt6.exe"
+          $windeployqtPath = "D:\a\BigPictureTV\Qt\6.8.0\msvc2022_64\bin\windeployqt6.exe"
 
           # Check if the executable exists
           if (Test-Path $windeployqtPath) {
