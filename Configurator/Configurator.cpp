@@ -50,7 +50,7 @@ void Configurator::setupConnections()
     connect(ui->actionsButton, &QPushButton::clicked, this, &Configurator::setActionsTab);
     connect(ui->advancedButton, &QPushButton::clicked, this, &Configurator::setAdvancedTab);
 
-    ui->startupCheckBox->setChecked(ShortcutManager::isShortcutPresent());
+    ui->startupCheckBox->setChecked(ShortcutManager::isShortcutPresent("BigPictureTV.lnk"));
     initDiscordAction();
 }
 
@@ -94,7 +94,7 @@ void Configurator::populateComboboxes()
 void Configurator::onStartupCheckboxStateChanged(Qt::CheckState state)
 {
     bool isChecked = (state == Qt::Checked);
-    ShortcutManager::manageShortcut(isChecked);
+    ShortcutManager::manageShortcut(isChecked, "BigPictureTV.lnk");
 }
 
 void Configurator::onDisableAudioCheckboxStateChanged(Qt::CheckState state)

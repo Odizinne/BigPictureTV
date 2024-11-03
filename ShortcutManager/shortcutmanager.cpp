@@ -5,9 +5,8 @@
 #include <QShortcut>
 #include <QStandardPaths>
 
-void ShortcutManager::manageShortcut(bool state)
+void ShortcutManager::manageShortcut(bool state, QString shortcutName)
 {
-    QString shortcutName = "BigPictureTV.lnk";
     QString applicationPath = QCoreApplication::applicationFilePath();
     QString startupPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + QDir::separator() + "Startup";
     QString shortcutPath = startupPath + QDir::separator() + shortcutName;
@@ -19,9 +18,8 @@ void ShortcutManager::manageShortcut(bool state)
     }
 }
 
-bool ShortcutManager::isShortcutPresent()
+bool ShortcutManager::isShortcutPresent(QString shortcutName)
 {
-    QString shortcutName = "BigPictureTV.lnk";
     QString startupPath = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation) + QDir::separator() + "Startup";
     QString shortcutPath = startupPath + QDir::separator() + shortcutName;
 

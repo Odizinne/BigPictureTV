@@ -5,8 +5,8 @@
 
 namespace ShortcutManager
 {
-    bool isShortcutPresent();
-    void manageShortcut(bool state);
+    bool isShortcutPresent(QString shortcutName);
+    void manageShortcut(bool state, QString shortcutName);
 }
 
 #endif // SHORTCUTMANAGER_H
