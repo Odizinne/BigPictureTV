@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <thread>
+#include <QDebug>
 
 std::string executeCommand(const std::string &command)
 {
@@ -112,6 +113,7 @@ void AudioManager::setAudioDevice(const std::string &deviceName)
 
                 if (result.find("Error") == std::string::npos) {
                     deviceFound = true;
+                    qDebug() << "Switchted audio output to:" << device.name;
                     break;
                 }
             }
@@ -120,7 +122,7 @@ void AudioManager::setAudioDevice(const std::string &deviceName)
         if (deviceFound) {
             break;
         }
-
+        qDebug() << "Device missing, retrying. Retry count:" << retryCount;
         ++retryCount;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
