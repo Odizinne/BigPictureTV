@@ -2,40 +2,6 @@
 #include <QDebug>
 #include <windows.h>
 
-// Constants
-const QMap<QString, QString> BIG_PICTURE_WINDOW_TITLES
-    = {{"schinese", "Steam 大屏幕模式"},
-       {"tchinese", "Steam Big Picture 模式"},
-       {"japanese", "Steam Big Pictureモード"},
-       {"koreana", "Steam Big Picture 모드"},
-       {"thai", "โหมด Big Picture บน Steam"},
-       {"bulgarian", "Steam режим „Голям екран“"},
-       {"czech", "Steam režim Big Picture"},
-       {"danish", "Steam Big Picture-tilstand"},
-       {"german", "Big-Picture-Modus"},
-       {"english", "Steam Big Picture mode"},
-       {"spanish", "Modo Big Picture de Steam"},
-       {"latam", "Modo Big Picture de Steam"},
-       {"greek", "Steam Λειτουργία Big Picture"},
-       {"french", "Steam mode Big Picture"},
-       {"indonesian", "Mode Big Picture Steam"},
-       {"italian", "Modalità Big Picture di Steam"},
-       {"hungarian", "Steam Nagy Kép mód"},
-       {"dutch", "Steam Big Picture-modus"},
-       {"norwegian", "Steam Big Picture-modus"},
-       {"polish", "Tryb Big Picture Steam"},
-       {"portuguese", "Steam Big Picture"},
-       {"brazilian", "Steam Modo Big Picture"},
-       {"romanian", "Steam modul Big Picture"},
-       {"russian", "Режим Big Picture"},
-       {"finnish", "Steamin televisiotila"},
-       {"swedish", "Steams Big Picture-läge"},
-       {"turkish", "Steam Geniş Ekran Modu"},
-       {"vietnamese", "Chế độ Big Picture trên Steam"},
-       {"ukrainian", "Steam у режимі Big Picture"}};
-
-const QChar NON_BREAKING_SPACE = QChar(0x00A0);
-
 QString getRegistryValue(const std::wstring &keyPath, const std::wstring &valueName)
 {
     HKEY hKey;
@@ -56,6 +22,7 @@ QString getRegistryValue(const std::wstring &keyPath, const std::wstring &valueN
 
 QString cleanString(const QString &str)
 {
+    const QChar NON_BREAKING_SPACE = QChar(0x00A0);
     QString cleanedStr = str;
     return cleanedStr.replace(NON_BREAKING_SPACE, ' ');
 }
@@ -88,6 +55,37 @@ QString SteamWindowManager::getSteamLanguage()
 
 QString SteamWindowManager::getBigPictureWindowTitle()
 {
+    const QMap<QString, QString> BIG_PICTURE_WINDOW_TITLES
+        = {{"schinese", "Steam 大屏幕模式"},
+           {"tchinese", "Steam Big Picture 模式"},
+           {"japanese", "Steam Big Pictureモード"},
+           {"koreana", "Steam Big Picture 모드"},
+           {"thai", "โหมด Big Picture บน Steam"},
+           {"bulgarian", "Steam режим „Голям екран“"},
+           {"czech", "Steam režim Big Picture"},
+           {"danish", "Steam Big Picture-tilstand"},
+           {"german", "Big-Picture-Modus"},
+           {"english", "Steam Big Picture mode"},
+           {"spanish", "Modo Big Picture de Steam"},
+           {"latam", "Modo Big Picture de Steam"},
+           {"greek", "Steam Λειτουργία Big Picture"},
+           {"french", "Steam mode Big Picture"},
+           {"indonesian", "Mode Big Picture Steam"},
+           {"italian", "Modalità Big Picture di Steam"},
+           {"hungarian", "Steam Nagy Kép mód"},
+           {"dutch", "Steam Big Picture-modus"},
+           {"norwegian", "Steam Big Picture-modus"},
+           {"polish", "Tryb Big Picture Steam"},
+           {"portuguese", "Steam Big Picture"},
+           {"brazilian", "Steam Modo Big Picture"},
+           {"romanian", "Steam modul Big Picture"},
+           {"russian", "Режим Big Picture"},
+           {"finnish", "Steamin televisiotila"},
+           {"swedish", "Steams Big Picture-läge"},
+           {"turkish", "Steam Geniş Ekran Modu"},
+           {"vietnamese", "Chế độ Big Picture trên Steam"},
+           {"ukrainian", "Steam у режимі Big Picture"}};
+
     QString language = getSteamLanguage().toLower();
     return BIG_PICTURE_WINDOW_TITLES.value(language, BIG_PICTURE_WINDOW_TITLES.value("english"));
 }

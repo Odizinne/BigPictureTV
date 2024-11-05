@@ -9,13 +9,6 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 
-
-const QString DISCORD_EXECUTABLE_NAME = "Update.exe";
-const QString DISCORD_PROCESS_NAME = "Discord.exe";
-const QString SUNSHINE_STATUS_FILE = QStandardPaths::writableLocation(
-                                         QStandardPaths::AppDataLocation)
-                                     + "/sunshine-status/status.txt";
-
 QColor adjustColor(const QColor &color, double factor) {
     int r = color.red();
     int g = color.green();
@@ -103,13 +96,14 @@ void Utils::setPowerPlan(QString planGuid) {
 }
 
 QString getDiscordPath() {
+    QString discordExecutableName = "Update.exe";
     QString localAppData = qgetenv("LOCALAPPDATA");
     if (localAppData.isEmpty()) {
         qWarning() << "Failed to get LOCALAPPDATA environment variable";
         return QString();
     }
 
-    return localAppData + "/Discord/" + DISCORD_EXECUTABLE_NAME;
+    return localAppData + "/Discord/" + discordExecutableName;
 }
 
 bool Utils::isDiscordInstalled() {
@@ -118,8 +112,9 @@ bool Utils::isDiscordInstalled() {
 }
 
 bool Utils::isDiscordRunning() {
+    QString discordProcessName = "Discord.exe";
     QProcess process;
-    process.start("tasklist.exe", QStringList() << "/FI" << QString("IMAGENAME eq %1").arg(DISCORD_PROCESS_NAME));
+    process.start("tasklist.exe", QStringList() << "/FI" << QString("IMAGENAME eq %1").arg(discordProcessName));
 
     if (!process.waitForFinished()) {
         qWarning() << "Failed to execute tasklist command";
@@ -127,12 +122,13 @@ bool Utils::isDiscordRunning() {
     }
 
     QString output = process.readAllStandardOutput();
-    return output.contains(DISCORD_PROCESS_NAME, Qt::CaseInsensitive);
+    return output.contains(discordProcessName, Qt::CaseInsensitive);
 }
 
 void Utils::closeDiscord() {
+    QString discordProcessName = "Discord.exe";
     QStringList arguments;
-    arguments << "/IM" << DISCORD_PROCESS_NAME
+    arguments << "/IM" << discordProcessName
               << "/F";
 
     QProcess process;
@@ -146,6 +142,7 @@ void Utils::closeDiscord() {
 }
 
 void Utils::startDiscord() {
+    QString discordProcessName = "Discord.exe";
     QString discordPath = getDiscordPath();
     if (discordPath.isEmpty()) {
         qWarning() << "Failed to get Discord path";
@@ -153,7 +150,7 @@ void Utils::startDiscord() {
     }
 
     QStringList arguments;
-    arguments << "--processStart" << DISCORD_PROCESS_NAME << "--process-start-args"
+    arguments << "--processStart" << discordProcessName << "--process-start-args"
               << "--start-minimized";
 
     qint64 processId;

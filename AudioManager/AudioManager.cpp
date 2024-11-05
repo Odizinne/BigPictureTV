@@ -122,6 +122,7 @@ void AudioManager::setAudioDevice(const std::string &deviceName)
         if (deviceFound) {
             break;
         }
+
         qDebug() << "Device missing, retrying. Retry count:" << retryCount;
         ++retryCount;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
