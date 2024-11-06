@@ -25,7 +25,7 @@ Configurator::Configurator(QWidget *parent)
     ui->actionsFrame->setVisible(false);
     ui->advancedFrame->setVisible(false);
     Utils::setFrameColorBasedOnWindow(this, ui->frame);
-    this->setFixedSize(356, 187);
+    this->setFixedSize(356, 224);
     setupConnections();
     getAudioCapabilities();
 }
@@ -49,6 +49,7 @@ void Configurator::setupConnections()
     connect(ui->avButton, &QPushButton::clicked, this, &Configurator::setAVTab);
     connect(ui->actionsButton, &QPushButton::clicked, this, &Configurator::setActionsTab);
     connect(ui->advancedButton, &QPushButton::clicked, this, &Configurator::setAdvancedTab);
+    connect(ui->autodetectCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::onAutodetectCheckBoxStateChanged);
 
     ui->startupCheckBox->setChecked(ShortcutManager::isShortcutPresent("BigPictureTV.lnk"));
     initDiscordAction();
@@ -77,6 +78,9 @@ void Configurator::getAudioCapabilities()
         ui->installAudioButton->setText(tr("Audio module installed"));
         if (!ui->disableAudioCheckBox->isChecked()) {
             toggleAudioSettings(true);
+        }
+        if (ui->autodetectCheckBox->isChecked()) {
+            ui->gamemodeAudioLineEdit->setEnabled(false);
         }
     }
 }
@@ -107,6 +111,14 @@ void Configurator::onDisableMonitorCheckboxStateChanged(Qt::CheckState state)
 {
     bool isChecked = (state == Qt::Checked);
     toggleMonitorSettings(!isChecked);
+}
+
+void Configurator::onAutodetectCheckBoxStateChanged(Qt::CheckState state)
+{
+    bool isChecked = (state == Qt::Checked);
+    if (!ui->disableAudioCheckBox->isChecked()) {
+        ui->gamemodeAudioLineEdit->setDisabled(isChecked);
+    }
 }
 
 void Configurator::onTargetWindowComboBoxIndexChanged(int index)
@@ -197,10 +209,12 @@ void Configurator::loadSettings()
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch", false).toBool());
     ui->customWindowLineEdit->setText(settings.value("custom_window_title", "").toString());
     ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode", 0).toInt());
+    ui->autodetectCheckBox->setChecked(settings.value("autodetect_hdmi", false).toBool());
 
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
     toggleCustomWindowTitle(ui->targetWindowComboBox->currentIndex() == 1);
+    ui->gamemodeAudioLineEdit->setDisabled(ui->autodetectCheckBox->isChecked());
 }
 
 void Configurator::saveSettings()
@@ -218,6 +232,7 @@ void Configurator::saveSettings()
     settings.setValue("disable_nightlight_action", ui->disableNightLightCheckBox->isChecked());
     settings.setValue("target_window_mode", ui->targetWindowComboBox->currentIndex());
     settings.setValue("custom_window_title", ui->customWindowLineEdit->text());
+    settings.setValue("autodetect_hdmi", ui->autodetectCheckBox->isChecked());
 }
 
 void Configurator::toggleAudioSettings(bool state)

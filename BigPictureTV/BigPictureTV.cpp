@@ -115,8 +115,14 @@ void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
 
 void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
 {
-    if (disableAudio)
+    if (disableAudio) {
         return;
+    }
+
+    if (autodetect_HDMI && !isDesktopMode) {
+        AudioManager::detectNewOutputs();
+        return;
+    }
 
     QString audioDevice = isDesktopMode ? desktop_audio_device
                                             : gamemode_audio_device;
@@ -200,6 +206,7 @@ void BigPictureTV::loadSettings()
     disable_nightlight_action = settings.value("disable_nightlight_action").toBool();
     target_window_mode = settings.value("target_window_mode").toInt();
     custom_window_title = settings.value("custom_window_title").toString();
+    autodetect_HDMI = settings.value("autodetect_hdmi").toBool();
 
     qDebug() << "Audio configuration:";
     qDebug() << "";

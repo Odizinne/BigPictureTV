@@ -24,7 +24,7 @@ SOURCES +=                                                  \
     Configurator/Configurator.cpp                           \
     ShortcutManager/ShortcutManager.cpp                     \
     SteamWindowManager/SteamwindowManager.cpp               \
-    Utils/utils.cpp                                         \
+    Utils/Utils.cpp                                         \
     main.cpp                                                \
 
 HEADERS +=                                                  \
@@ -34,7 +34,7 @@ HEADERS +=                                                  \
     NightLightSwitcher/NightLightSwitcher.h                 \
     ShortcutManager/ShortcutManager.h                       \
     SteamWindowManager/SteamwindowManager.h                 \
-    Utils/utils.h                                           \
+    Utils/Utils.h                                           \
 
 FORMS +=                                                    \
     Configurator/Configurator.ui                            \

@@ -13,6 +13,7 @@ struct Device
 namespace AudioManager
 {
     void setAudioDevice(const std::string &deviceName);
+    void detectNewOutputs();
 };
 
 #endif // AUDIOMANAGER_H

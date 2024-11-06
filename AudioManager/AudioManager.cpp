@@ -133,3 +133,59 @@ void AudioManager::setAudioDevice(const std::string &deviceName)
                                  + std::to_string(maxRetries) + " attempts.");
     }
 }
+
+void AudioManager::detectNewOutputs()
+{
+    std::vector<Device> previousDevices = parseDevices(executeCommand("Get-AudioDevice -l"));
+    int maxRetries = 10;
+    int retryCount = 0;
+    bool newDeviceFound = false;
+
+    while (retryCount < maxRetries && !newDeviceFound) {
+        // Wait for 1 second before checking again
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        // Parse the current list of devices
+        std::vector<Device> currentDevices = parseDevices(executeCommand("Get-AudioDevice -l"));
+
+        // Check for any device in currentDevices that wasn't in previousDevices
+        for (const auto &currentDevice : currentDevices) {
+            auto it = std::find_if(previousDevices.begin(), previousDevices.end(),
+                                   [&](const Device &device) { return device.name == currentDevice.name; });
+
+            // If a device in currentDevices is not found in previousDevices, it's a new device
+            if (it == previousDevices.end()) {
+                qDebug() << "New audio output detected:" << QString::fromStdString(currentDevice.name);
+
+                if (currentDevice.index < 1) {
+                    throw std::runtime_error("Invalid device index: " + std::to_string(currentDevice.index));
+                }
+
+                // Set the new device as the audio output
+                std::string setCommand = "Set-AudioDevice -Index " + std::to_string(currentDevice.index);
+                std::string result = executeCommand(setCommand);
+
+                if (result.find("Error") == std::string::npos) {
+                    qDebug() << "Switched audio output to new device:" << QString::fromStdString(currentDevice.name);
+                    newDeviceFound = true;
+                    break;
+                } else {
+                    qDebug() << "Failed to set new device due to error in command execution.";
+                }
+            }
+        }
+
+        if (newDeviceFound) {
+            break;
+        }
+
+        // Update the previousDevices list to the current state
+        previousDevices = currentDevices;
+        ++retryCount;
+    }
+
+    if (!newDeviceFound) {
+        throw std::runtime_error("Failed to detect and set a new audio device after "
+                                 + std::to_string(maxRetries) + " attempts.");
+    }
+}
