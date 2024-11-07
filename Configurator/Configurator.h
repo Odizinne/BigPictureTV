@@ -8,6 +8,8 @@
 #include <QString>
 #include <QSettings>
 #include <QPushButton>
+#include "AudioManager.h"
+#include <QComboBox>
 
 namespace Ui {
 class Configurator;
@@ -25,8 +27,6 @@ private slots:
     void onStartupCheckboxStateChanged(Qt::CheckState state);
     void onDisableAudioCheckboxStateChanged(Qt::CheckState state);
     void onDisableMonitorCheckboxStateChanged(Qt::CheckState state);
-    void onAutodetectCheckBoxStateChanged(Qt::CheckState state);
-    void onAutodetectDesktopCheckBoxStateChanged(Qt::CheckState state);
     void onTargetWindowComboBoxIndexChanged(int index);
     void onAudioButtonClicked();
     void setGeneralTab();
@@ -52,10 +52,14 @@ private:
     void fadeOut(QWidget *widget, std::function<void()> onFinished);
     void showFrame(QWidget* targetFrame, QPushButton* activeButton, int frameIndex);
     void switchTab(int targetFrame, QPushButton* targetButton, QWidget* targetFrameWidget);
+    void populateAudioComboBoxes();
+    QString getDeviceIDFromComboBox(QComboBox* comboBox);
+    void selectAudioDeviceFromSettings(QComboBox *comboBox, const QString &audioDeviceKey);
 
     Ui::Configurator *ui;
     QSettings settings;
     int activeFrame;
+    QList<Device> devices;
 
 signals:
     void closed();

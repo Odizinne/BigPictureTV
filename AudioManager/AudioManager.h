@@ -1,21 +1,19 @@
 #ifndef AUDIOMANAGER_H
 #define AUDIOMANAGER_H
 
-#include <string>
+#include <QString>
 
 struct Device
 {
-    int index;
-    std::string name;
-    std::string type;
-    bool isDefault = false;
+    QString name;
+    QString ID;
 };
 
 namespace AudioManager
 {
-    void setAudioDevice(const std::string &deviceName);
-    void detectNewOutputs();
-    std::string getDefaultOutputDevice();
+    void setAudioDevice(QString ID);
+    QList<Device> ListAudioOutputDevices();
+    void PrintAudioOutputDevices();
 };
 
 #endif // AUDIOMANAGER_H

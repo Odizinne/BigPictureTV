@@ -78,9 +78,6 @@ void BigPictureTV::checkWindowTitle()
     }
 
     if (isRunning && !gamemodeActive) {
-        if (autodetect_desktop) {
-            currentAudioOutputName = AudioManager::getDefaultOutputDevice();
-        }
         gamemodeActive = true;
         handleActions(false);
         handleMonitorChanges(false, disable_monitor_switch);
@@ -122,19 +119,10 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
         return;
     }
 
-    if (autodetect_HDMI && !isDesktopMode) {
-        AudioManager::detectNewOutputs();
-        return;
-    }
-
-    if (autodetect_desktop && isDesktopMode) {
-        AudioManager::setAudioDevice(currentAudioOutputName);
-    }
-
     QString audioDevice = isDesktopMode ? desktop_audio_device
                                             : gamemode_audio_device;
 
-    AudioManager::setAudioDevice(audioDevice.toStdString());
+    AudioManager::setAudioDevice(audioDevice);
 }
 
 void BigPictureTV::handleActions(bool isDesktopMode)
@@ -200,8 +188,8 @@ void BigPictureTV::handlePowerPlanAction(bool isDesktopMode)
 
 void BigPictureTV::loadSettings()
 {
-    gamemode_audio_device = settings.value("gamemode_audio_device").toString();
-    desktop_audio_device = settings.value("desktop_audio_device").toString();
+    gamemode_audio_device = settings.value("gamemode_audio_device_id").toString();
+    desktop_audio_device = settings.value("desktop_audio_device_id").toString();
     disable_audio_switch = settings.value("disable_audio_switch").toBool();
     window_checkrate = settings.value("window_checkrate").toInt();
     close_discord_action = settings.value("close_discord_action").toBool();
@@ -213,8 +201,6 @@ void BigPictureTV::loadSettings()
     disable_nightlight_action = settings.value("disable_nightlight_action").toBool();
     target_window_mode = settings.value("target_window_mode").toInt();
     custom_window_title = settings.value("custom_window_title").toString();
-    autodetect_HDMI = settings.value("autodetect_hdmi").toBool();
-    autodetect_desktop = settings.value("autodetect_desktop").toBool();
 
     qDebug() << "Audio configuration:";
     qDebug() << "";
