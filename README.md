@@ -112,6 +112,16 @@ This is not optimal unless you manually set a FPS limit to your TV refresh rate 
 - Set performance power plan in gamemode, revert to previous state in desktop mode.
 - Pause media (Spotify, Youtube...) in gamemode, restore them in desktop mode.
 
+### Advanced
+
+About autodetect gamemode and desktop audio:
+
+For autodetect gamemode audio, enable it only if you're using HDMI audio from your TV, and TV is off in desktop mode.  
+BigPictureTV will look for new audio device connections, and since HDMI is off when screen is not used by windows, it will find it.
+
+Autodetect desktop audio will save your default audio output right before switching, and try to restore it when going back to desktop mode.  
+If your device is disconnected when going back to desktop mode, audio switch will fail.
+
 ## Credits
 
 - [nathanbabcock](https://github.com/nathanbabcock/nightlight-cli/tree/main) for night light toggle
