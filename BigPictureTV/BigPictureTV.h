@@ -59,6 +59,8 @@ private:
     bool disable_nightlight_action;
     bool target_window_mode;
     bool autodetect_HDMI;
+    bool autodetect_desktop;
+    std::string currentAudioOutputName;
     QSettings settings;
     bool gamemodeActive;
 };

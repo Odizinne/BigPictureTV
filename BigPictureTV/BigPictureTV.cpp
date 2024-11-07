@@ -78,6 +78,9 @@ void BigPictureTV::checkWindowTitle()
     }
 
     if (isRunning && !gamemodeActive) {
+        if (autodetect_desktop) {
+            currentAudioOutputName = AudioManager::getDefaultOutputDevice();
+        }
         gamemodeActive = true;
         handleActions(false);
         handleMonitorChanges(false, disable_monitor_switch);
@@ -122,6 +125,10 @@ void BigPictureTV::handleAudioChanges(bool isDesktopMode, bool disableAudio)
     if (autodetect_HDMI && !isDesktopMode) {
         AudioManager::detectNewOutputs();
         return;
+    }
+
+    if (autodetect_desktop && isDesktopMode) {
+        AudioManager::setAudioDevice(currentAudioOutputName);
     }
 
     QString audioDevice = isDesktopMode ? desktop_audio_device
@@ -207,6 +214,7 @@ void BigPictureTV::loadSettings()
     target_window_mode = settings.value("target_window_mode").toInt();
     custom_window_title = settings.value("custom_window_title").toString();
     autodetect_HDMI = settings.value("autodetect_hdmi").toBool();
+    autodetect_desktop = settings.value("autodetect_desktop").toBool();
 
     qDebug() << "Audio configuration:";
     qDebug() << "";

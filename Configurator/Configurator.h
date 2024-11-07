@@ -26,6 +26,7 @@ private slots:
     void onDisableAudioCheckboxStateChanged(Qt::CheckState state);
     void onDisableMonitorCheckboxStateChanged(Qt::CheckState state);
     void onAutodetectCheckBoxStateChanged(Qt::CheckState state);
+    void onAutodetectDesktopCheckBoxStateChanged(Qt::CheckState state);
     void onTargetWindowComboBoxIndexChanged(int index);
     void onAudioButtonClicked();
     void setGeneralTab();

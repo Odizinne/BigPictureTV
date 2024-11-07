@@ -49,15 +49,16 @@ std::vector<Device> parseDevices(const std::string &output)
             if (deviceStarted) {
                 devices.push_back(currentDevice);
             }
-            currentDevice = Device{-1, "", ""};
+            currentDevice = Device{-1, "", "", false};
             deviceStarted = true;
             currentDevice.index = std::stoi(line.substr(line.find(":") + 2));
         } else if (line.find("Name") != std::string::npos) {
-            std::string_view lineView(line);
-            currentDevice.name = std::string(lineView.substr(lineView.find(":") + 2));
+            currentDevice.name = line.substr(line.find(":") + 2);
         } else if (line.find("Type") != std::string::npos) {
-            std::string_view lineView(line);
-            currentDevice.type = std::string(lineView.substr(lineView.find(":") + 2));
+            currentDevice.type = line.substr(line.find(":") + 2);
+        } else if (line.find("Default") != std::string::npos) {
+            std::string defaultValue = line.substr(line.find(":") + 2);
+            currentDevice.isDefault = (defaultValue == "True");
         }
     }
 
@@ -88,6 +89,20 @@ bool checkDevice(const std::string &deviceName)
         }
     }
     return false;
+}
+
+std::string AudioManager::getDefaultOutputDevice()
+{
+    std::string output = executeCommand("Get-AudioDevice -l");
+    std::vector<Device> devices = parseDevices(output);
+
+    for (const auto &device : devices) {
+        if (device.type == "Playback" && device.isDefault) {
+            return device.name;
+        }
+    }
+
+    return "";
 }
 
 void AudioManager::setAudioDevice(const std::string &deviceName)
