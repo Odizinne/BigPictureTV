@@ -47,7 +47,6 @@ void AudioManager::setAudioDevice(QString ID)
     while (retryCount < maxRetries) {
         // Correctly add double quotes around the ID, without adding escape characters
         QString setCommand = QString("Set-AudioDevice -ID \"") + ID + "\"";
-        qDebug() << setCommand;
         result = executeCommand(setCommand);
 
         if (result.find("Error") == std::string::npos) {
@@ -66,8 +65,7 @@ void AudioManager::setAudioDevice(QString ID)
     }
 
     if (!deviceFound) {
-        throw std::runtime_error("Failed to set the audio device after "
-                                 + std::to_string(maxRetries) + " attempts.");
+        qDebug() << "Unable to set audio device.";
     }
 }
 
@@ -170,10 +168,8 @@ QList<Device> AudioManager::ListAudioOutputDevices()
 
 void AudioManager::PrintAudioOutputDevices()
 {
-    // Call ListAudioOutputDevices to get the list of devices
     QList<Device> devices = ListAudioOutputDevices();
 
-    // Loop through the devices and print their names and IDs
     for (const Device& device : devices) {
         qDebug() << "Device Name: " << device.name;
         qDebug() << "Device ID: " << device.ID;
