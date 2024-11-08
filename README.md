@@ -68,9 +68,10 @@ Run `BigPictureTV.exe`.
    - Uncheck `Disable audio switching` once the module is installed.
 
 3. **Specify Audio Outputs**
-   - Use short names for audio outputs.
-   - BigPictureTV will identify the correct output based on keywords.
-   - Keep the names brief for better accuracy.
+   - Select your desired gamemode and desktop devices.  
+   Disconnected devices are listed so you can select HDMI audio even if your HDMI TV is disconnected in windows.  
+   On sound hardware changes (Disconnecting / reconnecting HDMI TV), it is possible that your audio output IDs changes. A reselection in configuration window might be necessary.
+
 
 **Example:**
 
