@@ -356,7 +356,6 @@ QString Configurator::getDeviceIDFromComboBox(QComboBox* comboBox)
 
 void Configurator::selectAudioDeviceFromSettings(QComboBox *comboBox, const QString &audioDeviceKey)
 {
-    //QString deviceName = settings.value(audioDeviceKey, "").toString();
     int index = comboBox->findText(audioDeviceKey);
 
     if (index != -1) {

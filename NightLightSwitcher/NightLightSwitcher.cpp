@@ -8,7 +8,8 @@
 
 HKEY hKey = nullptr;
 
-void init() {
+void init()
+{
     const std::wstring keyPath = L"Software\\Microsoft\\Windows\\CurrentVersion\\CloudStore\\Store\\DefaultAccount\\Current\\default$windows.data.bluelightreduction.bluelightreductionstate\\windows.data.bluelightreduction.bluelightreductionstate";
 
     if (RegOpenKeyEx(HKEY_CURRENT_USER, keyPath.c_str(), 0, KEY_READ | KEY_WRITE, &hKey) != ERROR_SUCCESS) {
@@ -16,12 +17,14 @@ void init() {
     }
 }
 
-bool NightLightSwitcher::supported() {
+bool NightLightSwitcher::supported()
+{
     init();
     return hKey != nullptr;
 }
 
-bool NightLightSwitcher::enabled() {
+bool NightLightSwitcher::enabled()
+{
     if (!supported()) return false;
 
     BYTE data[1024];
@@ -36,19 +39,22 @@ bool NightLightSwitcher::enabled() {
     return bytes[18] == 0x15; // 21 in decimal
 }
 
-void NightLightSwitcher::enable() {
+void NightLightSwitcher::enable()
+{
     if (supported() && !enabled()) {
         toggle();
     }
 }
 
-void NightLightSwitcher::disable() {
+void NightLightSwitcher::disable()
+{
     if (supported() && enabled()) {
         toggle();
     }
 }
 
-void NightLightSwitcher::toggle() {
+void NightLightSwitcher::toggle()
+{
     if (!supported()) return;
 
     BYTE data[1024];
@@ -93,7 +99,8 @@ void NightLightSwitcher::toggle() {
     }
 }
 
-std::vector<BYTE> hexToBytes(const std::wstring& hex) {
+std::vector<BYTE> hexToBytes(const std::wstring& hex)
+{
     std::vector<BYTE> bytes;
     size_t len = hex.size();
     for (size_t i = 0; i < len; i += 2) {
@@ -103,7 +110,8 @@ std::vector<BYTE> hexToBytes(const std::wstring& hex) {
     return bytes;
 }
 
-std::wstring bytesToHex(const std::vector<BYTE>& bytes) {
+std::wstring bytesToHex(const std::vector<BYTE>& bytes)
+{
     std::wstringstream ss;
     for (BYTE byte : bytes) {
         ss << std::hex << std::setw(2) << std::setfill(L'0') << static_cast<int>(byte);

@@ -190,11 +190,7 @@ void Utils::sendMediaKey(WORD keyCode) {
     INPUT ip = {0};
     ip.type = INPUT_KEYBOARD;
     ip.ki.wVk = keyCode;
-
-    // Press the key
     SendInput(1, &ip, sizeof(INPUT));
-
-    // Release the key
     ip.ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(1, &ip, sizeof(INPUT));
 }

@@ -70,6 +70,7 @@ void AudioManager::setAudioDevice(QString ID)
     }
 }
 
+// AI generated
 QList<Device> AudioManager::ListAudioOutputDevices()
 {
     QList<Device> devices;
