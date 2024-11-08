@@ -13,13 +13,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    if (AttachConsole(ATTACH_PARENT_PROCESS)) {
-        // Redirect qDebug() and other output to the console
-        FILE *stream;
-        freopen_s(&stream, "CONOUT$", "w", stdout);
-        freopen_s(&stream, "CONOUT$", "w", stderr);
-    }
-
     QString serverName = "BigPictureTVUniqueIdentifier";
     QLocalServer localServer;
     QLocalSocket localSocket;

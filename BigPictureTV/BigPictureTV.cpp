@@ -201,12 +201,6 @@ void BigPictureTV::loadSettings()
     disable_nightlight_action = settings.value("disable_nightlight_action").toBool();
     target_window_mode = settings.value("target_window_mode").toInt();
     custom_window_title = settings.value("custom_window_title").toString();
-
-    qDebug() << "Audio configuration:";
-    qDebug() << "";
-    qDebug() << "Switch audio:" << !disable_audio_switch;
-    qDebug() << "Gamemode audio device:" << gamemode_audio_device;
-    qDebug() << "Desktop audio device:" << desktop_audio_device;
 }
 
 void BigPictureTV::showSettings()

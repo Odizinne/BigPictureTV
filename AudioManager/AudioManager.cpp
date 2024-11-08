@@ -43,6 +43,7 @@ void AudioManager::setAudioDevice(QString ID)
     int maxRetries = 10;
     int retryCount = 0;
     std::string result;
+    qDebug() << "Will try to set output to:" << ID;
 
     while (retryCount < maxRetries) {
         // Correctly add double quotes around the ID, without adding escape characters
