@@ -15,7 +15,6 @@ namespace Utils {
     bool isDiscordRunning();
     void closeDiscord();
     void startDiscord();
-    bool isAudioDeviceCmdletsInstalled();
     void sendMediaKey(WORD keyCode);
     void setFrameColorBasedOnWindow(QWidget *window, QFrame *frame);
 }

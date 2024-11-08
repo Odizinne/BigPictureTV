@@ -1,39 +1,88 @@
 #include "AudioManager.h"
 #include <QProcess>
 #include <chrono>
-#include <stdexcept>
 #include <thread>
 #include <QDebug>
 #include <mmdeviceapi.h>
 #include <Functiondiscoverykeys_devpkey.h>
 #include <comdef.h>
 #include <atlbase.h>
+#include "PolicyConfig.h"
 
-std::string executeCommand(QString command)
+bool setDefaultAudioOutputDevice(const QString &deviceId)
 {
-    QProcess process;
-    process.setProgram("powershell.exe");
+    HRESULT hr;
+    IMMDeviceEnumerator *deviceEnumerator = nullptr;
+    IMMDevice *defaultDevice = nullptr;
+    IPolicyConfig *policyConfig = nullptr;
+    IPolicyConfigVista *policyConfigVista = nullptr;
 
-    QStringList arguments;
-    arguments << "-NoProfile" << "-Command" << command;
-    process.setArguments(arguments);
-
-    process.start();
-    if (!process.waitForStarted()) {
-        throw std::runtime_error("Failed to start PowerShell process!");
-    }
-    if (!process.waitForFinished()) {
-        throw std::runtime_error("PowerShell process did not finish!");
+    // Initialize COM library
+    hr = CoInitialize(nullptr);
+    if (FAILED(hr)) {
+        qDebug() << "Failed to initialize COM library";
+        return false;
     }
 
-    QByteArray output = process.readAllStandardOutput();
-    QByteArray error = process.readAllStandardError();
-
-    if (!error.isEmpty()) {
-        return error.toStdString();
+    // Create device enumerator
+    hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER,
+                          IID_PPV_ARGS(&deviceEnumerator));
+    if (FAILED(hr)) {
+        qDebug() << "Failed to create device enumerator";
+        CoUninitialize();
+        return false;
     }
 
-    return output.toStdString();
+    // Get the device by ID
+    hr = deviceEnumerator->GetDevice(reinterpret_cast<LPCWSTR>(deviceId.utf16()), &defaultDevice);
+    if (FAILED(hr)) {
+        qDebug() << "Failed to get device by ID";
+        deviceEnumerator->Release();
+        CoUninitialize();
+        return false;
+    }
+
+    // Attempt to get IPolicyConfig interface
+    hr = CoCreateInstance(__uuidof(CPolicyConfigClient), nullptr, CLSCTX_ALL,
+                          IID_PPV_ARGS(&policyConfig));
+    if (FAILED(hr)) {
+        // If IPolicyConfig is unavailable, try IPolicyConfigVista
+        hr = CoCreateInstance(__uuidof(CPolicyConfigVistaClient), nullptr, CLSCTX_ALL,
+                              IID_PPV_ARGS(&policyConfigVista));
+        if (FAILED(hr)) {
+            qDebug() << "Failed to create PolicyConfig interface";
+            defaultDevice->Release();
+            deviceEnumerator->Release();
+            CoUninitialize();
+            return false;
+        }
+    }
+
+    // Set as default device for all audio roles (Console, Multimedia, Communications)
+    if (policyConfig) {
+        hr = policyConfig->SetDefaultEndpoint(reinterpret_cast<LPCWSTR>(deviceId.utf16()), eConsole);
+        policyConfig->SetDefaultEndpoint(reinterpret_cast<LPCWSTR>(deviceId.utf16()), eMultimedia);
+        policyConfig->SetDefaultEndpoint(reinterpret_cast<LPCWSTR>(deviceId.utf16()), eCommunications);
+    } else if (policyConfigVista) {
+        hr = policyConfigVista->SetDefaultEndpoint(reinterpret_cast<LPCWSTR>(deviceId.utf16()), eConsole);
+        policyConfigVista->SetDefaultEndpoint(reinterpret_cast<LPCWSTR>(deviceId.utf16()), eMultimedia);
+        policyConfigVista->SetDefaultEndpoint(reinterpret_cast<LPCWSTR>(deviceId.utf16()), eCommunications);
+    }
+
+    // Release resources
+    if (policyConfig) policyConfig->Release();
+    if (policyConfigVista) policyConfigVista->Release();
+    defaultDevice->Release();
+    deviceEnumerator->Release();
+    CoUninitialize();
+
+    if (FAILED(hr)) {
+        qDebug() << "Failed to set default audio output device";
+        return false;
+    }
+
+    qDebug() << "Default audio output device set to:" << deviceId;
+    return true;
 }
 
 
@@ -42,15 +91,11 @@ void AudioManager::setAudioDevice(QString ID)
     bool deviceFound = false;
     int maxRetries = 10;
     int retryCount = 0;
-    std::string result;
     qDebug() << "Will try to set output to:" << ID;
 
     while (retryCount < maxRetries) {
-        // Correctly add double quotes around the ID, without adding escape characters
-        QString setCommand = QString("Set-AudioDevice -ID \"") + ID + "\"";
-        result = executeCommand(setCommand);
 
-        if (result.find("Error") == std::string::npos) {
+        if (setDefaultAudioOutputDevice(ID)) {
             deviceFound = true;
             qDebug() << "Switched audio output to:" << ID;
             break;
@@ -70,7 +115,6 @@ void AudioManager::setAudioDevice(QString ID)
     }
 }
 
-// AI generated
 QList<Device> AudioManager::ListAudioOutputDevices()
 {
     QList<Device> devices;
@@ -168,12 +212,3 @@ QList<Device> AudioManager::ListAudioOutputDevices()
     return devices;
 }
 
-void AudioManager::PrintAudioOutputDevices()
-{
-    QList<Device> devices = ListAudioOutputDevices();
-
-    for (const Device& device : devices) {
-        qDebug() << "Device Name: " << device.name;
-        qDebug() << "Device ID: " << device.ID;
-    }
-}

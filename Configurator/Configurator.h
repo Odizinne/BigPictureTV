@@ -28,7 +28,6 @@ private slots:
     void onDisableAudioCheckboxStateChanged(Qt::CheckState state);
     void onDisableMonitorCheckboxStateChanged(Qt::CheckState state);
     void onTargetWindowComboBoxIndexChanged(int index);
-    void onAudioButtonClicked();
     void setGeneralTab();
     void setAVTab();
     void setActionsTab();
@@ -37,7 +36,6 @@ private slots:
 private:
     void initDiscordAction();
     bool discordInstalled;
-    void getAudioCapabilities();
     void populateComboboxes();
     void toggleAudioSettings(bool state);
     void toggleMonitorSettings(bool state);
@@ -46,11 +44,8 @@ private:
     void createDefaultSettings();
     void loadSettings();
     void saveSettings();
-    void applySettings();
-    void initUI();
     void fadeIn(QWidget *widget);
     void fadeOut(QWidget *widget, std::function<void()> onFinished);
-    void showFrame(QWidget* targetFrame, QPushButton* activeButton, int frameIndex);
     void switchTab(int targetFrame, QPushButton* targetButton, QWidget* targetFrameWidget);
     void populateAudioComboBoxes();
     QString getDeviceIDFromComboBox(QComboBox* comboBox);

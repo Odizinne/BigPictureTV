@@ -13,7 +13,6 @@ namespace AudioManager
 {
     void setAudioDevice(QString ID);
     QList<Device> ListAudioOutputDevices();
-    void PrintAudioOutputDevices();
 };
 
 #endif // AUDIOMANAGER_H

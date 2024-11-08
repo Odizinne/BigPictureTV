@@ -98,24 +98,3 @@ void NightLightSwitcher::toggle()
         qDebug() << "Failed to update registry value.";
     }
 }
-
-std::vector<BYTE> hexToBytes(const std::wstring& hex)
-{
-    std::vector<BYTE> bytes;
-    size_t len = hex.size();
-    for (size_t i = 0; i < len; i += 2) {
-        BYTE byte = static_cast<BYTE>(std::stoi(hex.substr(i, 2), nullptr, 16));
-        bytes.push_back(byte);
-    }
-    return bytes;
-}
-
-std::wstring bytesToHex(const std::vector<BYTE>& bytes)
-{
-    std::wstringstream ss;
-    for (BYTE byte : bytes) {
-        ss << std::hex << std::setw(2) << std::setfill(L'0') << static_cast<int>(byte);
-    }
-    return ss.str();
-}
-

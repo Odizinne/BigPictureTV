@@ -161,31 +161,6 @@ void Utils::startDiscord() {
     }
 }
 
-bool Utils::isAudioDeviceCmdletsInstalled() {
-    QProcess process;
-    process.setProgram("powershell");
-    process.setArguments({"-NoProfile", "-Command", "Get-Module -ListAvailable -Name AudioDeviceCmdlets"});
-    process.start();
-    if (!process.waitForStarted()) {
-        qWarning() << "Failed to start process.";
-        return false;
-    }
-
-    if (!process.waitForFinished()) {
-        qWarning() << "Process did not finish correctly.";
-        return false;
-    }
-
-    QString output = process.readAllStandardOutput();
-    QString error = process.readAllStandardError();
-
-    if (!error.isEmpty()) {
-        qWarning() << "Error:" << error;
-    }
-
-    return output.contains("AudioDeviceCmdlets", Qt::CaseInsensitive);
-}
-
 void Utils::sendMediaKey(WORD keyCode) {
     INPUT ip = {0};
     ip.type = INPUT_KEYBOARD;

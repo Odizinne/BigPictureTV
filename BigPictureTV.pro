@@ -29,6 +29,7 @@ SOURCES +=                                                  \
 
 HEADERS +=                                                  \
     AudioManager/AudioManager.h                             \
+    AudioManager/PolicyConfig.h                             \
     BigPictureTV/BigPictureTV.h                             \
     Configurator/Configurator.h                             \
     NightLightSwitcher/NightLightSwitcher.h                 \

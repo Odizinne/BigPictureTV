@@ -30,7 +30,6 @@ Configurator::Configurator(QWidget *parent)
     Utils::setFrameColorBasedOnWindow(this, ui->frame);
     this->setFixedSize(382, 187);
     setupConnections();
-    getAudioCapabilities();
 }
 
 Configurator::~Configurator()
@@ -45,7 +44,6 @@ void Configurator::setupConnections()
     connect(ui->startupCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::onStartupCheckboxStateChanged);
     connect(ui->disableAudioCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::onDisableAudioCheckboxStateChanged);
     connect(ui->disableMonitorCheckBox, &QCheckBox::checkStateChanged, this, &Configurator::onDisableMonitorCheckboxStateChanged);
-    connect(ui->installAudioButton,  &QPushButton::clicked, this, &Configurator::onAudioButtonClicked);
     connect(ui->targetWindowComboBox, &QComboBox::currentIndexChanged, this, &Configurator::onTargetWindowComboBoxIndexChanged);
     connect(ui->resetSettingsButton, &QPushButton::clicked, this, &Configurator::createDefaultSettings);
     connect(ui->generalButton, &QPushButton::clicked, this, &Configurator::setGeneralTab);
@@ -65,22 +63,6 @@ void Configurator::initDiscordAction()
         ui->CloseDiscordLabel->setEnabled(false);
         ui->closeDiscordCheckBox->setToolTip(tr("Discord does not appear to be installed"));
         ui->CloseDiscordLabel->setToolTip(tr("Discord does not appear to be installed"));
-    }
-}
-
-void Configurator::getAudioCapabilities()
-{
-    if (!Utils::isAudioDeviceCmdletsInstalled()) {
-        ui->disableAudioCheckBox->setChecked(true);
-        ui->disableAudioCheckBox->setEnabled(false);
-        toggleAudioSettings(false);
-    } else {
-        ui->disableAudioCheckBox->setEnabled(true);
-        ui->installAudioButton->setEnabled(false);
-        ui->installAudioButton->setText(tr("Audio module installed"));
-        if (!ui->disableAudioCheckBox->isChecked()) {
-            toggleAudioSettings(true);
-        }
     }
 }
 
@@ -121,50 +103,7 @@ void Configurator::onTargetWindowComboBoxIndexChanged(int index)
     }
 }
 
-void Configurator::onAudioButtonClicked()
-{
-    ui->installAudioButton->setEnabled(false);
 
-    QProcess process;
-    process.start(
-        "powershell",
-        QStringList() << "-NoProfile" << "-ExecutionPolicy" << "Bypass" << "-Command"
-                      << "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser; "
-                         "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser");
-
-    if (!process.waitForFinished()) {
-        QString status = tr("Error");
-        QString message = tr("Failed to execute the PowerShell commands.\n"
-                             "Please check if PowerShell is installed and properly configured.");
-        QMessageBox::critical(this, status, message);
-    } else {
-        QString errorOutput = process.readAllStandardError();
-        int exitCode = process.exitCode();
-
-        QString status;
-        QString message;
-
-        if (exitCode == 0) {
-            status = tr("Success");
-            message = tr("AudioDeviceCmdlets module installed successfully.\nYou can now use audio "
-                         "settings.");
-            QMessageBox::information(this, status, message);
-        } else {
-            status = tr("Error");
-            message = tr("Failed to install NuGet package provider or AudioDeviceCmdlets module.\n"
-                         "Please install them manually by running these commands in PowerShell:\n"
-                         "Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;\n"
-                         "Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser\n"
-                         "You should then restart the application.\n"
-                         "Error details:\n")
-                      + errorOutput;
-            QMessageBox::critical(this, status, message);
-            ui->installAudioButton->setEnabled(true);
-        }
-    }
-
-    getAudioCapabilities();
-}
 
 void Configurator::createDefaultSettings()
 {
@@ -201,7 +140,6 @@ void Configurator::loadSettings()
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
     toggleCustomWindowTitle(ui->targetWindowComboBox->currentIndex() == 1);
 
-    qDebug() << settings.value("gamemode_audio_device").toString();
     selectAudioDeviceFromSettings(ui->gamemodeAudioComboBox, settings.value("gamemode_audio_device").toString());
     selectAudioDeviceFromSettings(ui->desktopAudioComboBox, settings.value("desktop_audio_device").toString());
 }
