@@ -17,6 +17,7 @@ namespace Utils {
     void startDiscord();
     void sendMediaKey(WORD keyCode);
     void setFrameColorBasedOnWindow(QWidget *window, QFrame *frame);
+    void skipBigPictureIntro();
 }
 
 #endif // UTILS_H

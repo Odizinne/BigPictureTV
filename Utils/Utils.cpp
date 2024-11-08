@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "Windows.h"
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -168,4 +169,30 @@ void Utils::sendMediaKey(WORD keyCode) {
     SendInput(1, &ip, sizeof(INPUT));
     ip.ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(1, &ip, sizeof(INPUT));
+}
+
+void Utils::skipBigPictureIntro() {
+    // Define the input event for mouse button down and up
+    INPUT input[2] = {};
+
+    // Mouse button down (left click)
+    input[0].type = INPUT_MOUSE;
+    input[0].mi.dx = 0;  // X coordinate
+    input[0].mi.dy = 0;  // Y coordinate
+    input[0].mi.mouseData = 0;
+    input[0].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
+    input[0].mi.time = 0;
+    input[0].mi.dwExtraInfo = 0;
+
+    // Mouse button up (release left click)
+    input[1].type = INPUT_MOUSE;
+    input[1].mi.dx = 0;  // X coordinate
+    input[1].mi.dy = 0;  // Y coordinate
+    input[1].mi.mouseData = 0;
+    input[1].mi.dwFlags = MOUSEEVENTF_LEFTUP;
+    input[1].mi.time = 0;
+    input[1].mi.dwExtraInfo = 0;
+
+    // Send the input events (left down and then left up)
+    SendInput(2, input, sizeof(INPUT));
 }

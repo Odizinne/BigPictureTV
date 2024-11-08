@@ -81,6 +81,9 @@ void BigPictureTV::checkWindowTitle()
         gamemodeActive = true;
         handleActions(false);
         handleMonitorChanges(false, disable_monitor_switch);
+        if (skip_intro) {
+            Utils::skipBigPictureIntro();
+        }
         handleAudioChanges(false, disable_audio_switch);
         settings.setValue("gamemode", gamemodeActive);
     } else if (!isRunning && gamemodeActive) {
@@ -201,6 +204,7 @@ void BigPictureTV::loadSettings()
     disable_nightlight_action = settings.value("disable_nightlight_action").toBool();
     target_window_mode = settings.value("target_window_mode").toInt();
     custom_window_title = settings.value("custom_window_title").toString();
+    skip_intro = settings.value("skip_intro").toBool();
 }
 
 void BigPictureTV::showSettings()

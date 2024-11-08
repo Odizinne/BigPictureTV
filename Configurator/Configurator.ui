@@ -374,8 +374,8 @@
           <property name="spacing">
            <number>6</number>
           </property>
-          <item row="2" column="0">
-           <widget class="QLabel" name="disableMonitorLabel">
+          <item row="0" column="0">
+           <widget class="QLabel" name="startupLabel">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -383,11 +383,24 @@
              </size>
             </property>
             <property name="text">
-             <string>Disable monitor switching</string>
+             <string>Run at startup</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="2" column="0">
+           <widget class="QLabel" name="disableAudioLabel">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Disable audio switching</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
            <widget class="QCheckBox" name="disableAudioCheckBox">
             <property name="minimumSize">
              <size>
@@ -419,7 +432,7 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="3" column="1">
            <widget class="QCheckBox" name="disableMonitorCheckBox">
             <property name="minimumSize">
              <size>
@@ -435,8 +448,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="disableAudioLabel">
+          <item row="3" column="0">
+           <widget class="QLabel" name="disableMonitorLabel">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -444,12 +457,12 @@
              </size>
             </property>
             <property name="text">
-             <string>Disable audio switching</string>
+             <string>Disable monitor switching</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="startupLabel">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -457,7 +470,17 @@
              </size>
             </property>
             <property name="text">
-             <string>Run at startup</string>
+             <string>Skip Big Picture intro</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QCheckBox" name="skipIntroCheckBox">
+            <property name="layoutDirection">
+             <enum>Qt::LayoutDirection::RightToLeft</enum>
+            </property>
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>

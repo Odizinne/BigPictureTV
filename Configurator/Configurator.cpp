@@ -103,8 +103,6 @@ void Configurator::onTargetWindowComboBoxIndexChanged(int index)
     }
 }
 
-
-
 void Configurator::createDefaultSettings()
 {
     ui->checkrateSpinBox->setValue(1000);
@@ -135,6 +133,7 @@ void Configurator::loadSettings()
     ui->disableMonitorCheckBox->setChecked(settings.value("disable_monitor_switch", false).toBool());
     ui->customWindowLineEdit->setText(settings.value("custom_window_title", "").toString());
     ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode", 0).toInt());
+    ui->skipIntroCheckBox->setChecked(settings.value("skip_intro", false).toBool());
 
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
@@ -161,6 +160,7 @@ void Configurator::saveSettings()
     settings.setValue("disable_nightlight_action", ui->disableNightLightCheckBox->isChecked());
     settings.setValue("target_window_mode", ui->targetWindowComboBox->currentIndex());
     settings.setValue("custom_window_title", ui->customWindowLineEdit->text());
+    settings.setValue("skip_intro", ui->skipIntroCheckBox->isChecked());
 }
 
 void Configurator::toggleAudioSettings(bool state)
