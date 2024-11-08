@@ -60,13 +60,6 @@ Run `BigPictureTV.exe`.
 
 ### Audio Configuration
 
-1. **Install Audio Module**
-   - Click on the "Install audio module" button.
-   - Wait for the installation to complete.
-
-2. **Configure Audio Switching**
-   - Uncheck `Disable audio switching` once the module is installed.
-
 3. **Specify Audio Outputs**
    - Select your desired gamemode and desktop devices.  
    Disconnected devices are listed so you can select HDMI audio even if your HDMI TV is disconnected in windows.  
