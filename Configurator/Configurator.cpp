@@ -27,8 +27,7 @@ Configurator::Configurator(QWidget *parent)
     ui->avFrame->setVisible(false);
     ui->actionsFrame->setVisible(false);
     ui->advancedFrame->setVisible(false);
-    Utils::setFrameColorBasedOnWindow(this, ui->frame);
-    this->setFixedSize(382, 187);
+    this->setFixedSize(382, 218);
     setupConnections();
 }
 

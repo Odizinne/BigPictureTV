@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>379</width>
-    <height>559</height>
+    <height>704</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -33,7 +33,7 @@
     <item row="1" column="0" colspan="4">
      <widget class="QFrame" name="frame">
       <property name="frameShape">
-       <enum>QFrame::Shape::StyledPanel</enum>
+       <enum>QFrame::Shape::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Shadow::Raised</enum>
@@ -41,6 +41,21 @@
       <layout class="QGridLayout" name="gridLayout">
        <property name="sizeConstraint">
         <enum>QLayout::SizeConstraint::SetMinimumSize</enum>
+       </property>
+       <property name="leftMargin">
+        <number>4</number>
+       </property>
+       <property name="topMargin">
+        <number>4</number>
+       </property>
+       <property name="rightMargin">
+        <number>4</number>
+       </property>
+       <property name="bottomMargin">
+        <number>4</number>
+       </property>
+       <property name="horizontalSpacing">
+        <number>0</number>
        </property>
        <item row="2" column="0">
         <widget class="QFrame" name="actionsFrame">
@@ -63,8 +78,11 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <property name="spacing">
-           <number>6</number>
+          <property name="horizontalSpacing">
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>12</number>
           </property>
           <item row="1" column="0">
            <widget class="QLabel" name="disableNightLightLabel">
@@ -87,7 +105,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -132,7 +150,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -164,7 +182,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -180,7 +198,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -215,15 +233,18 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <property name="spacing">
-           <number>6</number>
+          <property name="horizontalSpacing">
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>12</number>
           </property>
           <item row="1" column="2" colspan="3">
            <widget class="QComboBox" name="targetWindowComboBox">
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
            </widget>
@@ -278,7 +299,7 @@
             <property name="minimumSize">
              <size>
               <width>90</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="frame">
@@ -316,7 +337,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
            </widget>
@@ -339,7 +360,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="text">
@@ -371,8 +392,11 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <property name="spacing">
-           <number>6</number>
+          <property name="horizontalSpacing">
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>12</number>
           </property>
           <item row="0" column="0">
            <widget class="QLabel" name="startupLabel">
@@ -405,7 +429,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -421,7 +445,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -437,7 +461,7 @@
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
             <property name="layoutDirection">
@@ -476,6 +500,12 @@
           </item>
           <item row="1" column="1">
            <widget class="QCheckBox" name="skipIntroCheckBox">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="layoutDirection">
              <enum>Qt::LayoutDirection::RightToLeft</enum>
             </property>
@@ -508,11 +538,33 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <property name="spacing">
-           <number>6</number>
+          <property name="horizontalSpacing">
+           <number>0</number>
           </property>
-          <item row="0" column="0">
-           <widget class="QLabel" name="gamemodeAudioLabel">
+          <property name="verticalSpacing">
+           <number>12</number>
+          </property>
+          <item row="0" column="2" colspan="2">
+           <widget class="QComboBox" name="gamemodeAudioComboBox">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="desktopMonitorLabel">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -520,37 +572,24 @@
              </size>
             </property>
             <property name="text">
-             <string>Gamemode audio</string>
+             <string>Desktop video</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="desktopAudioLabel">
+          <item row="2" column="3">
+           <widget class="QComboBox" name="gamemodeMonitorComboBox">
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>25</height>
+              <height>30</height>
              </size>
             </property>
-            <property name="text">
-             <string>Desktop audio</string>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="gamemodeMonitorLabel">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="text">
-             <string>Gamemode video</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
+          <item row="2" column="2">
            <spacer name="horizontalSpacer_2">
             <property name="minimumSize">
              <size>
@@ -569,21 +608,8 @@
             </property>
            </spacer>
           </item>
-          <item row="2" column="2">
-           <widget class="QComboBox" name="gamemodeMonitorComboBox">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="desktopMonitorLabel">
+          <item row="0" column="0">
+           <widget class="QLabel" name="gamemodeAudioLabel">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -591,35 +617,41 @@
              </size>
             </property>
             <property name="text">
-             <string>Desktop video</string>
+             <string>Gamemode audio</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QComboBox" name="desktopMonitorComboBox">
+          <item row="2" column="0">
+           <widget class="QLabel" name="gamemodeMonitorLabel">
             <property name="minimumSize">
              <size>
               <width>0</width>
               <height>25</height>
              </size>
             </property>
+            <property name="text">
+             <string>Gamemode video</string>
+            </property>
            </widget>
           </item>
-          <item row="0" column="1" colspan="2">
-           <widget class="QComboBox" name="gamemodeAudioComboBox">
-            <property name="maximumSize">
+          <item row="3" column="3">
+           <widget class="QComboBox" name="desktopMonitorComboBox">
+            <property name="minimumSize">
              <size>
-              <width>16777215</width>
-              <height>16777215</height>
+              <width>0</width>
+              <height>30</height>
              </size>
             </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
-            </property>
            </widget>
           </item>
-          <item row="1" column="1" colspan="2">
+          <item row="1" column="2" colspan="2">
            <widget class="QComboBox" name="desktopAudioComboBox">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>30</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
               <width>16777215</width>
@@ -630,6 +662,32 @@
              <enum>QComboBox::SizeAdjustPolicy::AdjustToMinimumContentsLengthWithIcon</enum>
             </property>
            </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="desktopAudioLabel">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Desktop audio</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -642,7 +700,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>25</height>
+        <height>30</height>
        </size>
       </property>
       <property name="text">
@@ -661,7 +719,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>25</height>
+        <height>30</height>
        </size>
       </property>
       <property name="text">
@@ -677,7 +735,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>25</height>
+        <height>30</height>
        </size>
       </property>
       <property name="text">
@@ -693,7 +751,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>25</height>
+        <height>30</height>
        </size>
       </property>
       <property name="text">

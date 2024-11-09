@@ -16,8 +16,8 @@ namespace Utils {
     void closeDiscord();
     void startDiscord();
     void sendMediaKey(WORD keyCode);
-    void setFrameColorBasedOnWindow(QWidget *window, QFrame *frame);
     void skipBigPictureIntro();
+    bool isWindows10();
 }
 
 #endif // UTILS_H

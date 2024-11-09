@@ -7,7 +7,7 @@
 #include <QString>
 #include <QTranslator>
 #include "BigPictureTV.h"
-#include <Windows.h>
+#include "Utils.h"
 
 int main(int argc, char *argv[])
 {
@@ -37,7 +37,9 @@ int main(int argc, char *argv[])
         a.installTranslator(&translator);
     }
 
-    a.setStyle("fusion");
+    if (Utils::isWindows10()) {
+        a.setStyle("fusion");
+    }
     a.setQuitOnLastWindowClosed(false);
 
     BigPictureTV w;
