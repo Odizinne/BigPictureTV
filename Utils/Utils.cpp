@@ -1,5 +1,6 @@
 #include "Utils.h"
-#include "Windows.h"
+#include <QApplication>
+#include <QScreen>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -10,14 +11,16 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 
-void Utils::runEnhancedDisplayswitch(const QString &command) {
+void Utils::runEnhancedDisplayswitch(const QString &command)
+{
     QProcess process;
     QString executablePath = "dependencies/EnhancedDisplaySwitch.exe";
     process.start(executablePath, QStringList() << command);
     process.waitForFinished();
 }
 
-QString getTheme() {
+QString getTheme()
+{
     QSettings settings(
         "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
         QSettings::NativeFormat);
@@ -26,13 +29,15 @@ QString getTheme() {
     return (value == 0) ? "light" : "dark";
 }
 
-QIcon Utils::getIconForTheme() {
+QIcon Utils::getIconForTheme()
+{
     QString theme = getTheme();
     QString iconPath = QString(":/icons/icon_%1.png").arg(theme);
     return QIcon(iconPath);
 }
 
-QString Utils::getActivePowerPlan() {
+QString Utils::getActivePowerPlan()
+{
     QString regPath = "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Power\\User\\PowerSchemes";
     QString regKey = "ActivePowerScheme";
 
@@ -42,7 +47,8 @@ QString Utils::getActivePowerPlan() {
     return activeSchemeGuid;
 }
 
-void Utils::setPowerPlan(QString planGuid) {
+void Utils::setPowerPlan(QString planGuid)
+{
     QString command = "powercfg";
     QStringList arguments;
     arguments << "/s" << planGuid;
@@ -59,7 +65,8 @@ void Utils::setPowerPlan(QString planGuid) {
     }
 }
 
-QString getDiscordPath() {
+QString getDiscordPath()
+{
     QString discordExecutableName = "Update.exe";
     QString localAppData = qgetenv("LOCALAPPDATA");
     if (localAppData.isEmpty()) {
@@ -70,12 +77,14 @@ QString getDiscordPath() {
     return localAppData + "/Discord/" + discordExecutableName;
 }
 
-bool Utils::isDiscordInstalled() {
+bool Utils::isDiscordInstalled()
+{
     QString discordPath = getDiscordPath();
     return QFileInfo::exists(discordPath);
 }
 
-bool Utils::isDiscordRunning() {
+bool Utils::isDiscordRunning()
+{
     QString discordProcessName = "Discord.exe";
     QProcess process;
     process.start("tasklist.exe", QStringList() << "/FI" << QString("IMAGENAME eq %1").arg(discordProcessName));
@@ -89,7 +98,8 @@ bool Utils::isDiscordRunning() {
     return output.contains(discordProcessName, Qt::CaseInsensitive);
 }
 
-void Utils::closeDiscord() {
+void Utils::closeDiscord()
+{
     QString discordProcessName = "Discord.exe";
     QStringList arguments;
     arguments << "/IM" << discordProcessName
@@ -105,7 +115,8 @@ void Utils::closeDiscord() {
     }
 }
 
-void Utils::startDiscord() {
+void Utils::startDiscord()
+{
     QString discordProcessName = "Discord.exe";
     QString discordPath = getDiscordPath();
     if (discordPath.isEmpty()) {
@@ -125,7 +136,8 @@ void Utils::startDiscord() {
     }
 }
 
-void Utils::sendMediaKey(WORD keyCode) {
+void Utils::sendMediaKey(WORD keyCode)
+{
     INPUT ip = {0};
     ip.type = INPUT_KEYBOARD;
     ip.ki.wVk = keyCode;
@@ -134,7 +146,19 @@ void Utils::sendMediaKey(WORD keyCode) {
     SendInput(1, &ip, sizeof(INPUT));
 }
 
-void Utils::skipBigPictureIntro() {
+
+
+void Utils::skipBigPictureIntro()
+{
+    // Center the mouse on the primary screen
+    QScreen* primaryScreen = QGuiApplication::primaryScreen();
+    if (primaryScreen) {
+        QRect screenGeometry = primaryScreen->geometry();
+        int centerX = screenGeometry.width() / 2;
+        int centerY = screenGeometry.height() / 2;
+        QCursor::setPos(centerX, centerY);
+    }
+
     // Define the input event for mouse button down and up
     INPUT input[2] = {};
 
