@@ -7,7 +7,7 @@
 #include <QFrame>
 
 namespace Utils {
-    void runEnhancedDisplayswitch(const QString &command);
+    void runDisplayswitch(const QString &command);
     QIcon getIconForTheme();
     QString getActivePowerPlan();
     void setPowerPlan(QString planGuid);

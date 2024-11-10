@@ -12,11 +12,10 @@
 #include <QCoreApplication>
 #include <QFileInfo>
 
-void Utils::runEnhancedDisplayswitch(const QString &command)
+void Utils::runDisplayswitch(const QString &command)
 {
     QProcess process;
-    QString executablePath = "dependencies/EnhancedDisplaySwitch.exe";
-    process.start(executablePath, QStringList() << command);
+    process.start("displayswitch.exe", QStringList() << command);
     process.waitForFinished();
 }
 
