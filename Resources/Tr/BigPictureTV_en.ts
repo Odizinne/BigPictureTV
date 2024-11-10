@@ -4,12 +4,17 @@
 <context>
     <name>BigPictureTV</name>
     <message>
-        <location filename="../../BigPictureTV/BigPictureTV.cpp" line="51"/>
+        <location filename="../../BigPictureTV/BigPictureTV.cpp" line="47"/>
+        <source>Pause detection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../BigPictureTV/BigPictureTV.cpp" line="54"/>
         <source>Settings</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../BigPictureTV/BigPictureTV.cpp" line="52"/>
+        <location filename="../../BigPictureTV/BigPictureTV.cpp" line="58"/>
         <source>Quit</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17,233 +22,159 @@
 <context>
     <name>Configurator</name>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="26"/>
+        <location filename="../../Configurator/Configurator.ui" line="26"/>
         <source>BigPictureTV - Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="40"/>
+        <location filename="../../Configurator/Configurator.ui" line="707"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="55"/>
-        <source>Install audio module</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="68"/>
+        <location filename="../../Configurator/Configurator.ui" line="410"/>
         <source>Run at startup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="97"/>
+        <location filename="../../Configurator/Configurator.ui" line="423"/>
         <source>Disable audio switching</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="126"/>
+        <location filename="../../Configurator/Configurator.ui" line="484"/>
         <source>Disable monitor switching</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="150"/>
-        <source>Audio / Video</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="175"/>
+        <location filename="../../Configurator/Configurator.ui" line="633"/>
         <source>Gamemode video</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="188"/>
+        <location filename="../../Configurator/Configurator.ui" line="675"/>
         <source>Desktop audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="201"/>
+        <location filename="../../Configurator/Configurator.ui" line="575"/>
         <source>Desktop video</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="290"/>
+        <location filename="../../Configurator/Configurator.ui" line="497"/>
+        <source>Skip Big Picture intro</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Configurator/Configurator.ui" line="620"/>
         <source>Gamemode audio</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="298"/>
+        <location filename="../../Configurator/Configurator.ui" line="726"/>
+        <source>Audio/Video</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Configurator/Configurator.ui" line="742"/>
         <source>Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="313"/>
+        <location filename="../../Configurator/Configurator.ui" line="128"/>
         <source>Will revert to previously set power plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="316"/>
+        <location filename="../../Configurator/Configurator.ui" line="131"/>
         <source>Enable performance power plan</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="345"/>
+        <location filename="../../Configurator/Configurator.ui" line="96"/>
         <source>Will revert to previous night light state</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="348"/>
+        <location filename="../../Configurator/Configurator.ui" line="99"/>
         <source>Disable night light</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="361"/>
+        <location filename="../../Configurator/Configurator.ui" line="173"/>
         <source>Will reopen discord in desktop mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="364"/>
+        <location filename="../../Configurator/Configurator.ui" line="176"/>
         <source>Close discord</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="409"/>
+        <location filename="../../Configurator/Configurator.ui" line="144"/>
         <source>Pause currently playing media</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="433"/>
+        <location filename="../../Configurator/Configurator.ui" line="758"/>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="448"/>
+        <location filename="../../Configurator/Configurator.ui" line="280"/>
         <source>Custom window title</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="481"/>
+        <location filename="../../Configurator/Configurator.ui" line="293"/>
         <source>Target window</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="494"/>
+        <location filename="../../Configurator/Configurator.ui" line="331"/>
         <source>Window check rate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="550"/>
+        <location filename="../../Configurator/Configurator.ui" line="367"/>
         <source>Reset default settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.ui" line="557"/>
-        <source>Open settings folder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="567"/>
-        <source>Infos</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="579"/>
-        <source>Repository:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="616"/>
-        <source>Commit ID:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="677"/>
-        <source>Detected steam language:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="744"/>
-        <source>Commit date:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.ui" line="757"/>
-        <source>Target steam window title:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.cpp" line="62"/>
-        <location filename="../../Configurator/configurator.cpp" line="63"/>
+        <location filename="../../Configurator/Configurator.cpp" line="63"/>
+        <location filename="../../Configurator/Configurator.cpp" line="64"/>
         <source>Discord does not appear to be installed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.cpp" line="76"/>
-        <source>Audio module installed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.cpp" line="85"/>
+        <location filename="../../Configurator/Configurator.cpp" line="70"/>
         <source>Internal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.cpp" line="86"/>
+        <location filename="../../Configurator/Configurator.cpp" line="71"/>
         <source>Extend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.cpp" line="87"/>
+        <location filename="../../Configurator/Configurator.cpp" line="72"/>
         <source>External</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.cpp" line="88"/>
+        <location filename="../../Configurator/Configurator.cpp" line="73"/>
         <source>Clone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.cpp" line="90"/>
+        <location filename="../../Configurator/Configurator.cpp" line="74"/>
         <source>Big Picture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Configurator/configurator.cpp" line="91"/>
+        <location filename="../../Configurator/Configurator.cpp" line="75"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.cpp" line="132"/>
-        <location filename="../../Configurator/configurator.cpp" line="150"/>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.cpp" line="133"/>
-        <source>Failed to execute the PowerShell commands.
-Please check if PowerShell is installed and properly configured.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.cpp" line="145"/>
-        <source>Success</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.cpp" line="146"/>
-        <source>AudioDeviceCmdlets module installed successfully.
-You can now use audio settings.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Configurator/configurator.cpp" line="151"/>
-        <source>Failed to install NuGet package provider or AudioDeviceCmdlets module.
-Please install them manually by running these commands in PowerShell:
-Install-PackageProvider -Name NuGet -Force -Scope CurrentUser;
-Install-Module -Name AudioDeviceCmdlets -Force -Scope CurrentUser
-You should then restart the application.
-Error details:
-</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

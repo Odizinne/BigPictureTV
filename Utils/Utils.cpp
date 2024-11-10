@@ -146,8 +146,6 @@ void Utils::sendMediaKey(WORD keyCode)
     SendInput(1, &ip, sizeof(INPUT));
 }
 
-
-
 void Utils::skipBigPictureIntro()
 {
     // Center the mouse on the primary screen
