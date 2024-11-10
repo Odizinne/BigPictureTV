@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include <QTranslator>
 #include <QApplication>
 #include <QScreen>
 #include <QDebug>
