@@ -44,6 +44,7 @@ private:
     void showSettings();
     void startupReset();
     void changeDetectionState();
+    void checkAndSetHDR(bool isDesktopMode);
 
     QString gamemode_audio_device;
     QString desktop_audio_device;
@@ -59,6 +60,7 @@ private:
     bool disable_nightlight_action;
     int target_window_mode;
     bool skip_intro;
+    bool enable_hdr;
     QSettings settings;
     bool gamemodeActive;
 };

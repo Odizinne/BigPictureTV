@@ -18,6 +18,8 @@ namespace Utils {
     void sendMediaKey(WORD keyCode);
     void skipBigPictureIntro();
     bool isWindows10();
+    int getHDRStatus();
+    void setHDR(QString mode);
 }
 
 #endif // UTILS_H

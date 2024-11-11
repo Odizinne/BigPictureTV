@@ -23,6 +23,7 @@ Configurator::Configurator(QWidget *parent)
     this->setWindowIcon(Utils::getIconForTheme());
     populateComboboxes();
     populateAudioComboBoxes();
+    getHDRCapabilities();
     loadSettings();
     ui->avFrame->setVisible(false);
     ui->actionsFrame->setVisible(false);
@@ -134,6 +135,7 @@ void Configurator::loadSettings()
     ui->customWindowLineEdit->setText(settings.value("custom_window_title", "").toString());
     ui->targetWindowComboBox->setCurrentIndex(settings.value("target_window_mode", 0).toInt());
     ui->skipIntroCheckBox->setChecked(settings.value("skip_intro", false).toBool());
+    ui->HDRCheckBox->setChecked(settings.value("enable_hdr", false).toBool());
 
     toggleAudioSettings(!ui->disableAudioCheckBox->isChecked());
     toggleMonitorSettings(!ui->disableMonitorCheckBox->isChecked());
@@ -161,6 +163,7 @@ void Configurator::saveSettings()
     settings.setValue("target_window_mode", ui->targetWindowComboBox->currentIndex());
     settings.setValue("custom_window_title", ui->customWindowLineEdit->text());
     settings.setValue("skip_intro", ui->skipIntroCheckBox->isChecked());
+    settings.setValue("enable_hdr", ui->HDRCheckBox->isChecked());
 }
 
 void Configurator::toggleAudioSettings(bool state)
@@ -298,5 +301,13 @@ void Configurator::selectAudioDeviceFromSettings(QComboBox *comboBox, const QStr
 
     if (index != -1) {
         comboBox->setCurrentIndex(index);
+    }
+}
+
+void Configurator::getHDRCapabilities()
+{
+    if (Utils::getHDRStatus() == 2) {
+        ui->HDRLabel->setDisabled(true);
+        ui->HDRCheckBox->setDisabled(true);
     }
 }

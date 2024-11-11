@@ -83,6 +83,7 @@ void BigPictureTV::checkWindowTitle()
         gamemodeActive = true;
         handleActions(false);
         handleMonitorChanges(false, disable_monitor_switch);
+        checkAndSetHDR(false);
         if (skip_intro) {
             Utils::skipBigPictureIntro();
         }
@@ -91,6 +92,7 @@ void BigPictureTV::checkWindowTitle()
     } else if (!isRunning && gamemodeActive) {
         gamemodeActive = false;
         handleActions(true);
+        checkAndSetHDR(true);
         handleMonitorChanges(true, disable_monitor_switch);
         handleAudioChanges(true, disable_audio_switch);
         settings.setValue("gamemode", gamemodeActive);
@@ -115,6 +117,18 @@ void BigPictureTV::handleMonitorChanges(bool isDesktopMode, bool disableVideo)
 
     if (command) {
         Utils::runDisplayswitch(command);
+    }
+}
+
+void BigPictureTV::checkAndSetHDR(bool isDesktopMode)
+{
+    if (!enable_hdr) {
+        return;
+    }
+
+    QString command = isDesktopMode ? "off" : "on";
+    if (Utils::getHDRStatus() != 2) {
+        Utils::setHDR(command);
     }
 }
 
@@ -207,6 +221,7 @@ void BigPictureTV::loadSettings()
     target_window_mode = settings.value("target_window_mode").toInt();
     custom_window_title = settings.value("custom_window_title").toString();
     skip_intro = settings.value("skip_intro").toBool();
+    enable_hdr = settings.value("enable_hdr").toBool();
 }
 
 void BigPictureTV::showSettings()

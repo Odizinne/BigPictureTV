@@ -5,6 +5,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17 silent lrelease embed_translations
 
 QM_FILES_RESOURCE_PREFIX = /translations
+DEPS_DIR = $$PWD/Dependencies
+BUILD_DIR = $$OUT_PWD
 
 INCLUDEPATH +=                                              \
     AudioManager                                            \
@@ -48,3 +50,5 @@ RESOURCES +=                                                \
 RC_FILE = Resources/appicon.rc
 
 LIBS += -lole32 -luser32 -ladvapi32 -lshell32
+
+QMAKE_POST_LINK = powershell -Command "Copy-Item -Path '$$DEPS_DIR' -Recurse -Destination '$$BUILD_DIR/release'"

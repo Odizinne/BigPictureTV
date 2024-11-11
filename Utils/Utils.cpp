@@ -209,3 +209,34 @@ bool Utils::isWindows10()
     int buildNumber = getBuildNumber();
     return (buildNumber >= 10240 && buildNumber < 22000);
 }
+
+int Utils::getHDRStatus()
+{
+    QString program = QCoreApplication::applicationDirPath() + "/Dependencies/HDRCmd.exe";
+    QStringList arguments;
+    arguments << "status" << "-m" << "exitcode";
+    QProcess process;
+    process.start(program, arguments);
+
+    if (!process.waitForFinished()) {
+        qDebug() << "Process failed to finish";
+        return -1;
+    }
+
+    int exitCode = process.exitCode();
+    return exitCode;
+}
+
+void Utils::setHDR(QString mode)
+{
+    QString program = QCoreApplication::applicationDirPath() + "/Dependencies/HDRCmd.exe";
+    QStringList arguments;
+    arguments << mode;
+    QProcess process;
+    process.start(program, arguments);
+
+    if (!process.waitForFinished()) {
+        qDebug() << "Process failed to finish";
+        return;
+    }
+}

@@ -44,6 +44,7 @@ private:
     void createDefaultSettings();
     void loadSettings();
     void saveSettings();
+    void getHDRCapabilities();
     void fadeIn(QWidget *widget);
     void fadeOut(QWidget *widget, std::function<void()> onFinished);
     void switchTab(int targetFrame, QPushButton* targetButton, QWidget* targetFrameWidget);
