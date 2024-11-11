@@ -66,13 +66,15 @@ void BigPictureTV::createTrayIcon()
 
 void BigPictureTV::checkWindowTitle()
 {
-    if (target_window_mode == 1 && custom_window_title == "") {
+    if (target_window_mode == 2 && custom_window_title == "") {
         return;
     }
 
     bool isRunning;
     if (target_window_mode == 0) {
         isRunning = SteamWindowManager::isBigPictureRunning();
+    } else if (target_window_mode == 1){
+        isRunning = SteamWindowManager::isCustomWindowRunning("Playnite");
     } else {
         isRunning = SteamWindowManager::isCustomWindowRunning(custom_window_title);
     }

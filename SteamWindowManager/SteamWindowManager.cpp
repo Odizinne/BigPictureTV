@@ -120,7 +120,6 @@ bool SteamWindowManager::isCustomWindowRunning(const QString &windowTitle)
     for (const auto &windowTitle : currentWindowTitles) {
         QString cleanedTitle = cleanString(windowTitle.toLower());
         QStringList windowWords = cleanedTitle.split(' ', Qt::SkipEmptyParts);
-
         if (std::all_of(customWindowTitleWords.begin(),
                         customWindowTitleWords.end(),
                         [&windowWords](const QString &word) {

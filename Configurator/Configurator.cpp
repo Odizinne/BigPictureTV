@@ -72,6 +72,7 @@ void Configurator::populateComboboxes()
     ui->gamemodeMonitorComboBox->addItem(tr("External"));
     ui->gamemodeMonitorComboBox->addItem(tr("Clone"));
     ui->targetWindowComboBox->addItem(tr("Big Picture"));
+    ui->targetWindowComboBox->addItem(tr("Playnite"));
     ui->targetWindowComboBox->addItem(tr("Custom"));
 }
 

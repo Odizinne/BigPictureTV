@@ -57,7 +57,7 @@ private:
     int desktop_monitor_mode;
     bool disable_monitor_switch;
     bool disable_nightlight_action;
-    bool target_window_mode;
+    int target_window_mode;
     bool skip_intro;
     QSettings settings;
     bool gamemodeActive;
