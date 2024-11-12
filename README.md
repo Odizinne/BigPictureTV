@@ -64,11 +64,6 @@ Run `BigPictureTV.exe`.
    Disconnected devices are listed so you can select HDMI audio even if your HDMI TV is disconnected in windows.  
    On sound hardware changes (Disconnecting / reconnecting HDMI TV), it is possible that your audio output IDs changes. A reselection in configuration window might be necessary.
 
-
-**Example:**
-
-If you have a headset with the full name "CORSAIR VOID ELITE Wireless Gaming Dongle," you can simply specify "Corsair" as the audio output name. BigPictureTV will detect the correct output based on this keyword.
-
 ##
 
 ### Monitor Configuration
@@ -100,6 +95,7 @@ This is not optimal unless you manually set a FPS limit to your TV refresh rate 
 
 ### Actions
 
+- Enable HDR in gamemode, disable HDR in desktop mode.
 - Close discord in gamemode, start discord in desktop mode.
 - Disable night light in gamemode, revert to previous state in desktop mode.
 - Set performance power plan in gamemode, revert to previous state in desktop mode.
