@@ -13,8 +13,7 @@ This project automates switching between a monitor and a TV when launching Steam
 
 **Runtime:**
 - [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-- [AudioDeviceCmdlets](https://github.com/frgnca/AudioDeviceCmdlets) for audio output switching.
- 
+
 ## Download
 
 ### Using OdizinnePackageManager (recommended)
