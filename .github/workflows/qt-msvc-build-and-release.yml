@@ -13,16 +13,15 @@ jobs:
         with:
           submodules: true
 
-      - name: Set up Visual Studio shell
-        uses: egor-tensin/vs-shell@v2
-        with:
-          arch: x64
-
       - uses: res2k/setup-winsdk@support-sdk-26100 # TEMPORARY until upstream fbactions/setup-winsdk works w/ 26100
         with:
           winsdk-build-version: 26100
         name: Install Windows 11 SDK 26100
-        
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          sdk: 10.0.26100.0
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
