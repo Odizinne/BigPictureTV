@@ -126,9 +126,9 @@ void BigPictureTV::checkAndSetHDR(bool isDesktopMode)
         return;
     }
 
-    QString command = isDesktopMode ? "off" : "on";
+    bool enable = isDesktopMode ? false : true;
     if (Utils::getHDRStatus() != 2) {
-        Utils::setHDR(command);
+        Utils::setHDR(enable);
     }
 }
 

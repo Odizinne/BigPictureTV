@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include "HDR.h"
 #include <QTranslator>
 #include <QApplication>
 #include <QScreen>
@@ -212,31 +213,19 @@ bool Utils::isWindows10()
 
 int Utils::getHDRStatus()
 {
-    QString program = QCoreApplication::applicationDirPath() + "/Dependencies/HDRCmd.exe";
-    QStringList arguments;
-    arguments << "status" << "-m" << "exitcode";
-    QProcess process;
-    process.start(program, arguments);
-
-    if (!process.waitForFinished()) {
-        qDebug() << "Process failed to finish";
-        return -1;
+    hdr::Status hdrStatus = hdr::GetWindowsHDRStatus();
+    if (hdrStatus == hdr::Status::On) {
+        return 0; // Enabled
+    } else if (hdrStatus == hdr::Status::Off) {
+        return 1; // Disabled
+    } else if (hdrStatus == hdr::Status::Unsupported) {
+        return 2; // Unsuported
+    } else {
+        return 2; // Error, so unsupported
     }
-
-    int exitCode = process.exitCode();
-    return exitCode;
 }
 
-void Utils::setHDR(QString mode)
+void Utils::setHDR(bool enable)
 {
-    QString program = QCoreApplication::applicationDirPath() + "/Dependencies/HDRCmd.exe";
-    QStringList arguments;
-    arguments << mode;
-    QProcess process;
-    process.start(program, arguments);
-
-    if (!process.waitForFinished()) {
-        qDebug() << "Process failed to finish";
-        return;
-    }
+    hdr::SetWindowsHDRStatus(enable);
 }

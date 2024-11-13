@@ -19,7 +19,7 @@ namespace Utils {
     void skipBigPictureIntro();
     bool isWindows10();
     int getHDRStatus();
-    void setHDR(QString mode);
+    void setHDR(bool enable);
 }
 
 #endif // UTILS_H

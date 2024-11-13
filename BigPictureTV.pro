@@ -5,17 +5,16 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 CONFIG += c++17 silent lrelease embed_translations
 
 QM_FILES_RESOURCE_PREFIX = /translations
-DEPS_DIR = $$PWD/Dependencies
-BUILD_DIR = $$OUT_PWD
 
 INCLUDEPATH +=                                              \
-    AudioManager                                            \
-    BigPictureTV                                            \
-    Configurator                                            \
-    NightLightSwitcher                                      \
-    ShortcutManager                                         \
-    SteamWindowManager                                      \
-    Utils                                                   \
+    AudioManager/                                           \
+    BigPictureTV/                                           \
+    Configurator/                                           \
+    NightLightSwitcher/                                     \
+    ShortcutManager/                                        \
+    SteamWindowManager/                                     \
+    Utils/                                                  \
+    Dependencies/HDRtray/common/                            \
 
 SOURCES +=                                                  \
     AudioManager/AudioManager.cpp                           \
@@ -26,6 +25,7 @@ SOURCES +=                                                  \
     SteamWindowManager/SteamwindowManager.cpp               \
     Utils/Utils.cpp                                         \
     main.cpp                                                \
+    Dependencies/HDRtray/common/hdr.cpp                     \
 
 HEADERS +=                                                  \
     AudioManager/AudioManager.h                             \
@@ -36,6 +36,7 @@ HEADERS +=                                                  \
     ShortcutManager/ShortcutManager.h                       \
     SteamWindowManager/SteamwindowManager.h                 \
     Utils/Utils.h                                           \
+    Dependencies/HDRtray/common/hdr.h                       \
 
 FORMS +=                                                    \
     Configurator/Configurator.ui                            \
@@ -50,5 +51,3 @@ RESOURCES +=                                                \
 RC_FILE = Resources/appicon.rc
 
 LIBS += -lole32 -luser32 -ladvapi32 -lshell32
-
-QMAKE_POST_LINK = powershell -Command "Copy-Item -Path '$$DEPS_DIR' -Recurse -Destination '$$BUILD_DIR/release'"
