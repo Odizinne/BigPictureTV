@@ -20,6 +20,11 @@ jobs:
         with:
           arch: x64
 
+      - uses: res2k/setup-winsdk@support-sdk-26100 # TEMPORARY until upstream fbactions/setup-winsdk works w/ 26100
+        with:
+          winsdk-build-version: 26100
+        name: Install Windows 11 SDK 26100
+        
       - name: Install Qt
         uses: jurplel/install-qt-action@v4
         with:
