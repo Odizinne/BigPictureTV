@@ -1,5 +1,6 @@
 # BigPictureTV
 
+[![Version](https://img.shields.io/github/v/release/odizinne/bigpicturetv)]()
 [![Github All Releases](https://img.shields.io/github/downloads/odizinne/bigpicturetv/total.svg)]()
 [![license](https://img.shields.io/github/license/odizinne/bigpicturetv)]()
 
