@@ -1,5 +1,6 @@
 # BigPictureTV
 
+[![Version](https://img.shields.io/github/v/release/odizinne/bigpicturetv)]()
 [![Github All Releases](https://img.shields.io/github/downloads/odizinne/bigpicturetv/total.svg)]()
 [![license](https://img.shields.io/github/license/odizinne/bigpicturetv)]()
 
@@ -105,3 +106,4 @@ This is not optimal unless you manually set a FPS limit to your TV refresh rate 
 
 - [nathanbabcock](https://github.com/nathanbabcock/nightlight-cli/tree/main) for night light toggle
 - [res2k](https://github.com/res2k/HDRTray) for HDRCmd.exe
+
