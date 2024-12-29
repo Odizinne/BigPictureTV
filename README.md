@@ -4,9 +4,13 @@
 [![Github All Releases](https://img.shields.io/github/downloads/odizinne/bigpicturetv/total.svg)]()
 [![license](https://img.shields.io/github/license/odizinne/bigpicturetv)]()
 
-This project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
+⚠️ **Maintenance Only**  
+This project is now in maintenance mode. While existing features will be supported and critical issues may be addressed, no new features or significant updates are planned.
+
 
 ## Overview
+
+This project automates switching between a monitor and a TV when launching Steam Big Picture on Windows.  
 
 ![image](.assets/screenshot.png)
 
