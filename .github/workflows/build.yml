@@ -1,0 +1,66 @@
+name: Build
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  QT_VERSION: '6.10.0'
+
+jobs:
+  build:
+    runs-on: windows-2022
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Visual Studio shell
+        uses: egor-tensin/vs-shell@v2
+        with:
+          arch: x64
+
+      - name: Install Qt
+        id: qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: 'win64_msvc2022_64'
+          modules: 'qtmultimedia'
+          add-tools-to-path: true
+          cache: true
+
+      - name: Generate and Build with CMake
+        shell: pwsh
+        run: |
+          mkdir -p build
+          cd build
+          cmake ..
+          cmake --build . --config Release
+          cmake --install . --config Release
+
+      - name: Rename release folder
+        shell: pwsh
+        run: |
+          $releaseDir = "build/install"
+          $newDir = "BigPictureTV"
+          if (Test-Path $releaseDir) {
+              Rename-Item -Path $releaseDir -NewName $newDir
+          } else {
+              Write-Error "Release folder not found!"
+              exit 1
+          }
+
+      - name: Zip binaries folder
+        shell: pwsh
+        run: |
+          $zipFile = "build/BigPictureTV_win64_msvc2022.zip"
+          $folder = "build/BigPictureTV"
+          Compress-Archive -Path $folder -DestinationPath $zipFile
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BigPictureTV_win64_msvc2022
+          path: build/BigPictureTV_win64_msvc2022.zip
