@@ -1,4 +1,4 @@
-#include "AudioManager.h"
+#include "audiomanager.h"
 #include <QProcess>
 #include <chrono>
 #include <thread>
@@ -7,7 +7,7 @@
 #include <Functiondiscoverykeys_devpkey.h>
 #include <comdef.h>
 #include <atlbase.h>
-#include "PolicyConfig.h"
+#include "policyconfig.h"
 
 bool setDefaultAudioOutputDevice(const QString &deviceId)
 {

@@ -1,4 +1,4 @@
-#include "Utils.h"
+#include "utils.h"
 #include "HDR.h"
 #include <QTranslator>
 #include <QApplication>

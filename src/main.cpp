@@ -1,11 +1,10 @@
 #include <QApplication>
+#include <QQmlApplicationEngine>
 #include <QDebug>
-#include <QLocale>
-#include <QString>
-#include <QTranslator>
 #include <QProcess>
-#include "BigPictureTV.h"
-#include "Utils.h"
+#include "appconfiguration.h"
+#include "appbridge.h"
+#include "utils.h"
 
 bool isAnotherInstanceRunning(const QString& processName)
 {
@@ -20,10 +19,13 @@ bool isAnotherInstanceRunning(const QString& processName)
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    a.setQuitOnLastWindowClosed(false);
+    QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
+    app.setOrganizationName("Odizinne");
+    app.setApplicationName("BigPictureTV");
+
     if (Utils::isWindows10()) {
-        a.setStyle("fusion");
+        app.setStyle("fusion");
     }
 
     const QString processName = "BigPictureTV.exe";
@@ -32,14 +34,18 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    QLocale locale;
-    QString languageCode = locale.name().section('_', 0, 0);
-    QTranslator translator;
-    if (translator.load(":/translations/BigPictureTV_" + languageCode + ".qm")) {
-        a.installTranslator(&translator);
+    QQmlApplicationEngine engine;
+
+    // Create singletons before loading QML
+    // This ensures proper initialization order
+    AppConfiguration::create(&engine, nullptr);
+    AppBridge::create(&engine, nullptr);
+
+    engine.loadFromModule("Odizinne.BigPictureTV", "Main");
+
+    if (engine.rootObjects().isEmpty()) {
+        return -1;
     }
 
-    BigPictureTV w;
-
-    return a.exec();
+    return app.exec();
 }

@@ -1,4 +1,4 @@
-#include "NightLightSwitcher.h"
+#include "nightlightswitcher.h"
 #include <QDebug>
 #include <iostream>
 #include <sstream>

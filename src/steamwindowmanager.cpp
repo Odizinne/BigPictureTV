@@ -1,4 +1,4 @@
-#include "SteamWindowManager.h"
+#include "steamwindowmanager.h"
 #include <QDebug>
 #include <windows.h>
 
@@ -105,9 +105,11 @@ bool SteamWindowManager::isBigPictureRunning()
                         [&windowWords](const QString &word) {
                             return windowWords.contains(word);
                         })) {
+            qDebug() << "found";
             return true;
         }
     }
+    qDebug() << "not found";
     return false;
 }
 
@@ -129,4 +131,34 @@ bool SteamWindowManager::isCustomWindowRunning(const QString &windowTitle)
         }
     }
     return false;
+}
+
+bool SteamWindowManager::isBigPictureWindowTitle(const QString &windowTitle)
+{
+    QString bigPictureTitle = cleanString(getBigPictureWindowTitle().toLower());
+    QStringList bigPictureWords = bigPictureTitle.split(' ', Qt::SkipEmptyParts);
+
+    QString cleanedTitle = cleanString(windowTitle.toLower());
+    QStringList windowWords = cleanedTitle.split(' ', Qt::SkipEmptyParts);
+
+    return std::all_of(bigPictureWords.begin(),
+                       bigPictureWords.end(),
+                       [&windowWords](const QString &word) {
+                           return windowWords.contains(word);
+                       });
+}
+
+bool SteamWindowManager::isCustomWindowTitle(const QString &windowTitle, const QString &customTitle)
+{
+    QString cleanedCustomTitle = cleanString(customTitle.toLower());
+    QStringList customTitleWords = cleanedCustomTitle.split(' ', Qt::SkipEmptyParts);
+
+    QString cleanedWindowTitle = cleanString(windowTitle.toLower());
+    QStringList windowWords = cleanedWindowTitle.split(' ', Qt::SkipEmptyParts);
+
+    return std::all_of(customTitleWords.begin(),
+                       customTitleWords.end(),
+                       [&windowWords](const QString &word) {
+                           return windowWords.contains(word);
+                       });
 }

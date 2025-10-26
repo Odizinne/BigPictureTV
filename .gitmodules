@@ -1,3 +1,3 @@
-[submodule "Dependencies/HDRtray"]
-	path = Dependencies/HDRtray
+[submodule "extern/HDRtray"]
+	path = extern/HDRtray
 	url = https://github.com/res2k/HDRTray.git
