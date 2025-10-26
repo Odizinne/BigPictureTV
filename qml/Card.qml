@@ -28,7 +28,7 @@ Rectangle {
 
     transform: Translate {
         id: translateTransform
-        y: show ? 0 : -20
+        y: card.show ? 0 : -20
 
         Behavior on y {
             NumberAnimation {

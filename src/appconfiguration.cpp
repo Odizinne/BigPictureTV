@@ -243,6 +243,15 @@ void AppConfiguration::setGamemode(bool value)
     }
 }
 
+void AppConfiguration::setFirstRun(bool value)
+{
+    if (m_firstRun != value) {
+        m_firstRun = value;
+        saveSettings();
+        emit firstRunChanged();
+    }
+}
+
 void AppConfiguration::resetToDefaults()
 {
     setTargetWindowMode(0);

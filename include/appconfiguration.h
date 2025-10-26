@@ -39,6 +39,8 @@ class AppConfiguration : public QObject
     // Internal state
     Q_PROPERTY(bool gamemode READ gamemode WRITE setGamemode NOTIFY gamemodeChanged)
 
+    Q_PROPERTY(bool firstRun READ firstRun WRITE setFirstRun NOTIFY firstRunChanged)
+
 public:
     static AppConfiguration* create(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
     static AppConfiguration* instance();
@@ -66,6 +68,7 @@ public:
     bool enableHdr() const { return m_enableHdr; }
 
     bool gamemode() const { return m_gamemode; }
+    bool firstRun() const { return m_firstRun; }
 
     // Setters
     void setTargetWindowMode(int value);
@@ -90,6 +93,7 @@ public:
     void setEnableHdr(bool value);
 
     void setGamemode(bool value);
+    void setFirstRun(bool value);
 
     Q_INVOKABLE void resetToDefaults();
 
@@ -116,6 +120,7 @@ signals:
     void enableHdrChanged();
 
     void gamemodeChanged();
+    void firstRunChanged();
 
 private:
     explicit AppConfiguration(QObject *parent = nullptr);
@@ -128,7 +133,6 @@ private:
 
     QSettings m_settings;
 
-    // Member variables
     int m_targetWindowMode;
     QString m_customWindowTitle;
     bool m_skipIntro;
@@ -151,6 +155,7 @@ private:
     bool m_enableHdr;
 
     bool m_gamemode;
+    bool m_firstRun;
 };
 
 #endif // APPCONFIGURATION_H

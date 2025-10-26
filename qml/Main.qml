@@ -12,8 +12,15 @@ ApplicationWindow {
     height: 450
     minimumWidth: 800
     minimumHeight: 450
-    visible: true
+    visible: false
     title: qsTr("BigPictureTV - Settings")
+
+    Component.onCompleted: {
+        if (AppConfiguration.firstRun) {
+            root.show()
+            AppConfiguration.firstRun = false
+        }
+    }
 
     ListModel {
         id: navigationModel
