@@ -253,46 +253,84 @@ ApplicationWindow {
         id: videoPane
 
         Pane {
+            Component.onCompleted: {
+                // Initialize: if monitor switching not disabled and no monitor selected, select first one
+                if (!AppConfiguration.disableMonitorSwitch &&
+                    DisplayManager.displays.length > 0 &&
+                    AppConfiguration.gamemodeDisplayDevice === "") {
+                    AppConfiguration.gamemodeDisplayDevice = DisplayManager.displays[0].devicePath
+                }
+            }
+
             ScrollView {
                 anchors.fill: parent
+                contentWidth: availableWidth
 
                 ColumnLayout {
                     width: parent.width
                     spacing: 3
 
+
+                    Label {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 10
+                        Layout.leftMargin: 3
+                        text: qsTr("Gamemode Display")
+                        font.pixelSize: 18
+                        font.bold: true
+                    }
+
+                    Label {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 3
+                        Layout.bottomMargin: 5
+                        text: qsTr("Select which display to use when entering gamemode")
+                        font.pixelSize: 13
+                        opacity: 0.7
+                        wrapMode: Text.WordWrap
+                    }
+
                     Card {
                         Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width
                         title: "Disable monitor switching"
                         additionalControl: Switch {
                             id: disableMonitorCheckBox
                             checked: AppConfiguration.disableMonitorSwitch
-                            onToggled: AppConfiguration.disableMonitorSwitch = checked
+                            onToggled: {
+                                if (checked) {
+                                    AppConfiguration.disableMonitorSwitch = true
+                                    AppConfiguration.gamemodeDisplayDevice = ""
+                                } else {
+                                    AppConfiguration.disableMonitorSwitch = false
+                                    if (DisplayManager.displays.length > 0) {
+                                        AppConfiguration.gamemodeDisplayDevice = DisplayManager.displays[0].devicePath
+                                    }
+                                }
+                            }
                         }
                     }
 
-                    Card {
-                        Layout.fillWidth: true
-                        title: "Gamemode monitor"
-                        enabled: !AppConfiguration.disableMonitorSwitch
-                        additionalControl: CustomComboBox {
-                            id: gamemodeMonitorComboBox
-                            Layout.fillWidth: true
-                            model: [qsTr("External"), qsTr("Clone")]
-                            currentIndex: AppConfiguration.gamemodeMonitorMode
-                            onActivated: AppConfiguration.gamemodeMonitorMode = currentIndex
-                        }
-                    }
+                    Repeater {
+                        model: DisplayManager.displays
 
-                    Card {
-                        Layout.fillWidth: true
-                        title: "Desktop monitor"
-                        enabled: !AppConfiguration.disableMonitorSwitch
-                        additionalControl: CustomComboBox {
-                            id: desktopMonitorComboBox
+                        Card {
+                            id: monitorDel
+                            required property var model
                             Layout.fillWidth: true
-                            model: [qsTr("Internal"), qsTr("Extend")]
-                            currentIndex: AppConfiguration.desktopMonitorMode
-                            onActivated: AppConfiguration.desktopMonitorMode = currentIndex
+                            Layout.preferredWidth: parent.width
+                            title: model.name + (model.isActive ? qsTr(" (Currently Active)") : "")
+                            additionalControl: Switch {
+                                checked: AppConfiguration.gamemodeDisplayDevice === monitorDel.model.devicePath
+                                onToggled: {
+                                    if (checked) {
+                                        AppConfiguration.disableMonitorSwitch = false
+                                        AppConfiguration.gamemodeDisplayDevice = monitorDel.model.devicePath
+                                    } else if (AppConfiguration.gamemodeDisplayDevice === monitorDel.model.devicePath) {
+                                        checked = true
+                                    }
+                                }
+                            }
                         }
                     }
                 }

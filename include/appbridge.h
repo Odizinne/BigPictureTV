@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQmlEngine>
 #include "audiomanager.h"
+#include "displaymanager.h"
 
 class WindowEventMonitor;
 

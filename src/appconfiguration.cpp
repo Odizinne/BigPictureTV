@@ -44,8 +44,7 @@ void AppConfiguration::loadSettings()
     m_desktopAudioDeviceId = m_settings.value("desktop_audio_device_id", "").toString();
 
     m_disableMonitorSwitch = m_settings.value("disable_monitor_switch", false).toBool();
-    m_gamemodeMonitorMode = m_settings.value("gamemode_monitor_mode", 0).toInt();
-    m_desktopMonitorMode = m_settings.value("desktop_monitor_mode", 0).toInt();
+    m_gamemodeDisplayDevice = m_settings.value("gamemode_display_device", "").toString();
 
     m_closeDiscordAction = m_settings.value("close_discord_action", false).toBool();
     m_performancePowerplanAction = m_settings.value("performance_powerplan_action", false).toBool();
@@ -54,6 +53,7 @@ void AppConfiguration::loadSettings()
     m_enableHdr = m_settings.value("enable_hdr", false).toBool();
 
     m_gamemode = m_settings.value("gamemode", false).toBool();
+    m_firstRun = m_settings.value("first_run", true).toBool();
 }
 
 void AppConfiguration::saveSettings()
@@ -69,8 +69,7 @@ void AppConfiguration::saveSettings()
     m_settings.setValue("desktop_audio_device_id", m_desktopAudioDeviceId);
 
     m_settings.setValue("disable_monitor_switch", m_disableMonitorSwitch);
-    m_settings.setValue("gamemode_monitor_mode", m_gamemodeMonitorMode);
-    m_settings.setValue("desktop_monitor_mode", m_desktopMonitorMode);
+    m_settings.setValue("gamemode_display_device", m_gamemodeDisplayDevice);
 
     m_settings.setValue("close_discord_action", m_closeDiscordAction);
     m_settings.setValue("performance_powerplan_action", m_performancePowerplanAction);
@@ -79,6 +78,7 @@ void AppConfiguration::saveSettings()
     m_settings.setValue("enable_hdr", m_enableHdr);
 
     m_settings.setValue("gamemode", m_gamemode);
+    m_settings.setValue("first_run", m_firstRun);
 }
 
 void AppConfiguration::setTargetWindowMode(int value)
@@ -171,21 +171,12 @@ void AppConfiguration::setDisableMonitorSwitch(bool value)
     }
 }
 
-void AppConfiguration::setGamemodeMonitorMode(int value)
+void AppConfiguration::setGamemodeDisplayDevice(const QString &value)
 {
-    if (m_gamemodeMonitorMode != value) {
-        m_gamemodeMonitorMode = value;
+    if (m_gamemodeDisplayDevice != value) {
+        m_gamemodeDisplayDevice = value;
         saveSettings();
-        emit gamemodeMonitorModeChanged();
-    }
-}
-
-void AppConfiguration::setDesktopMonitorMode(int value)
-{
-    if (m_desktopMonitorMode != value) {
-        m_desktopMonitorMode = value;
-        saveSettings();
-        emit desktopMonitorModeChanged();
+        emit gamemodeDisplayDeviceChanged();
     }
 }
 
@@ -266,8 +257,7 @@ void AppConfiguration::resetToDefaults()
     setDesktopAudioDeviceId("");
 
     setDisableMonitorSwitch(false);
-    setGamemodeMonitorMode(0);
-    setDesktopMonitorMode(0);
+    setGamemodeDisplayDevice("");
 
     setCloseDiscordAction(false);
     setPerformancePowerplanAction(false);

@@ -4,6 +4,7 @@
 #include "audiomanager.h"
 #include "nightlightswitcher.h"
 #include "steamwindowmanager.h"
+#include "displaymanager.h"
 #include "utils.h"
 #include <QApplication>
 #include <QVariant>
@@ -129,17 +130,22 @@ void AppBridge::handleMonitorChanges(bool isDesktopMode)
     if (config->disableMonitorSwitch())
         return;
 
-    int index = isDesktopMode ? config->desktopMonitorMode() : config->gamemodeMonitorMode();
-    const char *command = nullptr;
+    DisplayManager* displayManager = DisplayManager::instance();
+    if (!displayManager)
+        return;
 
-    if (index == 0) {
-        command = isDesktopMode ? "/internal" : "/external";
-    } else if (index == 1) {
-        command = isDesktopMode ? "/extend" : "/clone";
-    }
+    if (isDesktopMode) {
+        // Restore original configuration
+        displayManager->restoreOriginalConfiguration();
+    } else {
+        // Save current configuration before switching
+        displayManager->saveCurrentConfiguration();
 
-    if (command) {
-        Utils::runDisplayswitch(command);
+        // Switch to gamemode display
+        QString displayDevice = config->gamemodeDisplayDevice();
+        if (!displayDevice.isEmpty()) {
+            displayManager->switchToDisplay(displayDevice);
+        }
     }
 }
 

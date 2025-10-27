@@ -26,8 +26,7 @@ class AppConfiguration : public QObject
 
     // Monitor settings
     Q_PROPERTY(bool disableMonitorSwitch READ disableMonitorSwitch WRITE setDisableMonitorSwitch NOTIFY disableMonitorSwitchChanged)
-    Q_PROPERTY(int gamemodeMonitorMode READ gamemodeMonitorMode WRITE setGamemodeMonitorMode NOTIFY gamemodeMonitorModeChanged)
-    Q_PROPERTY(int desktopMonitorMode READ desktopMonitorMode WRITE setDesktopMonitorMode NOTIFY desktopMonitorModeChanged)
+    Q_PROPERTY(QString gamemodeDisplayDevice READ gamemodeDisplayDevice WRITE setGamemodeDisplayDevice NOTIFY gamemodeDisplayDeviceChanged)
 
     // Action settings
     Q_PROPERTY(bool closeDiscordAction READ closeDiscordAction WRITE setCloseDiscordAction NOTIFY closeDiscordActionChanged)
@@ -58,8 +57,7 @@ public:
     QString desktopAudioDeviceId() const { return m_desktopAudioDeviceId; }
 
     bool disableMonitorSwitch() const { return m_disableMonitorSwitch; }
-    int gamemodeMonitorMode() const { return m_gamemodeMonitorMode; }
-    int desktopMonitorMode() const { return m_desktopMonitorMode; }
+    QString gamemodeDisplayDevice() const { return m_gamemodeDisplayDevice; }
 
     bool closeDiscordAction() const { return m_closeDiscordAction; }
     bool performancePowerplanAction() const { return m_performancePowerplanAction; }
@@ -83,8 +81,7 @@ public:
     void setDesktopAudioDeviceId(const QString &value);
 
     void setDisableMonitorSwitch(bool value);
-    void setGamemodeMonitorMode(int value);
-    void setDesktopMonitorMode(int value);
+    void setGamemodeDisplayDevice(const QString &value);
 
     void setCloseDiscordAction(bool value);
     void setPerformancePowerplanAction(bool value);
@@ -110,8 +107,7 @@ signals:
     void desktopAudioDeviceIdChanged();
 
     void disableMonitorSwitchChanged();
-    void gamemodeMonitorModeChanged();
-    void desktopMonitorModeChanged();
+    void gamemodeDisplayDeviceChanged();
 
     void closeDiscordActionChanged();
     void performancePowerplanActionChanged();
@@ -145,8 +141,7 @@ private:
     QString m_desktopAudioDeviceId;
 
     bool m_disableMonitorSwitch;
-    int m_gamemodeMonitorMode;
-    int m_desktopMonitorMode;
+    QString m_gamemodeDisplayDevice;
 
     bool m_closeDiscordAction;
     bool m_performancePowerplanAction;

@@ -4,6 +4,7 @@
 #include <QProcess>
 #include "appconfiguration.h"
 #include "appbridge.h"
+#include "displaymanager.h"
 #include "utils.h"
 
 bool isAnotherInstanceRunning(const QString& processName)
@@ -39,6 +40,7 @@ int main(int argc, char *argv[])
     // Create singletons before loading QML
     // This ensures proper initialization order
     AppConfiguration::create(&engine, nullptr);
+    DisplayManager::create(&engine, nullptr);
     AppBridge::create(&engine, nullptr);
 
     engine.loadFromModule("Odizinne.BigPictureTV", "Main");
