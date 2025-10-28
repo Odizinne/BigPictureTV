@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(BigPictureTV VERSION 1.0.1 LANGUAGES CXX)
+project(BigPictureTV VERSION 1.0.2 LANGUAGES CXX)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation directory" FORCE)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -45,6 +45,12 @@ set(QML_FILES
     qml/Main.qml
     qml/CustomComboBox.qml
     qml/Card.qml
+    qml/Tray.qml
+    qml/CustomStackView.qml
+    qml/Panes/ActionsPane.qml
+    qml/Panes/GeneralPane.qml
+    qml/Panes/AudioPane.qml
+    qml/Panes/VideoPane.qml
 )
 
 set(QML_SINGLETONS
