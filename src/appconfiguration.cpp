@@ -36,6 +36,7 @@ void AppConfiguration::loadSettings()
     m_customWindowTitle = m_settings.value("custom_window_title", "").toString();
     m_skipIntro = m_settings.value("skip_intro", false).toBool();
     m_launchAtStartup = ShortcutManager::isShortcutPresent("BigPictureTV");
+    m_doNotSwitchIfSunshineActive = m_settings.value("do_not_switch_if_sunshine_active", false).toBool();
 
     m_disableAudioSwitch = m_settings.value("disable_audio_switch", false).toBool();
     m_useHdmiAudioForGamemode = m_settings.value("use_hdmi_audio_for_gamemode", false).toBool();
@@ -65,6 +66,7 @@ void AppConfiguration::saveSettings()
     m_settings.setValue("target_window_mode", m_targetWindowMode);
     m_settings.setValue("custom_window_title", m_customWindowTitle);
     m_settings.setValue("skip_intro", m_skipIntro);
+    m_settings.setValue("do_not_switch_if_sunshine_active", m_doNotSwitchIfSunshineActive);
 
     m_settings.setValue("disable_audio_switch", m_disableAudioSwitch);
     m_settings.setValue("use_hdmi_audio_for_gamemode", m_useHdmiAudioForGamemode);
@@ -122,6 +124,15 @@ void AppConfiguration::setLaunchAtStartup(bool value)
         m_launchAtStartup = value;
         ShortcutManager::manageShortcut(value, "BigPictureTV");
         emit launchAtStartupChanged();
+    }
+}
+
+void AppConfiguration::setDoNotSwitchIfSunshineActive(bool value)
+{
+    if (m_doNotSwitchIfSunshineActive != value) {
+        m_doNotSwitchIfSunshineActive = value;
+        saveSettings();
+        emit doNotSwitchIfSunshineActiveChanged();
     }
 }
 
@@ -293,6 +304,7 @@ void AppConfiguration::resetToDefaults()
     setCustomWindowTitle("");
     setSkipIntro(false);
     setLaunchAtStartup(false);
+    setDoNotSwitchIfSunshineActive(false);
 
     setDisableAudioSwitch(false);
     setUseHdmiAudioForGamemode(false);

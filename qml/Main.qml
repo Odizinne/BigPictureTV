@@ -176,6 +176,16 @@ ApplicationWindow {
                             onClicked: AppConfiguration.skipIntro = checked
                         }
                     }
+
+                    Card {
+                        Layout.fillWidth: true
+                        title: "Do not switch if Sunshine is active"
+                        additionalControl: Switch {
+                            id: sunshineCheckBox
+                            checked: AppConfiguration.doNotSwitchIfSunshineActive
+                            onClicked: AppConfiguration.doNotSwitchIfSunshineActive = checked
+                        }
+                    }
                 }
             }
         }

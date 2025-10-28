@@ -97,6 +97,12 @@ void AppBridge::onWindowActivated(QString windowTitle)
     }
 
     if (isTargetWindow && !m_currentlyInGamemode) {
+        // Check if Sunshine is streaming (if option enabled)
+        if (config->doNotSwitchIfSunshineActive() && Utils::isSunshineStreaming()) {
+            qDebug() << "Target window activated but Sunshine is streaming - skipping gamemode activation";
+            return;
+        }
+
         // Target window activated - enter game mode and track it
         m_currentlyInGamemode = true;
         config->setGamemode(true);

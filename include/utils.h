@@ -20,6 +20,7 @@ namespace Utils {
     bool isWindows10();
     int getHDRStatus();
     void setHDR(bool enable);
+    bool isSunshineStreaming();
 }
 
 #endif // UTILS_H

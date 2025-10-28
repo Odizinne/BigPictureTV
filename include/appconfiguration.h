@@ -16,6 +16,7 @@ class AppConfiguration : public QObject
     Q_PROPERTY(QString customWindowTitle READ customWindowTitle WRITE setCustomWindowTitle NOTIFY customWindowTitleChanged)
     Q_PROPERTY(bool skipIntro READ skipIntro WRITE setSkipIntro NOTIFY skipIntroChanged)
     Q_PROPERTY(bool launchAtStartup READ launchAtStartup WRITE setLaunchAtStartup NOTIFY launchAtStartupChanged)
+    Q_PROPERTY(bool doNotSwitchIfSunshineActive READ doNotSwitchIfSunshineActive WRITE setDoNotSwitchIfSunshineActive NOTIFY doNotSwitchIfSunshineActiveChanged)
 
     // Audio settings
     Q_PROPERTY(bool disableAudioSwitch READ disableAudioSwitch WRITE setDisableAudioSwitch NOTIFY disableAudioSwitchChanged)
@@ -53,6 +54,7 @@ public:
     QString customWindowTitle() const { return m_customWindowTitle; }
     bool skipIntro() const { return m_skipIntro; }
     bool launchAtStartup() const { return m_launchAtStartup; }
+    bool doNotSwitchIfSunshineActive() const { return m_doNotSwitchIfSunshineActive; }
 
     bool disableAudioSwitch() const { return m_disableAudioSwitch; }
     bool useHdmiAudioForGamemode() const { return m_useHdmiAudioForGamemode; }
@@ -81,6 +83,7 @@ public:
     void setCustomWindowTitle(const QString &value);
     void setSkipIntro(bool value);
     void setLaunchAtStartup(bool value);
+    void setDoNotSwitchIfSunshineActive(bool value);
 
     void setDisableAudioSwitch(bool value);
     void setUseHdmiAudioForGamemode(bool value);
@@ -111,6 +114,7 @@ signals:
     void customWindowTitleChanged();
     void skipIntroChanged();
     void launchAtStartupChanged();
+    void doNotSwitchIfSunshineActiveChanged();
 
     void disableAudioSwitchChanged();
     void useHdmiAudioForGamemodeChanged();
@@ -149,6 +153,7 @@ private:
     QString m_customWindowTitle;
     bool m_skipIntro;
     bool m_launchAtStartup;
+    bool m_doNotSwitchIfSunshineActive;
 
     bool m_disableAudioSwitch;
     bool m_useHdmiAudioForGamemode;

@@ -229,3 +229,30 @@ void Utils::setHDR(bool enable)
 {
     hdr::SetWindowsHDRStatus(enable);
 }
+
+bool Utils::isSunshineStreaming()
+{
+    // Check if Sunshine is actively streaming by looking for UDP connections
+    // Sunshine uses UDP ports 47998-48000 for video/audio streaming
+    QProcess process;
+    process.start("netstat", QStringList() << "-ano" << "-p" << "UDP");
+    process.waitForFinished(2000);
+
+    QString output = process.readAllStandardOutput();
+    QStringList lines = output.split('\n');
+
+    // Look for UDP connections on Sunshine streaming ports (47998-48000)
+    for (const QString &line : lines) {
+        // Check if it's one of Sunshine's UDP streaming ports
+        for (int port = 47998; port <= 48000; port++) {
+            QString portStr = QString(":%1 ").arg(port);
+            if (line.contains(portStr) && line.contains("*:*")) {
+                qDebug() << "Sunshine streaming detected on UDP port" << port;
+                return true;
+            }
+        }
+    }
+
+    qDebug() << "Sunshine streaming not detected";
+    return false;
+}
