@@ -27,6 +27,9 @@ class AppConfiguration : public QObject
     // Monitor settings
     Q_PROPERTY(bool disableMonitorSwitch READ disableMonitorSwitch WRITE setDisableMonitorSwitch NOTIFY disableMonitorSwitchChanged)
     Q_PROPERTY(QString gamemodeDisplayDevice READ gamemodeDisplayDevice WRITE setGamemodeDisplayDevice NOTIFY gamemodeDisplayDeviceChanged)
+    Q_PROPERTY(quint32 gamemodeDisplayWidth READ gamemodeDisplayWidth WRITE setGamemodeDisplayWidth NOTIFY gamemodeDisplayWidthChanged)
+    Q_PROPERTY(quint32 gamemodeDisplayHeight READ gamemodeDisplayHeight WRITE setGamemodeDisplayHeight NOTIFY gamemodeDisplayHeightChanged)
+    Q_PROPERTY(quint32 gamemodeDisplayRefreshRate READ gamemodeDisplayRefreshRate WRITE setGamemodeDisplayRefreshRate NOTIFY gamemodeDisplayRefreshRateChanged)
 
     // Action settings
     Q_PROPERTY(bool closeDiscordAction READ closeDiscordAction WRITE setCloseDiscordAction NOTIFY closeDiscordActionChanged)
@@ -58,6 +61,9 @@ public:
 
     bool disableMonitorSwitch() const { return m_disableMonitorSwitch; }
     QString gamemodeDisplayDevice() const { return m_gamemodeDisplayDevice; }
+    quint32 gamemodeDisplayWidth() const { return m_gamemodeDisplayWidth; }
+    quint32 gamemodeDisplayHeight() const { return m_gamemodeDisplayHeight; }
+    quint32 gamemodeDisplayRefreshRate() const { return m_gamemodeDisplayRefreshRate; }
 
     bool closeDiscordAction() const { return m_closeDiscordAction; }
     bool performancePowerplanAction() const { return m_performancePowerplanAction; }
@@ -82,6 +88,9 @@ public:
 
     void setDisableMonitorSwitch(bool value);
     void setGamemodeDisplayDevice(const QString &value);
+    void setGamemodeDisplayWidth(quint32 value);
+    void setGamemodeDisplayHeight(quint32 value);
+    void setGamemodeDisplayRefreshRate(quint32 value);
 
     void setCloseDiscordAction(bool value);
     void setPerformancePowerplanAction(bool value);
@@ -108,6 +117,9 @@ signals:
 
     void disableMonitorSwitchChanged();
     void gamemodeDisplayDeviceChanged();
+    void gamemodeDisplayWidthChanged();
+    void gamemodeDisplayHeightChanged();
+    void gamemodeDisplayRefreshRateChanged();
 
     void closeDiscordActionChanged();
     void performancePowerplanActionChanged();
@@ -142,6 +154,9 @@ private:
 
     bool m_disableMonitorSwitch;
     QString m_gamemodeDisplayDevice;
+    quint32 m_gamemodeDisplayWidth;
+    quint32 m_gamemodeDisplayHeight;
+    quint32 m_gamemodeDisplayRefreshRate;
 
     bool m_closeDiscordAction;
     bool m_performancePowerplanAction;

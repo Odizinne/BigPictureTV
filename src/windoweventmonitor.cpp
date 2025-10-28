@@ -6,6 +6,7 @@ WindowEventMonitor* WindowEventMonitor::s_instance = nullptr;
 WindowEventMonitor::WindowEventMonitor(QObject *parent)
     : QObject(parent)
     , m_eventHook(nullptr)
+    , m_trackedWindow(nullptr)
 {
     s_instance = this;
 }
@@ -71,6 +72,14 @@ void CALLBACK WindowEventMonitor::WinEventProc(
         return;
     }
 
+    // Check if tracked window still exists
+    if (s_instance->m_trackedWindow && !IsWindow(s_instance->m_trackedWindow)) {
+        // Tracked window was destroyed
+        s_instance->m_trackedWindow = nullptr;
+        emit s_instance->windowDestroyed();
+        return;
+    }
+
     // Get window title
     int length = GetWindowTextLengthW(hwnd);
     if (length > 0) {
@@ -82,8 +91,17 @@ void CALLBACK WindowEventMonitor::WinEventProc(
         if (!windowTitle.isEmpty()) {
             emit s_instance->windowActivated(windowTitle);
         }
-    } else {
-        // Window was closed or has no title
-        emit s_instance->windowDestroyed();
+    }
+    // Don't emit windowDestroyed() just because a window has no title
+}
+
+void WindowEventMonitor::trackWindow(QString windowTitle)
+{
+    Q_UNUSED(windowTitle)
+    // Track the currently focused window
+    HWND foregroundWindow = GetForegroundWindow();
+    if (foregroundWindow) {
+        m_trackedWindow = foregroundWindow;
+        qDebug() << "Now tracking window:" << windowTitle;
     }
 }

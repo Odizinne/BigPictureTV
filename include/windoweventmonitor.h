@@ -19,6 +19,9 @@ signals:
     void windowActivated(QString windowTitle);
     void windowDestroyed();
 
+public slots:
+    void trackWindow(QString windowTitle);
+
 private:
     static void CALLBACK WinEventProc(
         HWINEVENTHOOK hWinEventHook,
@@ -33,6 +36,7 @@ private:
     static WindowEventMonitor* s_instance;
 
     HWINEVENTHOOK m_eventHook;
+    HWND m_trackedWindow;
 };
 
 #endif // WINDOWEVENTMONITOR_H

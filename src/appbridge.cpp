@@ -89,8 +89,10 @@ void AppBridge::onWindowActivated(QString windowTitle)
     }
 
     if (isTargetWindow && !m_currentlyInGamemode) {
+        // Target window activated - enter game mode and track it
         m_currentlyInGamemode = true;
         config->setGamemode(true);
+        windowMonitor->trackWindow(windowTitle);
         handleActions(false);
         handleMonitorChanges(false);
         checkAndSetHDR(false);
@@ -98,14 +100,9 @@ void AppBridge::onWindowActivated(QString windowTitle)
             Utils::skipBigPictureIntro();
         }
         handleAudioChanges(false);
-    } else if (!isTargetWindow && m_currentlyInGamemode) {
-        m_currentlyInGamemode = false;
-        config->setGamemode(false);
-        handleActions(true);
-        checkAndSetHDR(true);
-        handleMonitorChanges(true);
-        handleAudioChanges(true);
     }
+    // Don't exit game mode when switching to a different window
+    // Game mode should persist as long as the target window exists
 }
 
 void AppBridge::onWindowDestroyed()
@@ -141,10 +138,19 @@ void AppBridge::handleMonitorChanges(bool isDesktopMode)
         // Save current configuration before switching
         displayManager->saveCurrentConfiguration();
 
-        // Switch to gamemode display
+        // Switch to gamemode display with custom resolution
         QString displayDevice = config->gamemodeDisplayDevice();
         if (!displayDevice.isEmpty()) {
-            displayManager->switchToDisplay(displayDevice);
+            quint32 width = config->gamemodeDisplayWidth();
+            quint32 height = config->gamemodeDisplayHeight();
+            quint32 refreshRate = config->gamemodeDisplayRefreshRate();
+
+            if (width > 0 && height > 0 && refreshRate > 0) {
+                displayManager->switchToDisplayWithResolution(displayDevice, width, height, refreshRate);
+            } else {
+                // Fallback to default switching if resolution not set
+                displayManager->switchToDisplay(displayDevice);
+            }
         }
     }
 }

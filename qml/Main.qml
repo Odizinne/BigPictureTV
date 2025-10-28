@@ -333,6 +333,76 @@ ApplicationWindow {
                             }
                         }
                     }
+
+                    Label {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 20
+                        Layout.leftMargin: 3
+                        text: qsTr("Display Resolution")
+                        font.pixelSize: 18
+                        font.bold: true
+                    }
+
+                    Label {
+                        Layout.fillWidth: true
+                        Layout.leftMargin: 3
+                        Layout.bottomMargin: 5
+                        text: qsTr("Configure the resolution and refresh rate to use in gamemode")
+                        font.pixelSize: 13
+                        opacity: 0.7
+                        wrapMode: Text.WordWrap
+                    }
+
+                    Card {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width
+                        title: "Width"
+                        additionalControl: SpinBox {
+                            id: widthSpinBox
+                            from: 640
+                            to: 7680
+                            stepSize: 1
+                            value: AppConfiguration.gamemodeDisplayWidth
+                            onValueModified: {
+                                AppConfiguration.gamemodeDisplayWidth = value
+                            }
+                            editable: true
+                        }
+                    }
+
+                    Card {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width
+                        title: "Height"
+                        additionalControl: SpinBox {
+                            id: heightSpinBox
+                            from: 480
+                            to: 4320
+                            stepSize: 1
+                            value: AppConfiguration.gamemodeDisplayHeight
+                            onValueModified: {
+                                AppConfiguration.gamemodeDisplayHeight = value
+                            }
+                            editable: true
+                        }
+                    }
+
+                    Card {
+                        Layout.fillWidth: true
+                        Layout.preferredWidth: parent.width
+                        title: "Refresh Rate (Hz)"
+                        additionalControl: SpinBox {
+                            id: refreshRateSpinBox
+                            from: 24
+                            to: 360
+                            stepSize: 1
+                            value: AppConfiguration.gamemodeDisplayRefreshRate
+                            onValueModified: {
+                                AppConfiguration.gamemodeDisplayRefreshRate = value
+                            }
+                            editable: true
+                        }
+                    }
                 }
             }
         }

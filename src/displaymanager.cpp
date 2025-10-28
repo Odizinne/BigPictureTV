@@ -232,6 +232,104 @@ bool DisplayManager::setOnlyDisplay(const DisplayInfo &target)
     return true;
 }
 
+bool DisplayManager::setOnlyDisplayWithMode(const DisplayInfo &target, const DisplayMode &mode)
+{
+    UINT32 pathCount = 0, modeCount = 0;
+
+    if (GetDisplayConfigBufferSizes(QDC_ALL_PATHS, &pathCount, &modeCount) != ERROR_SUCCESS) {
+        qWarning() << "Failed to get display config buffer sizes for setting display with mode";
+        return false;
+    }
+
+    std::vector<DISPLAYCONFIG_PATH_INFO> paths(pathCount);
+    std::vector<DISPLAYCONFIG_MODE_INFO> modes(modeCount);
+
+    if (QueryDisplayConfig(QDC_ALL_PATHS, &pathCount, paths.data(), &modeCount, modes.data(), nullptr) != ERROR_SUCCESS) {
+        qWarning() << "Failed to query display config for setting display with mode";
+        return false;
+    }
+
+    std::vector<DISPLAYCONFIG_PATH_INFO> newPaths;
+    std::vector<DISPLAYCONFIG_MODE_INFO> newModes;
+
+    // Find the matching path by comparing device path
+    for (UINT32 i = 0; i < pathCount; i++) {
+        DISPLAYCONFIG_TARGET_DEVICE_NAME targetName = {};
+        targetName.header.type = DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
+        targetName.header.size = sizeof(targetName);
+        targetName.header.adapterId = paths[i].targetInfo.adapterId;
+        targetName.header.id = paths[i].targetInfo.id;
+
+        if (DisplayConfigGetDeviceInfo(&targetName.header) != ERROR_SUCCESS) {
+            continue;
+        }
+
+        std::wstring devicePath = targetName.monitorDevicePath;
+
+        if (devicePath == target.device_path) {
+            // This is our target display - keep it active
+            auto path = paths[i];
+            path.flags = DISPLAYCONFIG_PATH_ACTIVE;
+
+            // Copy and modify modes
+            UINT32 sourceModeIdx = DISPLAYCONFIG_PATH_MODE_IDX_INVALID;
+            UINT32 targetModeIdx = DISPLAYCONFIG_PATH_MODE_IDX_INVALID;
+
+            if (path.sourceInfo.modeInfoIdx != DISPLAYCONFIG_PATH_MODE_IDX_INVALID &&
+                path.sourceInfo.modeInfoIdx < modeCount) {
+                auto sourceMode = modes[path.sourceInfo.modeInfoIdx];
+                // Modify source mode resolution
+                sourceMode.sourceMode.width = mode.width;
+                sourceMode.sourceMode.height = mode.height;
+                newModes.push_back(sourceMode);
+                sourceModeIdx = (UINT32)newModes.size() - 1;
+            }
+
+            if (path.targetInfo.modeInfoIdx != DISPLAYCONFIG_PATH_MODE_IDX_INVALID &&
+                path.targetInfo.modeInfoIdx < modeCount) {
+                auto targetMode = modes[path.targetInfo.modeInfoIdx];
+                // Modify target mode resolution and refresh rate
+                targetMode.targetMode.targetVideoSignalInfo.activeSize.cx = mode.width;
+                targetMode.targetMode.targetVideoSignalInfo.activeSize.cy = mode.height;
+                targetMode.targetMode.targetVideoSignalInfo.totalSize.cx = mode.width;
+                targetMode.targetMode.targetVideoSignalInfo.totalSize.cy = mode.height;
+
+                // Set refresh rate (vSyncFreq is a rational number: numerator/denominator)
+                targetMode.targetMode.targetVideoSignalInfo.vSyncFreq.Numerator = mode.refreshRate;
+                targetMode.targetMode.targetVideoSignalInfo.vSyncFreq.Denominator = 1;
+
+                newModes.push_back(targetMode);
+                targetModeIdx = (UINT32)newModes.size() - 1;
+            }
+
+            path.sourceInfo.modeInfoIdx = sourceModeIdx;
+            path.targetInfo.modeInfoIdx = targetModeIdx;
+
+            newPaths.push_back(path);
+            break; // Found our display
+        }
+    }
+
+    if (newPaths.empty()) {
+        qWarning() << "Failed to find target display path for mode setting";
+        return false;
+    }
+
+    qDebug() << "Setting display to" << mode.width << "x" << mode.height << "@" << mode.refreshRate << "Hz";
+
+    LONG result = SetDisplayConfig((UINT32)newPaths.size(), newPaths.data(),
+                                   (UINT32)newModes.size(), newModes.data(),
+                                   SDC_APPLY | SDC_USE_SUPPLIED_DISPLAY_CONFIG |
+                                       SDC_ALLOW_CHANGES | SDC_SAVE_TO_DATABASE);
+
+    if (result != ERROR_SUCCESS) {
+        qWarning() << "SetDisplayConfig failed with error:" << result;
+        return false;
+    }
+
+    return true;
+}
+
 bool DisplayManager::switchToDisplay(const QString &devicePath)
 {
     auto displays = enumerateDisplays();
@@ -240,6 +338,25 @@ bool DisplayManager::switchToDisplay(const QString &devicePath)
     for (const auto &display : displays) {
         if (display.device_path == targetPath) {
             return setOnlyDisplay(display);
+        }
+    }
+
+    qWarning() << "Display not found:" << devicePath;
+    return false;
+}
+
+bool DisplayManager::switchToDisplayWithResolution(const QString &devicePath, quint32 width, quint32 height, quint32 refreshRate)
+{
+    auto displays = enumerateDisplays();
+    std::wstring targetPath = devicePath.toStdWString();
+
+    for (const auto &display : displays) {
+        if (display.device_path == targetPath) {
+            DisplayMode mode;
+            mode.width = width;
+            mode.height = height;
+            mode.refreshRate = refreshRate;
+            return setOnlyDisplayWithMode(display, mode);
         }
     }
 

@@ -45,6 +45,9 @@ void AppConfiguration::loadSettings()
 
     m_disableMonitorSwitch = m_settings.value("disable_monitor_switch", false).toBool();
     m_gamemodeDisplayDevice = m_settings.value("gamemode_display_device", "").toString();
+    m_gamemodeDisplayWidth = m_settings.value("gamemode_display_width", 3840).toUInt();
+    m_gamemodeDisplayHeight = m_settings.value("gamemode_display_height", 2160).toUInt();
+    m_gamemodeDisplayRefreshRate = m_settings.value("gamemode_display_refresh_rate", 60).toUInt();
 
     m_closeDiscordAction = m_settings.value("close_discord_action", false).toBool();
     m_performancePowerplanAction = m_settings.value("performance_powerplan_action", false).toBool();
@@ -70,6 +73,9 @@ void AppConfiguration::saveSettings()
 
     m_settings.setValue("disable_monitor_switch", m_disableMonitorSwitch);
     m_settings.setValue("gamemode_display_device", m_gamemodeDisplayDevice);
+    m_settings.setValue("gamemode_display_width", m_gamemodeDisplayWidth);
+    m_settings.setValue("gamemode_display_height", m_gamemodeDisplayHeight);
+    m_settings.setValue("gamemode_display_refresh_rate", m_gamemodeDisplayRefreshRate);
 
     m_settings.setValue("close_discord_action", m_closeDiscordAction);
     m_settings.setValue("performance_powerplan_action", m_performancePowerplanAction);
@@ -180,6 +186,33 @@ void AppConfiguration::setGamemodeDisplayDevice(const QString &value)
     }
 }
 
+void AppConfiguration::setGamemodeDisplayWidth(quint32 value)
+{
+    if (m_gamemodeDisplayWidth != value) {
+        m_gamemodeDisplayWidth = value;
+        saveSettings();
+        emit gamemodeDisplayWidthChanged();
+    }
+}
+
+void AppConfiguration::setGamemodeDisplayHeight(quint32 value)
+{
+    if (m_gamemodeDisplayHeight != value) {
+        m_gamemodeDisplayHeight = value;
+        saveSettings();
+        emit gamemodeDisplayHeightChanged();
+    }
+}
+
+void AppConfiguration::setGamemodeDisplayRefreshRate(quint32 value)
+{
+    if (m_gamemodeDisplayRefreshRate != value) {
+        m_gamemodeDisplayRefreshRate = value;
+        saveSettings();
+        emit gamemodeDisplayRefreshRateChanged();
+    }
+}
+
 void AppConfiguration::setCloseDiscordAction(bool value)
 {
     if (m_closeDiscordAction != value) {
@@ -258,6 +291,9 @@ void AppConfiguration::resetToDefaults()
 
     setDisableMonitorSwitch(false);
     setGamemodeDisplayDevice("");
+    setGamemodeDisplayWidth(3840);
+    setGamemodeDisplayHeight(2160);
+    setGamemodeDisplayRefreshRate(60);
 
     setCloseDiscordAction(false);
     setPerformancePowerplanAction(false);
