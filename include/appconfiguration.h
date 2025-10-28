@@ -19,6 +19,7 @@ class AppConfiguration : public QObject
 
     // Audio settings
     Q_PROPERTY(bool disableAudioSwitch READ disableAudioSwitch WRITE setDisableAudioSwitch NOTIFY disableAudioSwitchChanged)
+    Q_PROPERTY(bool useHdmiAudioForGamemode READ useHdmiAudioForGamemode WRITE setUseHdmiAudioForGamemode NOTIFY useHdmiAudioForGamemodeChanged)
     Q_PROPERTY(QString gamemodeAudioDevice READ gamemodeAudioDevice WRITE setGamemodeAudioDevice NOTIFY gamemodeAudioDeviceChanged)
     Q_PROPERTY(QString desktopAudioDevice READ desktopAudioDevice WRITE setDesktopAudioDevice NOTIFY desktopAudioDeviceChanged)
     Q_PROPERTY(QString gamemodeAudioDeviceId READ gamemodeAudioDeviceId WRITE setGamemodeAudioDeviceId NOTIFY gamemodeAudioDeviceIdChanged)
@@ -54,6 +55,7 @@ public:
     bool launchAtStartup() const { return m_launchAtStartup; }
 
     bool disableAudioSwitch() const { return m_disableAudioSwitch; }
+    bool useHdmiAudioForGamemode() const { return m_useHdmiAudioForGamemode; }
     QString gamemodeAudioDevice() const { return m_gamemodeAudioDevice; }
     QString desktopAudioDevice() const { return m_desktopAudioDevice; }
     QString gamemodeAudioDeviceId() const { return m_gamemodeAudioDeviceId; }
@@ -81,6 +83,7 @@ public:
     void setLaunchAtStartup(bool value);
 
     void setDisableAudioSwitch(bool value);
+    void setUseHdmiAudioForGamemode(bool value);
     void setGamemodeAudioDevice(const QString &value);
     void setDesktopAudioDevice(const QString &value);
     void setGamemodeAudioDeviceId(const QString &value);
@@ -110,6 +113,7 @@ signals:
     void launchAtStartupChanged();
 
     void disableAudioSwitchChanged();
+    void useHdmiAudioForGamemodeChanged();
     void gamemodeAudioDeviceChanged();
     void desktopAudioDeviceChanged();
     void gamemodeAudioDeviceIdChanged();
@@ -147,6 +151,7 @@ private:
     bool m_launchAtStartup;
 
     bool m_disableAudioSwitch;
+    bool m_useHdmiAudioForGamemode;
     QString m_gamemodeAudioDevice;
     QString m_desktopAudioDevice;
     QString m_gamemodeAudioDeviceId;

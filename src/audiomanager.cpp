@@ -136,9 +136,9 @@ QList<Device> AudioManager::ListAudioOutputDevices()
         return devices;
     }
 
-    // Enumerate all audio output devices (eRender), excluding disabled ones
+    // Enumerate only active audio output devices for a clean list
     CComPtr<IMMDeviceCollection> pCollection;
-    hr = pEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE | DEVICE_STATE_UNPLUGGED, &pCollection);
+    hr = pEnumerator->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pCollection);
     if (FAILED(hr)) {
         qDebug() << "Failed to enumerate audio output devices.";
         CoUninitialize();
@@ -168,11 +168,6 @@ QList<Device> AudioManager::ListAudioOutputDevices()
         hr = pDevice->GetState(&dwState);
         if (FAILED(hr)) {
             qDebug() << "Failed to get device state.";
-            continue;
-        }
-
-        // If the device is disabled, skip it
-        if (dwState == DEVICE_STATE_DISABLED) {
             continue;
         }
 

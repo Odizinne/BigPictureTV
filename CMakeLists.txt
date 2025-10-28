@@ -16,6 +16,7 @@ set(PROJECT_SOURCES
     src/appbridge.cpp
     src/appconfiguration.cpp
     src/windoweventmonitor.cpp
+    src/audiodevicenotifier.cpp
     src/audiomanager.cpp
     src/nightlightswitcher.cpp
     src/shortcutmanager.cpp
@@ -29,6 +30,7 @@ set(PROJECT_HEADERS
     include/appbridge.h
     include/appconfiguration.h
     include/windoweventmonitor.h
+    include/audiodevicenotifier.h
     include/audiomanager.h
     include/policyconfig.h
     include/nightlightswitcher.h

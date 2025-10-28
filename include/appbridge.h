@@ -7,6 +7,7 @@
 #include "displaymanager.h"
 
 class WindowEventMonitor;
+class AudioDeviceNotifier;
 
 class AppBridge : public QObject
 {
@@ -39,6 +40,7 @@ signals:
 private slots:
     void onWindowActivated(QString windowTitle);
     void onWindowDestroyed();
+    void onNewAudioDeviceDetected(QString deviceId, QString deviceName);
 
 private:
     explicit AppBridge(QObject *parent = nullptr);
@@ -68,9 +70,11 @@ private:
     bool discordState;
 
     WindowEventMonitor *windowMonitor;
+    AudioDeviceNotifier *audioDeviceNotifier;
 
     QList<Device> devices;
     bool m_currentlyInGamemode;
+    QStringList m_audioDeviceIdsBeforeMonitorSwitch; // Track audio device IDs before display switch
 };
 
 #endif // APPBRIDGE_H

@@ -205,8 +205,19 @@ ApplicationWindow {
 
                     Card {
                         Layout.fillWidth: true
-                        title: "Gamemode audio"
+                        title: "Use HDMI audio for gamemode"
                         enabled: !AppConfiguration.disableAudioSwitch
+                        additionalControl: Switch {
+                            id: useHdmiAudioCheckBox
+                            checked: AppConfiguration.useHdmiAudioForGamemode
+                            onToggled: AppConfiguration.useHdmiAudioForGamemode = checked
+                        }
+                    }
+
+                    Card {
+                        Layout.fillWidth: true
+                        title: "Gamemode audio"
+                        enabled: !AppConfiguration.disableAudioSwitch && !AppConfiguration.useHdmiAudioForGamemode
                         additionalControl: CustomComboBox {
                             id: gamemodeAudioComboBox
                             Layout.fillWidth: true

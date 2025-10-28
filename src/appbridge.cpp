@@ -1,6 +1,7 @@
 #include "appbridge.h"
 #include "appconfiguration.h"
 #include "windoweventmonitor.h"
+#include "audiodevicenotifier.h"
 #include "audiomanager.h"
 #include "nightlightswitcher.h"
 #include "steamwindowmanager.h"
@@ -8,6 +9,7 @@
 #include "utils.h"
 #include <QApplication>
 #include <QVariant>
+#include <QThread>
 
 AppBridge* AppBridge::s_instance = nullptr;
 
@@ -35,6 +37,7 @@ AppBridge::AppBridge(QObject *parent)
     , nightLightState(false)
     , discordState(false)
     , windowMonitor(new WindowEventMonitor(this))
+    , audioDeviceNotifier(new AudioDeviceNotifier(this))
     , m_currentlyInGamemode(false)
 {
     updateAudioDevices();
@@ -47,6 +50,10 @@ AppBridge::AppBridge(QObject *parent)
     connect(windowMonitor, &WindowEventMonitor::windowDestroyed,
             this, &AppBridge::onWindowDestroyed);
 
+    // Connect to audio device notifications
+    connect(audioDeviceNotifier, &AudioDeviceNotifier::newAudioDeviceDetected,
+            this, &AppBridge::onNewAudioDeviceDetected);
+
     windowMonitor->start();
 
     startupReset();
@@ -55,6 +62,7 @@ AppBridge::AppBridge(QObject *parent)
 AppBridge::~AppBridge()
 {
     delete windowMonitor;
+    delete audioDeviceNotifier;
 }
 
 QString AppBridge::getDeviceIdFromName(const QString& name)
@@ -113,6 +121,10 @@ void AppBridge::onWindowDestroyed()
     if (m_currentlyInGamemode) {
         m_currentlyInGamemode = false;
         config->setGamemode(false);
+
+        // Stop listening for audio devices if still listening
+        audioDeviceNotifier->stopListening();
+
         handleActions(true);
         checkAndSetHDR(true);
         handleMonitorChanges(true);
@@ -137,6 +149,19 @@ void AppBridge::handleMonitorChanges(bool isDesktopMode)
     } else {
         // Save current configuration before switching
         displayManager->saveCurrentConfiguration();
+
+        // Start listening for new audio devices (for HDMI audio detection)
+        if (config->useHdmiAudioForGamemode()) {
+            m_audioDeviceIdsBeforeMonitorSwitch.clear();
+            QList<Device> beforeDevices = AudioManager::ListAudioOutputDevices();
+            for (const Device &device : beforeDevices) {
+                m_audioDeviceIdsBeforeMonitorSwitch.append(device.ID);
+            }
+
+            // Subscribe to audio device notifications BEFORE switching display
+            audioDeviceNotifier->startListening(m_audioDeviceIdsBeforeMonitorSwitch);
+            qDebug() << "Started listening for new audio devices. Current devices:" << m_audioDeviceIdsBeforeMonitorSwitch.size();
+        }
 
         // Switch to gamemode display with custom resolution
         QString displayDevice = config->gamemodeDisplayDevice();
@@ -177,8 +202,27 @@ void AppBridge::handleAudioChanges(bool isDesktopMode)
         return;
     }
 
+    // When using HDMI audio for gamemode, audio switching is handled by notification callback
+    if (!isDesktopMode && config->useHdmiAudioForGamemode()) {
+        qDebug() << "HDMI audio enabled - waiting for device notification...";
+        return;
+    }
+
+    // Use configured audio device for normal switching
     QString audioDevice = isDesktopMode ? config->desktopAudioDeviceId() : config->gamemodeAudioDeviceId();
     AudioManager::setAudioDevice(audioDevice);
+}
+
+void AppBridge::onNewAudioDeviceDetected(QString deviceId, QString deviceName)
+{
+    qDebug() << "NEW AUDIO DEVICE DETECTED:" << deviceName << "ID:" << deviceId;
+
+    // Switch to the new audio device
+    AudioManager::setAudioDevice(deviceId);
+
+    // Stop listening for more devices
+    audioDeviceNotifier->stopListening();
+    qDebug() << "Stopped listening for audio devices after successful switch";
 }
 
 void AppBridge::handleActions(bool isDesktopMode)

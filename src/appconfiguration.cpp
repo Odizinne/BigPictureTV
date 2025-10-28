@@ -38,6 +38,7 @@ void AppConfiguration::loadSettings()
     m_launchAtStartup = ShortcutManager::isShortcutPresent("BigPictureTV");
 
     m_disableAudioSwitch = m_settings.value("disable_audio_switch", false).toBool();
+    m_useHdmiAudioForGamemode = m_settings.value("use_hdmi_audio_for_gamemode", false).toBool();
     m_gamemodeAudioDevice = m_settings.value("gamemode_audio_device", "").toString();
     m_desktopAudioDevice = m_settings.value("desktop_audio_device", "").toString();
     m_gamemodeAudioDeviceId = m_settings.value("gamemode_audio_device_id", "").toString();
@@ -66,6 +67,7 @@ void AppConfiguration::saveSettings()
     m_settings.setValue("skip_intro", m_skipIntro);
 
     m_settings.setValue("disable_audio_switch", m_disableAudioSwitch);
+    m_settings.setValue("use_hdmi_audio_for_gamemode", m_useHdmiAudioForGamemode);
     m_settings.setValue("gamemode_audio_device", m_gamemodeAudioDevice);
     m_settings.setValue("desktop_audio_device", m_desktopAudioDevice);
     m_settings.setValue("gamemode_audio_device_id", m_gamemodeAudioDeviceId);
@@ -129,6 +131,15 @@ void AppConfiguration::setDisableAudioSwitch(bool value)
         m_disableAudioSwitch = value;
         saveSettings();
         emit disableAudioSwitchChanged();
+    }
+}
+
+void AppConfiguration::setUseHdmiAudioForGamemode(bool value)
+{
+    if (m_useHdmiAudioForGamemode != value) {
+        m_useHdmiAudioForGamemode = value;
+        saveSettings();
+        emit useHdmiAudioForGamemodeChanged();
     }
 }
 
@@ -284,6 +295,7 @@ void AppConfiguration::resetToDefaults()
     setLaunchAtStartup(false);
 
     setDisableAudioSwitch(false);
+    setUseHdmiAudioForGamemode(false);
     setGamemodeAudioDevice("");
     setDesktopAudioDevice("");
     setGamemodeAudioDeviceId("");
