@@ -23,6 +23,7 @@ set(PROJECT_SOURCES
     src/steamwindowmanager.cpp
     src/utils.cpp
     src/displaymanager.cpp
+    src/displaystatemanager.cpp
     extern/HDRtray/common/HDR.cpp
 )
 
@@ -38,6 +39,7 @@ set(PROJECT_HEADERS
     include/steamwindowmanager.h
     include/utils.h
     include/displaymanager.h
+    include/displaystatemanager.h
     extern/HDRtray/common/HDR.h
 )
 

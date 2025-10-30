@@ -52,6 +52,11 @@ public:
     Q_INVOKABLE bool saveCurrentConfiguration();
     Q_INVOKABLE void refreshDisplays();
 
+    // Public methods for saved topology access
+    const std::vector<DISPLAYCONFIG_PATH_INFO>& getSavedPaths() const { return m_savedConfig.paths; }
+    const std::vector<DISPLAYCONFIG_MODE_INFO>& getSavedModes() const { return m_savedConfig.modes; }
+    bool restoreTopology(const std::vector<DISPLAYCONFIG_PATH_INFO> &paths, const std::vector<DISPLAYCONFIG_MODE_INFO> &modes);
+
 signals:
     void displaysChanged();
 
@@ -63,7 +68,7 @@ private:
     SavedConfig saveTopology();
     bool setOnlyDisplay(const DisplayInfo &target);
     bool setOnlyDisplayWithMode(const DisplayInfo &target, const DisplayMode &mode);
-    bool restoreTopology(const SavedConfig &config);
+    bool restoreTopologyFromSavedConfig(const SavedConfig &config);
 
     QVariantList m_displays;
     SavedConfig m_savedConfig;

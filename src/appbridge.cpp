@@ -152,9 +152,13 @@ void AppBridge::handleMonitorChanges(bool isDesktopMode)
     if (isDesktopMode) {
         // Restore original configuration
         displayManager->restoreOriginalConfiguration();
+        // Clear the persistent state file after successful restore
+        m_displayStateManager.clearSavedState();
     } else {
         // Save current configuration before switching
         displayManager->saveCurrentConfiguration();
+        // Also persist the topology to file for crash recovery
+        m_displayStateManager.saveDisplayState(displayManager->getSavedPaths(), displayManager->getSavedModes());
 
         // Start listening for new audio devices (for HDMI audio detection)
         if (config->useHdmiAudioForGamemode()) {
@@ -305,7 +309,28 @@ void AppBridge::startupReset()
         } else {
             isRunning = SteamWindowManager::isCustomWindowRunning(config->customWindowTitle());
         }
+
         if (!isRunning) {
+            // Target window is not running - we crashed/closed while in gamemode
+            qDebug() << "App was in gamemode but target window not running - recovering...";
+
+            // Try to restore display topology from file first
+            if (m_displayStateManager.hasSavedState()) {
+                DisplayManager* displayManager = DisplayManager::instance();
+                if (displayManager && !config->disableMonitorSwitch()) {
+                    std::vector<DISPLAYCONFIG_PATH_INFO> paths;
+                    std::vector<DISPLAYCONFIG_MODE_INFO> modes;
+
+                    if (m_displayStateManager.loadDisplayState(paths, modes)) {
+                        qDebug() << "Successfully loaded saved topology, attempting restore...";
+                        displayManager->restoreTopology(paths, modes);
+                    } else {
+                        qWarning() << "Failed to load saved topology, using in-memory backup...";
+                    }
+                }
+            }
+
+            // Handle audio and other settings
             handleMonitorChanges(true);
             handleAudioChanges(true);
         }

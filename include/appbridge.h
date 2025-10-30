@@ -5,6 +5,7 @@
 #include <QQmlEngine>
 #include "audiomanager.h"
 #include "displaymanager.h"
+#include "displaystatemanager.h"
 
 class WindowEventMonitor;
 class AudioDeviceNotifier;
@@ -75,6 +76,7 @@ private:
     QList<Device> devices;
     bool m_currentlyInGamemode;
     QStringList m_audioDeviceIdsBeforeMonitorSwitch; // Track audio device IDs before display switch
+    DisplayStateManager m_displayStateManager;
 };
 
 #endif // APPBRIDGE_H

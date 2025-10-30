@@ -364,18 +364,19 @@ bool DisplayManager::switchToDisplayWithResolution(const QString &devicePath, qu
     return false;
 }
 
-bool DisplayManager::restoreTopology(const SavedConfig &config)
+bool DisplayManager::restoreTopology(const std::vector<DISPLAYCONFIG_PATH_INFO> &paths,
+                                    const std::vector<DISPLAYCONFIG_MODE_INFO> &modes)
 {
-    if (config.paths.empty()) {
-        qWarning() << "Cannot restore empty configuration";
+    if (paths.empty() || modes.empty()) {
+        qWarning() << "Cannot restore empty topology";
         return false;
     }
 
-    auto paths = config.paths;
-    auto modes = config.modes;
+    auto pathsCopy = paths;
+    auto modesCopy = modes;
 
-    LONG result = SetDisplayConfig((UINT32)paths.size(), paths.data(),
-                                   (UINT32)modes.size(), modes.data(),
+    LONG result = SetDisplayConfig((UINT32)pathsCopy.size(), pathsCopy.data(),
+                                   (UINT32)modesCopy.size(), modesCopy.data(),
                                    SDC_APPLY | SDC_USE_SUPPLIED_DISPLAY_CONFIG |
                                        SDC_ALLOW_CHANGES);
 
@@ -387,6 +388,16 @@ bool DisplayManager::restoreTopology(const SavedConfig &config)
     return true;
 }
 
+bool DisplayManager::restoreTopologyFromSavedConfig(const SavedConfig &config)
+{
+    if (config.paths.empty()) {
+        qWarning() << "Cannot restore empty configuration";
+        return false;
+    }
+
+    return restoreTopology(config.paths, config.modes);
+}
+
 bool DisplayManager::restoreOriginalConfiguration()
 {
     if (!m_configSaved) {
@@ -394,5 +405,5 @@ bool DisplayManager::restoreOriginalConfiguration()
         return false;
     }
 
-    return restoreTopology(m_savedConfig);
+    return restoreTopologyFromSavedConfig(m_savedConfig);
 }
